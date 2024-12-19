@@ -8,21 +8,13 @@
     <meta content="" name="description">
     <meta content="" name="keywords">
 
-  <!-- Favicons -->
-  <link href="{{ asset('assets/admin/img/favicon.png') }}" rel="icon">
-  <link href="{{ asset('assets/admin/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+    <!-- Favicons -->
+    <link href="{{ asset('assets/admin/img/favicon.png') }}" rel="icon">
+    <link href="{{ asset('assets/admin/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
 
 
     @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-            @vite(['assets/admin/vendor/bootstrap/css/bootstrap.min.css',
-            'assets/admin/vendor/bootstrap-icons/bootstrap-icons.css',
-            'assets/admin/vendor/boxicons/css/boxicons.min.css',
-            'assets/admin/vendor/quill/quill.snow.css',
-            'assets/admin/vendor/quill/quill.bubble.css',
-            'assets/admin/vendor/remixicon/remixicon.css',
-            'assets/admin/vendor/simple-datatables/style.css',
-            'assets/admin/css/style.css'
-            ])
+        @vite(['assets/admin/vendor/bootstrap/css/bootstrap.min.css', 'assets/admin/vendor/bootstrap-icons/bootstrap-icons.css', 'assets/admin/vendor/boxicons/css/boxicons.min.css', 'assets/admin/vendor/quill/quill.snow.css', 'assets/admin/vendor/quill/quill.bubble.css', 'assets/admin/vendor/remixicon/remixicon.css', 'assets/admin/vendor/simple-datatables/style.css', 'assets/admin/css/style.css'])
     @else
         @include('admin.includes.head');
     @endif
@@ -31,37 +23,38 @@
 
 <body>
 
-  <!-- ======= Header ======= -->
+    <!-- ======= Header ======= -->
 
-  @include('admin.includes.topbar')
-  
-
-  <!-- End Header -->
-
-  <!-- ======= Sidebar ======= -->
-
-@include('admin.includes.sidebar')
+    @include('admin.includes.topbar')
 
 
-  <!-- End Sidebar-->
+    <!-- End Header -->
 
-  <main id="main" class="main">
+    <!-- ======= Sidebar ======= -->
 
-   @yield('content')
-
-  </main><!-- End #main -->
-
-  <!-- ======= Footer ======= -->
-
-  @include('admin.includes.footer')
+    @include('admin.includes.sidebar')
 
 
-  <!-- End Footer -->
+    <!-- End Sidebar-->
 
-  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
-      class="bi bi-arrow-up-short"></i></a>
+    <main id="main" class="main">
 
-  @include('admin.includes.foot')
+        @yield('content')
+
+    </main><!-- End #main -->
+
+    <!-- ======= Footer ======= -->
+
+    @include('admin.includes.footer')
+    @include('sweetalert::alert')
+
+
+    <!-- End Footer -->
+
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+            class="bi bi-arrow-up-short"></i></a>
+
+    @include('admin.includes.foot')
 
 
 </body>
