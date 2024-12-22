@@ -10,8 +10,8 @@
     <meta content="" name="keywords">
 
     <!-- Favicons -->
-    <link href="{{ asset('assets/admin/img/favicon.png') }}" rel="icon">
-    <link href="{{ asset('assets/admin/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+    <link href="{{ asset('assets/admin/img/cablogo.jpeg') }}" rel="icon">
+    <link href="{{ asset('assets/admin/img/cablogo.jpeg') }}" rel="apple-touch-icon">
 
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">
@@ -27,6 +27,7 @@
     <link href="{{ asset('assets/admin/vendor/quill/quill.bubble.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/admin/vendor/remixicon/remixicon.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/admin/vendor/simple-datatables/style.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/admin/css/customStyle.css')}}" rel="stylesheet">
 
     <!-- Template Main CSS File -->
     <link href="{{ asset('assets/admin/css/style.css') }}" rel="stylesheet">
@@ -53,8 +54,8 @@
 
                             <div class="d-flex justify-content-center py-4">
                                 <a href="index.html" class="logo d-flex align-items-center w-auto">
-                                    <img src="{{ asset('assets/admin/img/logo.png') }}" alt="">
-                                    <span class="d-none d-lg-block">NiceAdmin</span>
+                                    <img src="{{ asset('assets/admin/img/cablogo.jpeg') }}" alt="">
+                                    <span class="d-none d-lg-block">Go Cab</span>
                                 </a>
                             </div><!-- End Logo -->
 
@@ -67,14 +68,21 @@
                                         <p class="text-center small">Enter your personal details to create account</p>
                                     </div>
 
-                                    <form class="row g-3 needs-validation" novalidate action="{{ route('adminStore') }}" method="post">
+                                    <form class="row g-3 needs-validation" novalidate action="{{ route('adminStore') }}" method="post" enctype="multipart/form-data">
                                         @csrf
+                                        <div class="col-12">
+                                            <label for="user_image" class="form-label">Upload Image</label>
+                                            <input type="file" name="user_image" class="form-control" id="user_image"
+                                                required>
+
+                                        </div>
                                         <div class="col-12">
                                             <label for="first_name" class="form-label">First Name</label>
                                             <input type="text" name="first_name" class="form-control" id="first_name"
                                                 required>
                                             <div class="invalid-feedback">Please, enter your name!</div>
                                         </div>
+
                                         <div class="col-12">
                                             <label for="last_name" class="form-label">Last Name</label>
                                             <input type="text" name="last_name" class="form-control" id="last_name"
@@ -87,6 +95,12 @@
                                             <input type="email" name="email" class="form-control" id="email"
                                                 required>
                                             <div class="invalid-feedback">Please enter a valid Email adddress!</div>
+                                        </div>
+                                        <div class="col-12">
+                                            <label for="phone" class="form-label"> Phone</label>
+                                            <input type="number" name="phone" class="form-control" id="phone"
+                                                required>
+                                            <div class="invalid-feedback">Please enter a valid Phone Number!</div>
                                         </div>
 
 
@@ -119,13 +133,7 @@
                                 </div>
                             </div>
 
-                            <div class="credits">
-                                <!-- All the links in the footer should remain intact. -->
-                                <!-- You can delete the links only if you purchased the pro version. -->
-                                <!-- Licensing information: https://bootstrapmade.com/license/ -->
-                                <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
-                                Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
-                            </div>
+
 
                         </div>
                     </div>

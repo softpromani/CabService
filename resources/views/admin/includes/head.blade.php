@@ -16,6 +16,7 @@
 
   <!-- Template Main CSS File -->
   <link href="{{ asset('assets/admin/css/style.css')}}" rel="stylesheet">
+  <link href="{{ asset('assets/admin/css/customStyle.css')}}" rel="stylesheet">
 
   <!-- =======================================================
   * Template Name: NiceAdmin

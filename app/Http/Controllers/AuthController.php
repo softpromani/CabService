@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Media;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
@@ -26,17 +28,28 @@ class AuthController extends Controller
             'password' => 'required',
 
         ]);
+        $data = $request->user_image;
+        if ($request->hasFile('user_image')) {
+
+            $filePath = $data->store('user_images', 'public');
+
+        }
         $user = User::create([
             'first_name' => $request->first_name,
-            'last_name' => $request->first_name,
-            'email' => $request->first_name,
-            'password' => $request->first_name,
+            'last_name' => $request->last_name,
+            'phone' => $request->phone,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'user_image' => $filePath ?? '',
+
         ]);
+        Media::upload_media($user, $data, 'user_image');
+
         if ($user) {
-            toast('You have logged in successfully!', 'success');
+            toastr()->success('You have logged in successfully!');
             return redirect()->route('login');
         } else {
-            toast('Something went wrong!', 'error');
+            toastr()->error('Something went wrong!');
             return redirect()->route('register');
         }
     }
@@ -44,15 +57,15 @@ class AuthController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
-            'password' => 'required'
+            'password' => 'required',
         ]);
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->remember_me)) {
             $user = Auth::user()->first_name . '' . Auth::user()->last_name;
-            toast('Welcome '  . $user, 'success');
+            toastr()->success('Welcome ' . $user);
             return redirect()->route('admin.dashboard');
         } else {
-            toast('Invalid Username or Password!', 'error');
+            toastr()->error('Invalid Username or Password!');
             return redirect()->route('login');
         }
     }

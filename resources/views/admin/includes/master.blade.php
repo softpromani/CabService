@@ -9,8 +9,8 @@
     <meta content="" name="keywords">
 
     <!-- Favicons -->
-    <link href="{{ asset('assets/admin/img/favicon.png') }}" rel="icon">
-    <link href="{{ asset('assets/admin/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+    <link href="{{ asset('assets/admin/img/cablogo.jpeg') }}" rel="icon">
+    <link href="{{ asset('assets/admin/img/cablogo.jpeg') }}" rel="apple-touch-icon">
 
 
     @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
@@ -18,7 +18,7 @@
     @else
         @include('admin.includes.head');
     @endif
-
+    @yield('head-area')
 </head>
 
 <body>
@@ -46,7 +46,6 @@
     <!-- ======= Footer ======= -->
 
     @include('admin.includes.footer')
-    @include('sweetalert::alert')
 
 
     <!-- End Footer -->

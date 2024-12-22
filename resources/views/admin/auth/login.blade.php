@@ -10,8 +10,8 @@
     <meta content="" name="keywords">
 
     <!-- Favicons -->
-    <link href="{{ asset('assets/admin/img/favicon.png') }}" rel="icon">
-    <link href="{{ asset('assets/admin/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+    <link href="{{ asset('assets/admin/img/cablogo.jpeg') }}" rel="icon">
+    <link href="{{ asset('assets/admin/img/cablogo.jpeg') }}" rel="apple-touch-icon">
 
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">
@@ -27,6 +27,7 @@
     <link href="{{ asset('assets/admin/vendor/quill/quill.bubble.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/admin/vendor/remixicon/remixicon.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/admin/vendor/simple-datatables/style.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/admin/css/customStyle.css')}}" rel="stylesheet">
 
     <!-- Template Main CSS File -->
     <link href="{{ asset('assets/admin/css/style.css') }}" rel="stylesheet">
@@ -53,8 +54,8 @@
 
                             <div class="d-flex justify-content-center py-4">
                                 <a href="index.html" class="logo d-flex align-items-center w-auto">
-                                    <img src="{{ asset('assets/admin/img/logo.png') }}" alt="">
-                                    <span class="d-none d-lg-block">NiceAdmin</span>
+                                    <img src="{{ asset('assets/admin/img/cablogo.jpeg') }}" alt="">
+                                    <span class="d-none d-lg-block">Go Cab</span>
                                 </a>
                             </div><!-- End Logo -->
 
@@ -106,13 +107,6 @@
                                 </div>
                             </div>
 
-                            <div class="credits">
-                                <!-- All the links in the footer should remain intact. -->
-                                <!-- You can delete the links only if you purchased the pro version. -->
-                                <!-- Licensing information: https://bootstrapmade.com/license/ -->
-                                <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
-                                Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
-                            </div>
 
                         </div>
                     </div>

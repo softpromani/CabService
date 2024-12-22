@@ -2,24 +2,27 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RolePermissionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-
 Route::get('/admin/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login/store', action: [AuthController::class, 'loginStore'])->name('loginStore');
-Route::get('/register',  [AuthController::class, 'register'])->name('register');
-Route::get('admin/store',  [AuthController::class, 'adminStore'])->name('adminStore');
+Route::get('/register', [AuthController::class, 'register'])->name('register');
+Route::post('admin/store', [AuthController::class, 'adminStore'])->name('adminStore');
 
-
-
-Route::group(['name' => 'admin', 'prefix' => 'admin', 'as' => 'admin.'], function () {
+Route::group(['name' => 'admin', 'prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'auth'], function () {
+    Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/dashboard', action: [AdminController::class, 'index'])->name(name: 'dashboard');
+    Route::get('/user-list', action: [AdminController::class, 'userList'])->name(name: 'userList');
+    Route::get('/role/create', action: [RolePermissionController::class, 'role_create'])->name(name: 'role-create');
+    Route::get('/permission/{id}/edit', action: [RolePermissionController::class, 'permission_create'])->name(name: 'permission-edit');
+    Route::post('/role/store', action: [RolePermissionController::class, 'role_store'])->name(name: 'role-store');
+    Route::put('/permission/{id}/update', action: [RolePermissionController::class, 'permission_update'])->name(name: 'permission-update');
 });
-
 
 // Route::prefix('admin')->name('admin.')->group(function () {
 
