@@ -17,7 +17,13 @@ Route::post('admin/store', [AuthController::class, 'adminStore'])->name('adminSt
 Route::group(['name' => 'admin', 'prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'auth'], function () {
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/dashboard', action: [AdminController::class, 'index'])->name(name: 'dashboard');
+
     Route::get('/user-list', action: [AdminController::class, 'userList'])->name(name: 'userList');
+    Route::get('/add-user', action: [AdminController::class, 'addUser'])->name(name: 'addUser');
+    Route::post('/user/store', action: [AdminController::class, 'storeUser'])->name(name: 'storeUser');
+    Route::get('/edit-user/{id?}', action: [AdminController::class, 'editUser'])->name(name: 'editUser');
+
+    Route::put('/update-user/{id?}', action: [AdminController::class, 'updateUser'])->name(name: 'updateUser');
     Route::get('/role/create', action: [RolePermissionController::class, 'role_create'])->name(name: 'role-create');
     Route::get('/permission/{id}/edit', action: [RolePermissionController::class, 'permission_create'])->name(name: 'permission-edit');
     Route::post('/role/store', action: [RolePermissionController::class, 'role_store'])->name(name: 'role-store');

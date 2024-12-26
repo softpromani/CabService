@@ -11,7 +11,7 @@ class Media extends Model
     {
         return $this->morphTo();
     }
-    public static function upload_media($mediable, $file, $path)
+    public static function upload_media($mediable, $file, $path, $mediaType = null)
     {
         if (!$file || !$file->isValid()) {
             throw new \Exception("Invalid file upload.");
@@ -20,7 +20,8 @@ class Media extends Model
         $type = $file->getMimeType();
         $size = $file->getSize() / 1024;
         $storedPath = $file->store($path, 'public');
-        $res = $mediable->media()->create(['storage' => 'local', 'file' => $storedPath, 'extension' => $extension, 'file_type' => $type, 'size' => $size]);
+
+        $res = $mediable->media()->create(['storage' => 'local', 'file' => $storedPath, 'extension' => $extension, 'file_type' => $type, 'size' => $size, 'media_type' => $mediaType]);
         if (!$res) {
             throw new \Exception('Media Upload Fail');
         }

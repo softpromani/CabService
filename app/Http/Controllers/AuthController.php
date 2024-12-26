@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Media;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -32,7 +31,6 @@ class AuthController extends Controller
         if ($request->hasFile('user_image')) {
 
             $filePath = $data->store('user_images', 'public');
-
         }
         $user = User::create([
             'first_name' => $request->first_name,
@@ -43,7 +41,7 @@ class AuthController extends Controller
             'user_image' => $filePath ?? '',
 
         ]);
-        Media::upload_media($user, $data, 'user_image');
+        // Media::upload_media($user, $data, 'user_image');
 
         if ($user) {
             toastr()->success('You have logged in successfully!');
@@ -61,14 +59,23 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->remember_me)) {
-            $user = Auth::user()->first_name . '' . Auth::user()->last_name;
-            toastr()->success('Welcome ' . $user);
-            return redirect()->route('admin.dashboard');
+
+            $user = Auth::user();
+
+            if ($user->hasRole(['Admin', 'Super Admin'])) {
+                toastr()->success('Welcome ' . $user->first_name . ' ' . $user->last_name);
+                return redirect()->route('admin.dashboard');
+            } else {
+                Auth::logout();
+                toastr()->error('You do not have the required role to access this area.');
+                return redirect()->route('login');
+            }
         } else {
             toastr()->error('Invalid Username or Password!');
             return redirect()->route('login');
         }
     }
+
     public function logout()
     {
         Auth::logout();

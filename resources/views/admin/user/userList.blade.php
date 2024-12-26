@@ -15,7 +15,10 @@
 
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">User</h5>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title">User</h5>
+                            <a href="{{ route('admin.addUser') }}" class="btn btn-primary">Add User</a>
+                        </div>
                         <table class="table datatable">
                             <thead>
                                 <tr>
@@ -24,6 +27,7 @@
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Phone</th>
+                                    <th>Role</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -37,9 +41,10 @@
                                         <td>{{ $user->first_name . ' ' . $user->last_name }}</td>
                                         <td>{{ $user->email }}</td>
                                         <td>{{ $user->phone }}</td>
+                                        <td> {{ $user->roles[0]->name ?? '' }}</td>
                                         <td style="white-space: nowrap;">
-                                            
-                                            <a href="#" class="btn bg-success-light" style="margin-right: 5px;">
+
+                                            <a href="{{ route('admin.editUser' , $user->id) }}" class="btn bg-success-light" style="margin-right: 5px;">
                                                 Edit
                                             </a>
 
