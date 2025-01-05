@@ -14,6 +14,12 @@
           <span>User</span>
         </a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link " href="{{ route('admin.business') }}">
+          <i class="bi bi-grid"></i>
+          <span>Business-Setting</span>
+        </a>
+      </li>
 
       {{-- <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
