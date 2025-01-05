@@ -14,12 +14,15 @@
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 
 
+    {{--  @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+        {{--  @vite(['assets/admin/vendor/bootstrap/css/bootstrap.min.css', 'assets/admin/vendor/bootstrap-icons/bootstrap-icons.css', 'assets/admin/vendor/boxicons/css/boxicons.min.css', 'assets/admin/vendor/quill/quill.snow.css', 'assets/admin/vendor/quill/quill.bubble.css', 'assets/admin/vendor/remixicon/remixicon.css', 'assets/admin/vendor/simple-datatables/style.css', 'assets/admin/css/style.css'])
+    @else  --}}
     @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
         @vite(['assets/admin/vendor/bootstrap/css/bootstrap.min.css', 'assets/admin/vendor/bootstrap-icons/bootstrap-icons.css', 'assets/admin/vendor/boxicons/css/boxicons.min.css', 'assets/admin/vendor/quill/quill.snow.css', 'assets/admin/vendor/quill/quill.bubble.css', 'assets/admin/vendor/remixicon/remixicon.css', 'assets/admin/vendor/simple-datatables/style.css', 'assets/admin/css/style.css'])
 
     @else
         @include('admin.includes.head');
-    @endif
+    {{--  @endif  --}}
     @yield('head-area')
 </head>
 

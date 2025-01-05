@@ -2,6 +2,24 @@
 
     <ul class="sidebar-nav" id="sidebar-nav">
 
+      <li class="nav-item">
+        <a class="nav-link " href="index.html">
+          <i class="bi bi-grid"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link " href="{{ route('admin.userList') }}">
+          <i class="bi bi-grid"></i>
+          <span>User</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link " href="{{ route('admin.business') }}">
+          <i class="bi bi-grid"></i>
+          <span>Business-Setting</span>
+        </a>
+      </li>
         <li class="nav-item">
             <a class="nav-link " href="{{  route('admin.dashboard') }}">
                 <i class="bi bi-grid"></i>

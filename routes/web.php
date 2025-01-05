@@ -17,6 +17,9 @@ Route::group(['name' => 'admin', 'prefix' => 'admin', 'as' => 'admin.', 'middlew
     Route::get('/dashboard', action: [AdminController::class, 'index'])->name(name: 'dashboard');
 
     Route::get('/user-list', action: [AdminController::class, 'userList'])->name(name: 'userList');
+    Route::get('/business', action: [AdminController::class, 'business_setting'])->name('business');
+    Route::post('/business-setting', [AdminController::class, 'business_update'])->name('business-Setting');
+
     Route::get('/add-user', action: [AdminController::class, 'addUser'])->name(name: 'addUser');
     Route::post('/user/store', action: [AdminController::class, 'storeUser'])->name(name: 'storeUser');
     Route::get('/edit-user/{id?}', action: [AdminController::class, 'editUser'])->name(name: 'editUser');
