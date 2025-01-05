@@ -20,10 +20,10 @@ class RolePermissionController extends Controller
     {
         $data = $request->validate([
             'role' => 'required|unique:roles,name',
-            'image' => 'nullable|image|max:1024'
+            'image' => 'nullable|image|max:1024',
         ]);
         $res = CustomRole::create(['name' => $data['role']]);
-        Media::upload_media($res, $data['image'], 'role_img');
+        Media::upload_media($res, $data['image'], 'role_img', 'role_img');
         if ($res) {
             toastr()->success('Role Created Successfully');
         } else {
@@ -48,7 +48,7 @@ class RolePermissionController extends Controller
     {
         $data = $req->validate([
             'permissions' => 'required|array',
-            'permissions.*' => 'required|exists:permissions,name'
+            'permissions.*' => 'required|exists:permissions,name',
         ]);
         $role = Role::findOrFail($role);
         $res = $role->syncPermissions($data['permissions']);
