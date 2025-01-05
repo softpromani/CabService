@@ -13,8 +13,41 @@ class AdminController extends Controller
     {
         return view('admin.dashboard');
     }
-    public function userList()
+    public function userList(Request $request)
     {
+        if ($request->ajax()) {
+            $columns = [
+                ['title' => 'ID', 'field' => 'id'],
+                ['title' => 'Name', 'field' => 'full_name', 'headerFilter' => "input"],
+                ['title' => 'Email', 'field' => 'email', 'headerFilter' => "input"],
+                ['title' => 'Contact', 'field' => 'phone', 'headerFilter' => "input"],
+                ['title' => 'Role', 'field' => 'role_name', 'headerFilter' => "input"],
+            ];
+            // Get query parameters
+            $page = $request->query('page', 1); // Current page
+            $perPage = $request->query('size', 10); // Rows per page
+            $sortField = $request->query('sort[0][field]', 'id'); // Sort field
+            $sortOrder = $request->query('sort[0][dir]', 'asc'); // Sort order
+
+            // Query data from the database
+            $query = User::query();
+
+            // Apply sorting
+            if ($sortField && $sortOrder) {
+                $query->orderBy($sortField, $sortOrder);
+            }
+
+            // Paginate results
+            $users = $query->paginate($perPage, ['*'], 'page', $page);
+
+            // Return response in Tabulator format
+            return response()->json([
+                'columns' => $columns,
+                'last_page' => $users->lastPage(),
+                'data' => $users->items(),
+                'total' => $users->total(),
+            ]);
+        }
         $users = User::get();
         return view('admin.user.userList', compact('users'));
     }

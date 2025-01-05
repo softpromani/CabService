@@ -45,10 +45,15 @@ class AuthController extends Controller
                         $user->assignRole($role);
                     }
 
+                    // Token Generation
+                    $tokenResult = $user->createToken('Personal Access Token');
+                    $token = $tokenResult->accessToken;
+
                     return response()->json([
                         'message' => 'Login successful',
                         'role' => $role,
                         'data' => $user,
+                        'token' => $token,
                     ], 200);
                 } else {
                     return response()->json([
@@ -68,10 +73,15 @@ class AuthController extends Controller
                 ]);
                 $user->assignRole($role);
 
+                // Token Generation
+                $tokenResult = $user->createToken('Personal Access Token');
+                $token = $tokenResult->accessToken;
+
                 return response()->json([
-                    'message' => 'Profile is not completed yet . Please complete your profile to login',
+                    'message' => 'Profile is not completed yet. Please complete your profile to login',
                     'role' => $role,
                     'data' => $user,
+                    'token' => $token,
                 ], 201);
             } catch (\Exception $e) {
                 Log::error('Error creating user: ' . $e->getMessage());
@@ -84,14 +94,12 @@ class AuthController extends Controller
 
     public function updateProfile(Request $request)
     {
-        // Get the logged-in user
         $user = Auth::user();
 
         if (!$user) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        // Validate the profile data
         $validated = Validator::make($request->all(), [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
@@ -103,12 +111,11 @@ class AuthController extends Controller
         if ($validated->fails()) {
             return response()->json($validated->errors(), 422);
         }
-
-        // Update the user's profile
         $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
         $user->email = $request->email;
         $user->gender = $request->gender;
+        $user->is_profile = 1;
 
         // Handle user image upload
         if ($request->hasFile('user_image')) {

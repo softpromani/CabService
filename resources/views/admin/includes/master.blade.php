@@ -56,7 +56,7 @@
             class="bi bi-arrow-up-short"></i></a>
 
     @include('admin.includes.foot')
-
+    @yield('script-area')
 
 </body>
 

@@ -39,7 +39,7 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
-
+    protected $appends = ['full_name', 'role_name'];
     /**
      * Get the attributes that should be cast.
      *
@@ -55,5 +55,13 @@ class User extends Authenticatable
     public function media()
     {
         return $this->morphOne(Media::class, 'mediaable');
+    }
+    public function getFullNameAttribute()
+    {
+        return "{$this->first_name} {$this->last_name}";
+    }
+    public function getRoleNameAttribute()
+    {
+        return $this->roles[0]->name ?? 'N/A'; // Return 'N/A' if the user has no role
     }
 }
