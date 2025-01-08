@@ -8,24 +8,6 @@
           <span>Dashboard</span>
         </a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link " href="{{ route('admin.userList') }}">
-          <i class="bi bi-grid"></i>
-          <span>User</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link " href="{{ route('admin.business') }}">
-          <i class="bi bi-grid"></i>
-          <span>Business-Setting</span>
-        </a>
-      </li>
-        <li class="nav-item">
-            <a class="nav-link " href="{{  route('admin.dashboard') }}">
-                <i class="bi bi-grid"></i>
-                <span>Dashboard</span>
-            </a>
-        </li>
         @if(auth()->user()->hasRole(['Admin', 'Super Admin']))
         <li class="nav-item">
             <a class="nav-link collapsed" href="{{ route('admin.userList') }}">
@@ -46,6 +28,34 @@
                     <a href="{{ route('admin.role-create') }}">
                         <i class="bi bi-circle"></i><span>Role</span>
                     </a>
+                </li>
+
+
+            </ul>
+        </li>
+        @endif
+
+        @if(auth()->user()->hasRole(['Admin', 'Super Admin']))
+        <li class="nav-item">
+            <a class="nav-link collapsed" data-bs-target="#components1-nav" data-bs-toggle="collapse" href="#">
+                <i class="bi bi-menu-button-wide"></i><span>Master Setup</span><i
+                    class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="components1-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                <li>
+                    <a href="{{ route('admin.master.country') }}">
+                        <i class="bi bi-circle"></i><span>Country</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.master.state') }}">
+                        <i class="bi bi-circle"></i><span>State</span>
+                  </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.master.city') }}">
+                        <i class="bi bi-circle"></i><span>City</span>
+                   </a>
                 </li>
 
 
