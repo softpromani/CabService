@@ -22,7 +22,7 @@
 
     @else
         @include('admin.includes.head');
-    {{--  @endif  --}}
+     @endif 
     @yield('head-area')
 </head>
 
@@ -51,8 +51,6 @@
     <!-- ======= Footer ======= -->
 
     @include('admin.includes.footer')
-
-
     <!-- End Footer -->
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
