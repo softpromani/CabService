@@ -32,11 +32,14 @@ Route::group(['name' => 'admin', 'prefix' => 'admin', 'as' => 'admin.', 'middlew
     Route::put('/permission/{id}/update', action: [RolePermissionController::class, 'permission_update'])->name(name: 'permission-update');
     Route::group(['prefix' => 'master-setup', 'as' => 'master.'], function () {
         Route::get('/countries', [CscController::class, 'country_index'])->name('country');
-        Route::post('/countries', [CscController::class, 'country_store'])->name('country.store');
+        Route::post('/countries', [CscController::class, 'country_store'])->name('country_store');
+        Route::delete('/countries/delete/{id}', [CscController::class, 'country_destroy'])->name('country_destroy');
         Route::get('/states', [CscController::class, 'state_index'])->name('state');
         Route::post('/states', [CscController::class, 'state_store'])->name('state.store');
+        Route::delete('/states/delete/{id}', [CscController::class, 'state_destroy'])->name('state_destroy');
         Route::get('/cities', [CscController::class, 'city_index'])->name('city');
         Route::post('/cities', [CscController::class, 'city_store'])->name('city.store');
+        Route::delete('/cities/delete/{id}', [CscController::class, 'city_destroy'])->name('city_destroy');
 
     });
 });
