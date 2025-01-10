@@ -2,6 +2,7 @@
 @section('head-area')
 <link href="https://unpkg.com/tabulator-tables@6.3.0/dist/css/tabulator.min.css" rel="stylesheet">
 <script type="text/javascript" src="https://unpkg.com/tabulator-tables@6.3.0/dist/js/tabulator.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 @endsection
 @section('content')
 
@@ -64,6 +65,32 @@
     },
 
 });
+
+document.addEventListener("click", function (e) {
+            if (e.target.classList.contains("delete-btn")) {
+                var rowId = e.target.getAttribute("data-id"); // Get row ID from data attribute
+                alert(rowId);
+                if (confirm("Are you sure you want to delete this record?")) {
+                    // Send DELETE request to server
+                    fetch(`{{ url('admin/master-setup/cities/delete') }}/${rowId}`, {
+                        method: "DELETE",
+                        headers: {
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}", // Include CSRF token
+                            "Content-Type": "application/json",
+                        },
+                    })
+                        .then((response) => {
+                            if (response.ok) {
+                                table.deleteRow(rowId); // Remove row from Tabulator table
+                                alert("Record deleted successfully!");
+                            } else {
+                                alert("Failed to delete record. Please try again.");
+                            }
+                        })
+                        .catch((error) => console.error("Error:", error));
+                }
+            }
+        });
 });
 </script>
 

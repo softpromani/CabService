@@ -18,6 +18,7 @@ class CscController extends Controller
                 ['title' => 'Country Name', 'field' => 'name', 'headerFilter' => "input"],
                 ['title' => 'Country Code', 'field' => 'code', 'headerFilter' => "input"],
                 ['title' => 'Short Name', 'field' => 'sname', 'headerFilter' => "input"],
+                ['title' => 'Actions', 'field' => 'delete_action', 'formatter' => 'html', 'headerSort' => 'false'],
 
             ];
             // Get query parameters
@@ -36,6 +37,12 @@ class CscController extends Controller
 
             // Paginate results
             $countries = $query->paginate($perPage, ['*'], 'page', $page);
+
+            $countries->getCollection()->transform(function ($item) {
+                $item->delete_action = '<button class="btn btn-sm btn-danger delete-btn" data-id="' . $item->id . '">Delete</button>';
+                $item->edit_action = '<button class="btn btn-sm btn-primary edit-btn" data-id="' . $item->id . '">Edit</button>';
+                return $item;
+            });
 
             // Return response in Tabulator format
             return response()->json([
@@ -93,14 +100,17 @@ class CscController extends Controller
     // }
 
     // // Delete a country
-    // public function country_destroy($id)
-    // {
-    //     $country = Country::findOrFail($id);
-    //     $country->delete();
+    public function country_destroy($id)
+    {
+        $country = Country::find($id);
 
-    //     toastr()->success('Country Deleted Successfully');
-    //     return redirect()->route('admin.country.index'); // Redirect to the country list page
-    // }
+        if ($country) {
+            $country->delete();
+            return response()->json(['success' => true, 'message' => 'Country deleted successfully.']);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Country not found.'], 404);
+    }
 
     // STATE CONTROLLER
     public function state_index(Request $request)
@@ -111,6 +121,7 @@ class CscController extends Controller
                 ['title' => 'Country ID', 'field' => 'id', 'headerFilter' => "input"],
                 ['title' => 'State Name', 'field' => 'state_name', 'headerFilter' => "input"],
                 ['title' => 'Short Name', 'field' => 'short_name', 'headerFilter' => "input"],
+                ['title' => 'Actions', 'field' => 'delete_action', 'formatter' => 'html', 'headerSort' => 'false'],
 
             ];
             // Get query parameters
@@ -129,6 +140,11 @@ class CscController extends Controller
 
             // Paginate results
             $states = $query->paginate($perPage, ['*'], 'page', $page);
+
+            $states->getCollection()->transform(function ($item) {
+                $item->delete_action = '<button class="btn btn-sm btn-danger delete-btn" data-id="' . $item->id . '">Delete</button>';
+                return $item;
+            });
 
             // Return response in Tabulator format
             return response()->json([
@@ -164,6 +180,18 @@ class CscController extends Controller
             ->with('success', 'State added successfully!');
     }
 
+    public function state_destroy($id)
+    {
+        $country = State::find($id);
+
+        if ($country) {
+            $country->delete();
+            return response()->json(['success' => true, 'message' => 'Country deleted successfully.']);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Country not found.'], 404);
+    }
+
     // CITY CONTROLLER
 
     public function city_index(Request $request)
@@ -174,6 +202,7 @@ class CscController extends Controller
                 ['title' => 'State ID', 'field' => 'id', 'headerFilter' => "input"],
                 ['title' => 'City Name', 'field' => 'city_name', 'headerFilter' => "input"],
                 ['title' => 'Pin Code', 'field' => 'pin_code', 'headerFilter' => "input"],
+                ['title' => 'Actions', 'field' => 'delete_action', 'formatter' => 'html', 'headerSort' => 'false'],
 
             ];
             // Get query parameters
@@ -192,6 +221,11 @@ class CscController extends Controller
 
             // Paginate results
             $cities = $query->paginate($perPage, ['*'], 'page', $page);
+
+            $cities->getCollection()->transform(function ($item) {
+                $item->delete_action = '<button class="btn btn-sm btn-danger delete-btn" data-id="' . $item->id . '">Delete</button>';
+                return $item;
+            });
 
             // Return response in Tabulator format
             return response()->json([
@@ -225,6 +259,18 @@ class CscController extends Controller
         // Redirect with a success message
         return redirect()->route('admin.master.city')
             ->with('success', 'City added successfully!');
+    }
+
+    public function city_destroy($id)
+    {
+        $country = City::find($id);
+
+        if ($country) {
+            $country->delete();
+            return response()->json(['success' => true, 'message' => 'Country deleted successfully.']);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Country not found.'], 404);
     }
 
 }
