@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Driver;
 
 use App\Http\Controllers\Controller;
 use App\Models\Car;
@@ -54,7 +54,7 @@ class CarController extends Controller
             'pickup_point' => 'required',
 
         ]);
-       
+
         // Create a new Car entry
         $data = Car::create([
             'start_point' => $request->start_point,

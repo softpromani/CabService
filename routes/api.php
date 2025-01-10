@@ -10,18 +10,16 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 // Driver Api
+
+Route::group([ 'prefix'=>'driver','as'=>'driver.'],function(){
 Route::post('/profile-update',[ProfileController::class,'profile_update'])->name('profile-update');
 Route::post('/car',[CarController::class,'car'])->name('car');
 Route::post('/route',[CarController::class,'route'])->name('route');
 Route::post('/detail',[CarController::class,'detail'])->name('detail');
 Route::post('login/driver', [AuthController::class, 'driverLogin']);
-
 Route::post('login', [AuthController::class, 'login']);
 Route::post('login/user', [AuthController::class, 'userLogin']);
-Route::middleware('api')->group(function () {
 
-Route::middleware('api')->group(function () {
-    Route::post('user/login', [AuthController::class, 'userLogin']);
 });
 
 require base_path('routes/user_api_routes.php');
