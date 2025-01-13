@@ -20,8 +20,12 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('user_image')->nullable();
             $table->string('gender')->nullable();
+            $table->date('dob')->comment('date of birth')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
+            $table->boolean('is_profile')->default(false);
+            $table->boolean('is_verify')->default(false);
+            $table->boolean('is_active')->default(true);
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
