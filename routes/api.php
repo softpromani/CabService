@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'driver', 'as' => 'driver.'], function () {
     Route::post('login', [AuthController::class, 'login']);
-    Route::middleware('')->group(function () {
-        Route::post('/profile-update', [ProfileController::class, 'profile_update'])->name('profile-update');
+    Route::middleware(['auth:api','role:Driver'])->group(function () {
+        Route::put('/profile-update', [ProfileController::class, 'profile_update']);
         Route::post('/car', [CarController::class, 'car'])->name('car');
         Route::post('/route', [CarController::class, 'route'])->name('route');
     });
