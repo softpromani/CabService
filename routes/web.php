@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\admin\CscController;
+use App\Http\Controllers\admin\BrandController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RolePermissionController;
 use Illuminate\Support\Facades\Route;
@@ -34,12 +35,25 @@ Route::group(['name' => 'admin', 'prefix' => 'admin', 'as' => 'admin.', 'middlew
         Route::get('/countries', [CscController::class, 'country_index'])->name('country');
         Route::post('/countries', [CscController::class, 'country_store'])->name('country_store');
         Route::delete('/countries/delete/{id}', [CscController::class, 'country_destroy'])->name('country_destroy');
+        Route::get('/countries/{id}/edit', [CscController::class, 'editCountry'])->name('editCountry');
+        Route::put('/countries/update/{id}', [CscController::class, 'updateCountry'])->name('updateCountry');
         Route::get('/states', [CscController::class, 'state_index'])->name('state');
         Route::post('/states', [CscController::class, 'state_store'])->name('state.store');
+        Route::get('/states/{id}/edit', [CscController::class, 'editState'])->name('editState');
+        Route::put('/states/update/{id}', [CscController::class, 'updateState'])->name('updateState');
         Route::delete('/states/delete/{id}', [CscController::class, 'state_destroy'])->name('state_destroy');
         Route::get('/cities', [CscController::class, 'city_index'])->name('city');
         Route::post('/cities', [CscController::class, 'city_store'])->name('city.store');
+        Route::get('/cities/{id}/edit', [CscController::class, 'editCity'])->name('editCity');
+        Route::put('/states/update/{id}', [CscController::class, 'updateCity'])->name('updateCity');
         Route::delete('/cities/delete/{id}', [CscController::class, 'city_destroy'])->name('city_destroy');
+        Route::get('/brands', [BrandController::class, 'brand_index'])->name('brand');
+        Route::post('/brands', [BrandController::class, 'brand_store'])->name('brand_store');
+        Route::delete('/brands/delete/{id}', [BrandController::class, 'brand_destroy'])->name('brand_destroy');
+        Route::get('/brands/{id}/edit', [BrandController::class, 'editBrand'])->name('editBrand');
+        Route::put('/brands/update/{id}', [BrandController::class, 'updateBrand'])->name('updateBrand');
 
     });
+
 });
+
