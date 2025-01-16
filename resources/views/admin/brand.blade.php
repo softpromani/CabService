@@ -6,24 +6,22 @@
 @endsection
 @section('content')
 
-<form action="{{ isset($editcountry) ? route('admin.master.updateCountry', $editcountry->id) : route('admin.master.country') }}" method="post">
+<form action="{{ route('admin.master.brand_store') }}" method="post" enctype="multipart/form-data">
     @csrf
-    @isset($editcountry)
+    @isset($editbrand)
     @method('PUT')
     @endisset
 
     <div class="card p-3">
-        <h4 class="mb-4">Add Country</h4>
+        <h4 class="mb-4">Add Brand</h4>
         <div class="row g-3">
             <div class="col-md-4">
-                <x-input-box name="name" label="Country Name" value="{{ isset($editcountry) ? $editcountry->name : '' }}"/>
+                <x-input-box name="brand_name"/>
             </div>
             <div class="col-md-4">
-                <x-input-box name="code" label="Country Code" value="{{ isset($editcountry) ? $editcountry->code : '' }}"/>
+                <x-input-box type="file" name="brand_logo"/>
             </div>
-            <div class="col-md-4">
-                <x-input-box name="sname" label="Short Name" value="{{ isset($editcountry) ? $editcountry->sname : '' }}"/>
-            </div>
+
         </div>
         <div class="mt-3">
             <button type="submit" class="btn btn-primary">Submit</button>
@@ -31,32 +29,32 @@
     </div>
 </form>
 
+<section class="section">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header"></div>
+                <div class="card-body p-0">
+                    <div id="example-table-theme" class="table-bordered">
 
-
-
-
-    <section class="section">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-header"></div>
-                    <div class="card-body p-0">
-                        <div id="example-table-theme" class="table-bordered">
-
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
+
+
 @endsection
+
 @section('script-area')
+
 <script>
     $(document).ready(function(){
    var table = new Tabulator("#example-table-theme", {
     layout: "fitColumns",
     theme: "bootstrap4",
-    ajaxURL: "{{ route('admin.master.country') }}", // URL for the Laravel controller
+    ajaxURL: "{{ route('admin.master.brand') }}", // URL for the Laravel controller
     ajaxConfig: "GET", // HTTP request type
     pagination: "remote", // Enable remote pagination
     paginationSize: 10, // Number of rows per page
@@ -74,7 +72,7 @@ document.addEventListener("click", function (e) {
                 alert(rowId);
                 if (confirm("Are you sure you want to delete this record?")) {
                     // Send DELETE request to server
-                    fetch(`{{ url('admin/master-setup/countries/delete') }}/${rowId}`, {
+                    fetch(`{{ url('admin/master-setup/brands/delete') }}/${rowId}`, {
                         method: "DELETE",
                         headers: {
                             "X-CSRF-TOKEN": "{{ csrf_token() }}", // Include CSRF token
@@ -117,8 +115,5 @@ document.addEventListener("click", function (e) {
 
 
 </script>
-
-
-
 
 @endsection

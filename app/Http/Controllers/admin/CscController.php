@@ -39,8 +39,9 @@ class CscController extends Controller
             $countries = $query->paginate($perPage, ['*'], 'page', $page);
 
             $countries->getCollection()->transform(function ($item) {
-                $item->delete_action = '<button class="btn btn-sm btn-danger delete-btn" data-id="' . $item->id . '">Delete</button>';
-                $item->edit_action = '<button class="btn btn-sm btn-primary edit-btn" data-id="' . $item->id . '">Edit</button>';
+                $item->delete_action = '<i class="fa-solid fa-trash delete-btn text-danger" data-id="' . $item->id . '"></i>&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="' . route('admin.master.editCountry', $item->id) . '" class="text-black"><i class="fa-solid fa-pen-to-square text-warning"></i></a>
+                ';
                 return $item;
             });
 
@@ -78,26 +79,32 @@ class CscController extends Controller
             ->with('success', 'Country added successfully!');
     }
 
-    // Update a country's information
-    // public function country_update(Request $request, $id)
-    // {
-    //     $country = Country::findOrFail($id);
+    public function editCountry($id)
+    {
+        $editcountry = Country::findOrFail($id);
+        $countries = Country::all();
+        return view('admin.country', compact('editcountry', 'countries'));
+    }
 
-    //     $request->validate([
-    //         'name' => 'required|string|max:255',
-    //         'code' => 'required|string|max:10|unique:countries,code,' . $id,
-    //         'sname' => 'required|string|max:10|',
-    //     ]);
+    public function updateCountry(Request $request, $id)
+    {
 
-    //     $country->update([
-    //         'name' => $request->name,
-    //         'code' => $request->code,
-    //         'sname' => $request->sname,
-    //     ]);
+        $validatedData = $request->validate([
+            'name' => 'required|string', // Field to be updated
+            'code' => 'required', // New value
+            'sname' => 'required',
+        ]);
 
-    //     toastr()->success('Country Updated Successfully');
-    //     return redirect()->route('admin.country.index+'); // Redirect to the country list page
-    // }
+        $country = Country::findOrFail($id);
+        $country->name = $request->input('name');
+        $country->code = $request->input('code');
+        $country->sname = $request->input('sname');
+        $country->save();
+
+        return redirect()->route('admin.master.country')
+            ->with('success', 'Country updated successfully!');
+
+    }
 
     // // Delete a country
     public function country_destroy($id)
@@ -142,7 +149,8 @@ class CscController extends Controller
             $states = $query->paginate($perPage, ['*'], 'page', $page);
 
             $states->getCollection()->transform(function ($item) {
-                $item->delete_action = '<button class="btn btn-sm btn-danger delete-btn" data-id="' . $item->id . '">Delete</button>';
+                $item->delete_action = '<i class="fa-solid fa-trash delete-btn text-danger" data-id="' . $item->id . '"></i>&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="' . route('admin.master.editState', $item->id) . '" class="text-black"><i class="fa-solid fa-pen-to-square text-warning"></i></a>';
                 return $item;
             });
 
@@ -180,6 +188,33 @@ class CscController extends Controller
             ->with('success', 'State added successfully!');
     }
 
+    public function editState($id)
+    {
+        $editstate = State::findOrFail($id);
+        $states = State::all();
+        return view('admin.state', compact('editstate', 'states'));
+    }
+
+    public function updateState(Request $request, $id)
+    {
+
+        $validatedData = $request->validate([
+            'id' => 'required|string', // Field to be updated
+            'state_name' => 'required', // New value
+            'short_name' => 'required',
+        ]);
+
+        $state = State::findOrFail($id);
+        $state->id = $request->input('id');
+        $state->state_name = $request->input('state_name');
+        $state->short_name = $request->input('short_name');
+        $state->save();
+
+        return redirect()->route('admin.master.state')
+            ->with('success', 'State updated successfully!');
+
+    }
+
     public function state_destroy($id)
     {
         $country = State::find($id);
@@ -202,6 +237,7 @@ class CscController extends Controller
                 ['title' => 'State ID', 'field' => 'id', 'headerFilter' => "input"],
                 ['title' => 'City Name', 'field' => 'city_name', 'headerFilter' => "input"],
                 ['title' => 'Pin Code', 'field' => 'pin_code', 'headerFilter' => "input"],
+                ['title' => 'Status', 'field' => 'status', 'formatter' => 'html'],
                 ['title' => 'Actions', 'field' => 'delete_action', 'formatter' => 'html', 'headerSort' => 'false'],
 
             ];
@@ -223,7 +259,8 @@ class CscController extends Controller
             $cities = $query->paginate($perPage, ['*'], 'page', $page);
 
             $cities->getCollection()->transform(function ($item) {
-                $item->delete_action = '<button class="btn btn-sm btn-danger delete-btn" data-id="' . $item->id . '">Delete</button>';
+                $item->delete_action = '<i class="fa-solid fa-trash delete-btn text-danger" data-id="' . $item->id . '"></i>&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="' . route('admin.master.editCity', $item->id) . '" class="text-black"><i class="fa-solid fa-pen-to-square text-warning"></i></a>';
                 return $item;
             });
 
@@ -261,6 +298,32 @@ class CscController extends Controller
             ->with('success', 'City added successfully!');
     }
 
+    public function editCity($id)
+    {
+        $editcity = City::findOrFail($id);
+        $cities = City::all();
+        return view('admin.city', compact('editcity', 'cities'));
+    }
+
+    public function updateCity(Request $request, $id)
+    {
+
+        $validatedData = $request->validate([
+            'id' => 'required|string', // Field to be updated
+            'city_name' => 'required', // New value
+            'pin_code' => 'required',
+        ]);
+
+        $city = City::findOrFail($id);
+        $city->id = $request->input('id');
+        $city->city_name = $request->input('city_name');
+        $city->pin_code = $request->input('pin_code');
+        $city->save();
+
+        return redirect()->route('admin.master.city')
+            ->with('success', 'City updated successfully!');
+
+    }
     public function city_destroy($id)
     {
         $country = City::find($id);

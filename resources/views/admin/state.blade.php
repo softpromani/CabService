@@ -1,59 +1,29 @@
 @extends('admin.includes.master')
 @section('head-area')
-<link href="https://unpkg.com/tabulator-tables@6.3.0/dist/css/tabulator.min.css" rel="stylesheet">
+<link href="https://unpkg.com/tabulator-tables@6.3.0/dist/css/tabulator_bootstrap5.min.css" rel="stylesheet">
 <script type="text/javascript" src="https://unpkg.com/tabulator-tables@6.3.0/dist/js/tabulator.min.js"></script>
 
-<style>
-    /*Theme the Tabulator element*/
-#example-table-theme{
-    background-color:#ccc;
-    border: 1px solid #333;
-    border-radius: 10px;
-}
 
-/*Theme the header*/
-#example-table-theme .tabulator-header {
-    background-color:#333;
-    color:#141313;
-}
-
-/*Allow column header names to wrap lines*/
-#example-table-theme .tabulator-header .tabulator-col,
-#example-table-theme .tabulator-header .tabulator-col-row-handle {
-    white-space: normal;
-}
-
-/*Color the table rows*/
-#example-table-theme .tabulator-tableholder .tabulator-table .tabulator-row{
-    color:#fff;
-    background-color: #666;
-}
-
-/*Color even rows*/
-    #example-table-theme .tabulator-tableholder .tabulator-table .tabulator-row:nth-child(even) {
-    background-color: #444;
-}
-</style>
 @endsection
 @section('content')
 
-<form action="{{ route('admin.master.state') }}" method="post">
+<form action="{{isset($editstate) ? route('admin.master.updateState', $editstate->id) : route('admin.master.state') }}" method="post">
     @csrf
+    @isset($editstate)
+    @method('PUT')
+    @endisset
     <div class="card p-3">
         <h4 class="mb-4">Add State</h4>
         <div class="row g-3">
             <div class="col-md-4">
-                <label for="id" class="form-label">Country ID</label>
-                <input type="text" class="form-control" name="id" id="exampleCode">
+                <x-input-box name="id" label="Country ID" value="{{ isset($editstate) ? $editstate->id : '' }}"/>
             </div>
             <div class="col-md-4">
-                <label for="state_name" class="form-label">State Name</label>
-                <input type="text" class="form-control" name="state_name" id="examplename" >
+                <x-input-box name="state_name" label="State Name" value="{{ isset($editstate) ? $editstate->state_name : '' }}"/>
             </div>
 
             <div class="col-md-4">
-                <label for="short_name" class="form-label">Short Name</label>
-                <input type="text" class="form-control" name="short_name" id="examplesname">
+                <x-input-box name="short_name" label="Short Name" value="{{ isset($editstate) ? $editstate->short_name : '' }}"/>
             </div>
         </div>
         <div class="mt-3">

@@ -4,9 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\UserDocument;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
@@ -32,10 +30,10 @@ class AuthController extends Controller
             ['phone' => $phone],
             ['is_profile' => 0]// Default attributes if user is created
         );
-        if($user->is_active==false){
+        if ($user->is_active == false) {
             return response()->json([
-                'message'=>'!OPPs Your Account Suspended,Please contact with support'
-            ],500);
+                'message' => '!OPPs Your Account Suspended,Please contact with support',
+            ], 401);
         }
         try {
             // Assign the "Driver" role if not already assigned
@@ -68,7 +66,5 @@ class AuthController extends Controller
             ], 500);
         }
     }
-
-
 
 }

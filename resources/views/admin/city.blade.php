@@ -1,28 +1,28 @@
 @extends('admin.includes.master')
 @section('head-area')
-<link href="https://unpkg.com/tabulator-tables@6.3.0/dist/css/tabulator.min.css" rel="stylesheet">
+<link href="https://unpkg.com/tabulator-tables@6.3.0/dist/css/tabulator_bootstrap5.min.css" rel="stylesheet">
 <script type="text/javascript" src="https://unpkg.com/tabulator-tables@6.3.0/dist/js/tabulator.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 @endsection
 @section('content')
 
-<form action="{{ route('admin.master.city') }}" method="post">
+<form action="{{isset($editcity) ? route('admin.master.updateCity', $editcity->id) : route('admin.master.city') }}" method="post">
     @csrf
+    @isset($editcity)
+    @method('PUT')
+    @endisset
     <div class="card p-3">
         <h4 class="mb-4">Add City</h4>
         <div class="row g-3">
             <div class="col-md-4">
-                <label for="id" class="form-label">State ID</label>
-                <input type="text" class="form-control" name="id" id="exampleCode">
+                <x-input-box name="id" label="State Name" value="{{ isset($editcity) ? $editcity->id : '' }}"/>
             </div>
             <div class="col-md-4">
-                <label for="city_name" class="form-label">City Name</label>
-                <input type="text" class="form-control" name="city_name" id="examplename" >
+                <x-input-box name="city_name" label="City Name" value="{{ isset($editcity) ? $editcity->city_name : '' }}"/>
             </div>
 
             <div class="col-md-4">
-                <label for="pin_code" class="form-label">Pin Code</label>
-                <input type="text" class="form-control" name="pin_code" id="examplesname">
+                <x-input-box name="pin_code" label="Pin Code" value="{{ isset($editcity) ? $editcity->pin_code : '' }}"/>
             </div>
         </div>
         <div class="mt-3">

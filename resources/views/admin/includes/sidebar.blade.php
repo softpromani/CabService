@@ -63,6 +63,32 @@
         </li>
         @endif
 
+        @if(auth()->user()->hasRole(['Admin', 'Super Admin']))
+        <li class="nav-item">
+            <a class="nav-link collapsed" data-bs-target="#components2-nav" data-bs-toggle="collapse" href="#">
+                <i class="bi bi-menu-button-wide"></i><span>Brand</span><i
+                    class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="components2-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                <li>
+                    <a href="{{ route('admin.master.brand') }}">
+                        <i class="bi bi-circle"></i><span>Brand</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.master.brand') }}">
+                        <i class="bi bi-circle"></i><span>Model</span>
+                  </a>
+                </li>
+
+
+
+            </ul>
+        </li>
+        @endif
+
+
+
 
 
     </ul>
