@@ -6,7 +6,7 @@
 @endsection
 @section('content')
 
-<form action="{{ route('admin.master.brand_store') }}" method="post" enctype="multipart/form-data">
+<form action="{{isset($editbrand) ? route('admin.master.updateBrand', $editbrand->id) : route('admin.master.brand_store') }}" method="post" enctype="multipart/form-data">
     @csrf
     @isset($editbrand)
     @method('PUT')
@@ -16,10 +16,10 @@
         <h4 class="mb-4">Add Brand</h4>
         <div class="row g-3">
             <div class="col-md-4">
-                <x-input-box name="brand_name"/>
+                <x-input-box name="brand_name"  value="{{ isset($editbrand) ? $editbrand->brand_name : '' }}"/>
             </div>
             <div class="col-md-4">
-                <x-input-box type="file" name="brand_logo"/>
+                <x-input-box type="file" name="brand_logo"  value="{{ isset($editbrand) ? $editbrand->brand_logo : '' }}"/>
             </div>
 
         </div>

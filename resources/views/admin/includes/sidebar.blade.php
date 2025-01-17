@@ -8,7 +8,7 @@
           <span>Dashboard</span>
         </a>
       </li>
-        @if(auth()->user()->hasRole(['Admin', 'Super Admin']))
+        @if(auth()->user()->hasAnyRole(['admin', 'Super Admin']))
         <li class="nav-item">
             <a class="nav-link collapsed" href="{{ route('admin.userList') }}">
                 <i class="bi bi-person"></i>
@@ -17,7 +17,7 @@
         </li>
 
         @endif
-        @if(auth()->user()->hasRole(['Admin', 'Super Admin']))
+        @if(auth()->user()->hasAnyRole(['admin', 'Super Admin']))
         <li class="nav-item">
             <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
                 <i class="bi bi-menu-button-wide"></i><span>Role / Permision</span><i
@@ -35,7 +35,7 @@
         </li>
         @endif
 
-        @if(auth()->user()->hasRole(['Admin', 'Super Admin']))
+        @if(auth()->user()->hasAnyRole(['admin', 'Super Admin']))
         <li class="nav-item">
             <a class="nav-link collapsed" data-bs-target="#components1-nav" data-bs-toggle="collapse" href="#">
                 <i class="bi bi-menu-button-wide"></i><span>Master Setup</span><i
@@ -58,34 +58,23 @@
                    </a>
                 </li>
 
-
-            </ul>
-        </li>
-        @endif
-
-        @if(auth()->user()->hasRole(['Admin', 'Super Admin']))
-        <li class="nav-item">
-            <a class="nav-link collapsed" data-bs-target="#components2-nav" data-bs-toggle="collapse" href="#">
-                <i class="bi bi-menu-button-wide"></i><span>Brand</span><i
-                    class="bi bi-chevron-down ms-auto"></i>
-            </a>
-            <ul id="components2-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                 <li>
                     <a href="{{ route('admin.master.brand') }}">
                         <i class="bi bi-circle"></i><span>Brand</span>
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('admin.master.brand') }}">
+                    <a href="{{ route('admin.master.model') }}">
                         <i class="bi bi-circle"></i><span>Model</span>
                   </a>
                 </li>
 
 
-
             </ul>
         </li>
         @endif
+
+     
 
 
 

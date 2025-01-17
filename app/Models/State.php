@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -8,7 +7,12 @@ class State extends Model
 {
     //
     protected $fillable = [
-        'state_name', // The state name
+        'state_name',
         'short_name',
+        'country_id',
     ];
+    public function country()
+    {
+        return $this->belongsTo(Country::class);
+    }
 }

@@ -1,8 +1,9 @@
 <?php
 
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\admin\CscController;
 use App\Http\Controllers\admin\BrandController;
+use App\Http\Controllers\admin\CscController;
+use App\Http\Controllers\admin\ModelController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RolePermissionController;
 use Illuminate\Support\Facades\Route;
@@ -45,15 +46,19 @@ Route::group(['name' => 'admin', 'prefix' => 'admin', 'as' => 'admin.', 'middlew
         Route::get('/cities', [CscController::class, 'city_index'])->name('city');
         Route::post('/cities', [CscController::class, 'city_store'])->name('city.store');
         Route::get('/cities/{id}/edit', [CscController::class, 'editCity'])->name('editCity');
-        Route::put('/states/update/{id}', [CscController::class, 'updateCity'])->name('updateCity');
+        Route::put('/cities/update/{id}', [CscController::class, 'updateCity'])->name('updateCity');
         Route::delete('/cities/delete/{id}', [CscController::class, 'city_destroy'])->name('city_destroy');
         Route::get('/brands', [BrandController::class, 'brand_index'])->name('brand');
         Route::post('/brands', [BrandController::class, 'brand_store'])->name('brand_store');
         Route::delete('/brands/delete/{id}', [BrandController::class, 'brand_destroy'])->name('brand_destroy');
         Route::get('/brands/{id}/edit', [BrandController::class, 'editBrand'])->name('editBrand');
         Route::put('/brands/update/{id}', [BrandController::class, 'updateBrand'])->name('updateBrand');
+        Route::get('/models', [ModelController::class, 'model_index'])->name('model');
+        Route::post('/models', [ModelController::class, 'model_store'])->name('model_store');
+        Route::delete('/models/delete/{id}', [ModelController::class, 'model_destroy'])->name('model_destroy');
+        Route::get('/models/{id}/edit', [ModelController::class, 'editModel'])->name('editModel');
+        Route::put('/models/update/{id}', [ModelController::class, 'updateModel'])->name('updateModel');
 
     });
 
 });
-

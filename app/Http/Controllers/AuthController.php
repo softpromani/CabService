@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\User;
@@ -16,15 +15,14 @@ class AuthController extends Controller
     public function loginStore(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
+            'email'    => 'required|email',
             'password' => 'required',
         ]);
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->remember_me)) {
 
             $user = Auth::user();
-
-            if ($user->hasRole(['Admin', 'Super Admin'])) {
+            if ($user->hasAnyRole(['admin', 'Super Admin'])) {
                 toastr()->success('Welcome ' . $user->first_name . ' ' . $user->last_name);
                 return redirect()->route('admin.dashboard');
             } else {
