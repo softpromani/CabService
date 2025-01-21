@@ -16,8 +16,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">User</h5>
-                        <form action="{{ isset($editUser) ? route('admin.updateUser', $editUser->id) : route('admin.storeUser') }}" method="POST"
-                            enctype="multipart/form-data">
+                        <form action="{{  route('admin.storeUser') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             @if (isset($editUser))
                                 @method('put')

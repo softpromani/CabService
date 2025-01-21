@@ -62,7 +62,7 @@ class BrandController extends Controller
         // Validate the input fields
         $validated = $request->validate([
             'brand_name' => 'required|string|max:255',
-            'brand_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Restrict to image files
+            'brand_logo' => 'required|image|max:2048', // Restrict to image files
         ]);
 
         $brandLogoPath = null;

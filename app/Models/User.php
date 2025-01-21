@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -49,7 +48,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password'          => 'hashed',
         ];
     }
     public function media()
@@ -63,5 +62,15 @@ class User extends Authenticatable
     public function getRoleNameAttribute()
     {
         return $this->roles[0]->name ?? 'N/A'; // Return 'N/A' if the user has no role
+    }
+
+    public function rideSchedules()
+    {
+        return $this->hasMany(RideSchedule::class, 'driver_id');
+    }
+
+    public function car()
+    {
+        return $this->hasOne(Car::class, 'driver_id');
     }
 }

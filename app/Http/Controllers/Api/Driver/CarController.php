@@ -53,6 +53,7 @@ class CarController extends Controller
     public function model(Brand $brand)
     {
         $model = $brand?->carModels;
+
         return response()->json([
             'status' => 'success',
             'data'   => $model,

@@ -1,6 +1,6 @@
 @extends('admin.includes.master')
 @section('head-area')
-    <link href="https://unpkg.com/tabulator-tables@6.3.0/dist/css/tabulator.min.css" rel="stylesheet">
+<link href="https://unpkg.com/tabulator-tables@6.3.0/dist/css/tabulator_bootstrap5.min.css" rel="stylesheet">
     <script type="text/javascript" src="https://unpkg.com/tabulator-tables@6.3.0/dist/js/tabulator.min.js"></script>
 @endsection
 @section('content')
@@ -49,7 +49,14 @@
                                         <td style="white-space: nowrap;">
 
                                             <a href="{{ route('admin.editUser' , $user->id) }}" class="btn bg-success-light" style="margin-right: 5px;">
-                                                Edit
+                                                <i class="fa-solid fa-pen-to-square text-warning"></i>
+                                            </a>
+
+                                        </td>
+                                        <td style="white-space: nowrap;">
+
+                                            <a href="{{ route('admin.userProfile' , $user->id) }}" class="btn bg-success-light" style="margin-right: 5px;">
+                                                <i class="fa-solid fa-eye text-warning"></i>
                                             </a>
 
                                         </td>
@@ -79,7 +86,7 @@
         this.setColumns(response.columns);
         return response.data; // Return the response data for Tabulator to process
     },
-    
+
 });
 });
 </script>

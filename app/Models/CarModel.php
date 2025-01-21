@@ -14,6 +14,6 @@ class CarModel extends Model
     ];
     public function brand()
     {
-        return $this->belongsTo(Brand::class, 'brand_id'); // Assuming 'brand_id' is the foreign key in 'car_models' table
+        return $this->belongsTo(Brand::class, 'brand_id');
     }
 }
