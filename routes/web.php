@@ -2,8 +2,12 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\admin\BrandController;
+use App\Http\Controllers\Admin\BusinessPageController;
+use App\Http\Controllers\Admin\BusinessSettingController;
 use App\Http\Controllers\admin\CscController;
 use App\Http\Controllers\admin\ModelController;
+use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\SocialMediaController;
 use App\Http\Controllers\admin\UserProfileController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RolePermissionController;
@@ -63,6 +67,18 @@ Route::group(['name' => 'admin', 'prefix' => 'admin', 'as' => 'admin.', 'middlew
         Route::delete('/models/delete/{id}', [ModelController::class, 'model_destroy'])->name('model_destroy');
         Route::get('/models/{id}/edit', [ModelController::class, 'editModel'])->name('editModel');
         Route::put('/models/update/{id}', [ModelController::class, 'updateModel'])->name('updateModel');
+
+      
+    });
+    Route::group([ 'prefix'=>'setting','as'=>'setting.'],function(){
+
+        Route::resource('business-setting',BusinessSettingController::class);
+        Route::resource('business-pages',BusinessPageController::class);
+        Route::get('third-party-api/{slug?}',[SettingController::class, 'thirdPartyApi'])->name('thirdPartyApi');
+        Route::post('third-party-api-post',[SettingController::class, 'thirdPartyApiPost'])->name('thirdPartyApiPost');
+
+        Route::resource( 'socialmedia',controller: SocialMediaController::class);
+        Route::post('socialmedia/update-status', [SocialMediaController::class, 'updateStatus'])->name('socialmedia.update_status');
 
     });
 

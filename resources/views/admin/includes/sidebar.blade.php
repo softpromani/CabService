@@ -74,10 +74,37 @@
         </li>
         @endif
 
-     
+        @if(auth()->user()->hasAnyRole(['admin', 'Super Admin']))
+        <li class="nav-item">
+            <a class="nav-link collapsed" data-bs-target="#components2-nav" data-bs-toggle="collapse" href="#">
+                <i class="bi bi-menu-button-wide"></i><span>Business Setup</span><i
+                    class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="components2-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                <li class="menu-item">
+                    <a href="{{ route('admin.setting.business-setting.index') }}" class="menu-link">
+                        <div data-i18n="List">Business Settings</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('admin.setting.business-pages.index',['page' => 'about_us']) }}" class="menu-link">
+                        <div data-i18n="List">Business Pages</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('admin.setting.socialmedia.index') }}" class="menu-link">
+                        <div data-i18n="List">Social Media Links</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('admin.setting.thirdPartyApi','mail_config') }}" class="menu-link">
+                        <div data-i18n="List">Third Party API</div>
+                    </a>
+                </li>
 
-
-
+            </ul>
+        </li>
+        @endif
 
 
     </ul>

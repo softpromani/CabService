@@ -5,7 +5,7 @@ use App\Http\Controllers\Api\Driver\CarController;
 use App\Http\Controllers\Api\Driver\CountryStateCityController;
 use App\Http\Controllers\Api\Driver\ProfileController;
 use App\Http\Controllers\Api\Driver\RideController;
-use App\Http\Controllers\Driver\RideScheduleController;
+use App\Http\Controllers\Api\Driver\RideScheduleController;
 use Illuminate\Support\Facades\Route;
 
 // Driver Api
