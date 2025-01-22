@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
@@ -12,9 +11,8 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        // Validate request data
         $validated = Validator::make($request->all(), [
-            'phone' => 'required|numeric',
+            'phone'         => 'required|numeric',
             'is_otp_verify' => 'required|in:true',
         ]);
 
@@ -23,27 +21,26 @@ class AuthController extends Controller
         }
 
         $validatedData = $validated->validated();
-        $phone = $validatedData['phone'];
+        $phone         = $validatedData['phone'];
 
-        // Retrieve or create the user
         $user = User::firstOrCreate(
             ['phone' => $phone],
-            ['is_profile' => 0]// Default attributes if user is created
+            ['is_profile' => 0]
         );
-        if ($user->is_active == false) {
+        if ($user->is_active == 0) {
             return response()->json([
                 'message' => '!OPPs Your Account Suspended,Please contact with support',
             ], 401);
         }
         try {
             // Assign the "Driver" role if not already assigned
-            if (!$user->hasRole('Driver')) {
+            if (! $user->hasRole('Driver')) {
                 $user->assignRole('Driver');
             }
 
             // Generate access token
             $tokenResult = $user->createToken('Personal Access Token');
-            $token = $tokenResult->accessToken;
+            $token       = $tokenResult->accessToken;
 
             // Determine response message
             $message = $user->wasRecentlyCreated || $user->is_profile == 0
@@ -55,8 +52,8 @@ class AuthController extends Controller
             // Return response
             return response()->json([
                 'message' => $message,
-                'data' => $user,
-                'token' => $token,
+                'data'    => $user,
+                'token'   => $token,
             ], $statusCode);
         } catch (\Exception $e) {
             Log::error('Error processing login: ' . $e->getMessage());

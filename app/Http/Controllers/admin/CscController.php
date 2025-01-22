@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
@@ -21,11 +20,11 @@ class CscController extends Controller
                 ['title' => 'Actions', 'field' => 'delete_action', 'formatter' => 'html', 'headerSort' => 'false'],
 
             ];
-            // Get query parameters
-            $page = $request->query('page', 1); // Current page
-            $perPage = $request->query('size', 10); // Rows per page
+                                                                  // Get query parameters
+            $page      = $request->query('page', 1);              // Current page
+            $perPage   = $request->query('size', 10);             // Rows per page
             $sortField = $request->query('sort[0][field]', 'id'); // Sort field
-            $sortOrder = $request->query('sort[0][dir]', 'asc'); // Sort order
+            $sortOrder = $request->query('sort[0][dir]', 'asc');  // Sort order
 
             // Query data from the database
             $query = Country::query();
@@ -47,10 +46,10 @@ class CscController extends Controller
 
             // Return response in Tabulator format
             return response()->json([
-                'columns' => $columns,
+                'columns'   => $columns,
                 'last_page' => $countries->lastPage(),
-                'data' => $countries->items(),
-                'total' => $countries->total(),
+                'data'      => $countries->items(),
+                'total'     => $countries->total(),
             ]);
         }
         return view('admin.country'); // Pass countries to the view
@@ -62,15 +61,15 @@ class CscController extends Controller
     {
         // Validate the incoming request
         $request->validate([
-            'name' => 'required|string|max:255',
-            'code' => 'required|string|max:10|unique:countries,code',
+            'name'  => 'required|string|max:255',
+            'code'  => 'required|string|max:10|unique:countries,code',
             'sname' => 'required|string|max:50',
         ]);
 
         // Store data in the database
         Country::create([
-            'name' => $request->input('name'),
-            'code' => $request->input('code'),
+            'name'  => $request->input('name'),
+            'code'  => $request->input('code'),
             'sname' => $request->input('sname'),
         ]);
 
@@ -82,7 +81,7 @@ class CscController extends Controller
     public function editCountry($id)
     {
         $editcountry = Country::findOrFail($id);
-        $countries = Country::all();
+        $countries   = Country::all();
         return view('admin.country', compact('editcountry', 'countries'));
     }
 
@@ -90,14 +89,14 @@ class CscController extends Controller
     {
 
         $validatedData = $request->validate([
-            'name' => 'required|string', // Field to be updated
-            'code' => 'required', // New value
+            'name'  => 'required|string', // Field to be updated
+            'code'  => 'required',        // New value
             'sname' => 'required',
         ]);
 
-        $country = Country::findOrFail($id);
-        $country->name = $request->input('name');
-        $country->code = $request->input('code');
+        $country        = Country::findOrFail($id);
+        $country->name  = $request->input('name');
+        $country->code  = $request->input('code');
         $country->sname = $request->input('sname');
         $country->save();
 
@@ -125,52 +124,57 @@ class CscController extends Controller
         if ($request->ajax()) {
             $columns = [
                 ['title' => 'ID', 'field' => 'id'],
-                ['title' => 'Country ID', 'field' => 'id', 'headerFilter' => "input"],
+                ['title' => 'Country', 'field' => 'country_name', 'headerFilter' => "input"], // Display the country name
                 ['title' => 'State Name', 'field' => 'state_name', 'headerFilter' => "input"],
                 ['title' => 'Short Name', 'field' => 'short_name', 'headerFilter' => "input"],
                 ['title' => 'Actions', 'field' => 'delete_action', 'formatter' => 'html', 'headerSort' => 'false'],
-
             ];
-            // Get query parameters
-            $page = $request->query('page', 1); // Current page
-            $perPage = $request->query('size', 10); // Rows per page
+
+                                                                  // Get query parameters for pagination and sorting
+            $page      = $request->query('page', 1);              // Current page
+            $perPage   = $request->query('size', 10);             // Rows per page
             $sortField = $request->query('sort[0][field]', 'id'); // Sort field
-            $sortOrder = $request->query('sort[0][dir]', 'asc'); // Sort order
+            $sortOrder = $request->query('sort[0][dir]', 'asc');  // Sort order
 
-            // Query data from the database
-            $query = State::query();
+                                             // Query data from the database with eager loading of country relation
+            $query = State::with('country'); // Eager load the country relation
 
-            // Apply sorting
+            // Apply sorting if applicable
             if ($sortField && $sortOrder) {
                 $query->orderBy($sortField, $sortOrder);
             }
 
-            // Paginate results
+            // Paginate the results
             $states = $query->paginate($perPage, ['*'], 'page', $page);
 
+            // Transform the states collection to include the country name and actions
             $states->getCollection()->transform(function ($item) {
+                $item->country_name  = $item->country ? $item->country->name : ''; // Get the country name
                 $item->delete_action = '<i class="fa-solid fa-trash delete-btn text-danger" data-id="' . $item->id . '"></i>&nbsp;&nbsp;&nbsp;&nbsp;
                 <a href="' . route('admin.master.editState', $item->id) . '" class="text-black"><i class="fa-solid fa-pen-to-square text-warning"></i></a>';
                 return $item;
             });
 
-            // Return response in Tabulator format
+            // Return the response in Tabulator format
             return response()->json([
-                'columns' => $columns,
+                'columns'   => $columns,
                 'last_page' => $states->lastPage(),
-                'data' => $states->items(),
-                'total' => $states->total(),
+                'data'      => $states->items(),
+                'total'     => $states->total(),
             ]);
         }
-        return view('admin.state'); // Pass countries to the view
+
+                                     // Fetch countries for the select dropdown
+        $countries = Country::all(); // Using all() instead of get()
+
+        // Return the view with countries
+        return view('admin.state', compact('countries'));
     }
 
     // Show the form to create a new state
 
     public function state_store(Request $request)
     {
-        // dd($request->all());
-        // Validate the incoming request
         $request->validate([
             'state_name' => 'required|string|max:255|unique:states,state_name',
             'short_name' => 'required|string|max:50',
@@ -178,7 +182,7 @@ class CscController extends Controller
 
         // Store data in the database
         State::create([
-            'id' => $request->input('id'),
+            'country_id' => $request->input('country_id'),
             'state_name' => $request->input('state_name'),
             'short_name' => $request->input('short_name'),
         ]);
@@ -191,23 +195,23 @@ class CscController extends Controller
     public function editState($id)
     {
         $editstate = State::findOrFail($id);
-        $states = State::all();
-        return view('admin.state', compact('editstate', 'states'));
+        $states    = State::all();
+        $countries = Country::get();
+        return view('admin.state', compact('editstate', 'states', 'countries'));
     }
 
     public function updateState(Request $request, $id)
     {
 
         $validatedData = $request->validate([
-            'id' => 'required|string', // Field to be updated
             'state_name' => 'required', // New value
             'short_name' => 'required',
         ]);
 
-        $state = State::findOrFail($id);
-        $state->id = $request->input('id');
+        $state             = State::findOrFail($id);
         $state->state_name = $request->input('state_name');
         $state->short_name = $request->input('short_name');
+        $state->country_id = $request->input('country_id');
         $state->save();
 
         return redirect()->route('admin.master.state')
@@ -234,21 +238,21 @@ class CscController extends Controller
         if ($request->ajax()) {
             $columns = [
                 ['title' => 'ID', 'field' => 'id'],
-                ['title' => 'State ID', 'field' => 'id', 'headerFilter' => "input"],
+                ['title' => 'State', 'field' => 'state_name', 'headerFilter' => "input"], // Display the state name
                 ['title' => 'City Name', 'field' => 'city_name', 'headerFilter' => "input"],
                 ['title' => 'Pin Code', 'field' => 'pin_code', 'headerFilter' => "input"],
-                ['title' => 'Status', 'field' => 'status', 'formatter' => 'html'],
+                ['title' => 'Status', 'field' => 'is_active', 'formatter' => 'html'],
                 ['title' => 'Actions', 'field' => 'delete_action', 'formatter' => 'html', 'headerSort' => 'false'],
-
             ];
-            // Get query parameters
-            $page = $request->query('page', 1); // Current page
-            $perPage = $request->query('size', 10); // Rows per page
-            $sortField = $request->query('sort[0][field]', 'id'); // Sort field
-            $sortOrder = $request->query('sort[0][dir]', 'asc'); // Sort order
 
-            // Query data from the database
-            $query = City::query();
+                                                                  // Get query parameters
+            $page      = $request->query('page', 1);              // Current page
+            $perPage   = $request->query('size', 10);             // Rows per page
+            $sortField = $request->query('sort[0][field]', 'id'); // Sort field
+            $sortOrder = $request->query('sort[0][dir]', 'asc');  // Sort order
+
+                                          // Query data from the database with State relation
+            $query = City::with('state'); // eager loading to get the related state
 
             // Apply sorting
             if ($sortField && $sortOrder) {
@@ -258,21 +262,30 @@ class CscController extends Controller
             // Paginate results
             $cities = $query->paginate($perPage, ['*'], 'page', $page);
 
+            // Transform the results
             $cities->getCollection()->transform(function ($item) {
+                $item->is_active = $item->is_active == 1 ? 'Active' : 'Inactive';
+                                                                                  // Check if there's a related state and display its name
+                $item->state_name = $item->state ? $item->state->state_name : ''; // Adjust field name to match the State model
+
+                // Define delete action
                 $item->delete_action = '<i class="fa-solid fa-trash delete-btn text-danger" data-id="' . $item->id . '"></i>&nbsp;&nbsp;&nbsp;&nbsp;
-                <a href="' . route('admin.master.editCity', $item->id) . '" class="text-black"><i class="fa-solid fa-pen-to-square text-warning"></i></a>';
+            <a href="' . route('admin.master.editCity', $item->id) . '" class="text-black"><i class="fa-solid fa-pen-to-square text-warning"></i></a>';
                 return $item;
             });
 
             // Return response in Tabulator format
             return response()->json([
-                'columns' => $columns,
+                'columns'   => $columns,
                 'last_page' => $cities->lastPage(),
-                'data' => $cities->items(),
-                'total' => $cities->total(),
+                'data'      => $cities->items(),
+                'total'     => $cities->total(),
             ]);
         }
-        return view('admin.city'); // Pass countries to the view
+
+        // Pass states to view
+        $states = State::get();
+        return view('admin.city', compact('states'));
     }
 
     // Show the form to create a new state
@@ -282,15 +295,14 @@ class CscController extends Controller
         // dd($request->all());
         // Validate the incoming request
         $request->validate([
-            'city_name' => 'required|string|max:255|unique:states,state_name',
-            'pin_code' => 'required|string|max:50',
+            'city_name' => 'required|string|max:255',
+            'pin_code'  => 'required|string|max:50',
         ]);
-
-        // Store data in the database
+        // dd($request->all());
         City::create([
-            'id' => $request->input('id'),
             'city_name' => $request->input('city_name'),
-            'pin_code' => $request->input('pin_code'),
+            'pin_code'  => $request->input('pin_code'),
+            'state_id'  => $request->input('state_id'),
         ]);
 
         // Redirect with a success message
@@ -301,23 +313,23 @@ class CscController extends Controller
     public function editCity($id)
     {
         $editcity = City::findOrFail($id);
-        $cities = City::all();
-        return view('admin.city', compact('editcity', 'cities'));
+        $cities   = City::all();
+        $states   = State::get();
+        return view('admin.city', compact('editcity', 'cities', 'states'));
     }
 
     public function updateCity(Request $request, $id)
     {
 
         $validatedData = $request->validate([
-            'id' => 'required|string', // Field to be updated
             'city_name' => 'required', // New value
-            'pin_code' => 'required',
+            'pin_code'  => 'required',
         ]);
 
-        $city = City::findOrFail($id);
-        $city->id = $request->input('id');
+        $city            = City::findOrFail($id);
+        $city->state_id  = $request->input('state_id');
         $city->city_name = $request->input('city_name');
-        $city->pin_code = $request->input('pin_code');
+        $city->pin_code  = $request->input('pin_code');
         $city->save();
 
         return redirect()->route('admin.master.city')

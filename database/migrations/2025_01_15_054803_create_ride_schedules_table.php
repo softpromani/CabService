@@ -17,8 +17,9 @@ return new class extends Migration
             $table->biginteger('car_id')->comment('')->unsigned();
             $table->dateTime('start_at')->comment('ride start time and date ');
             $table->dateTime('end_at')->comment('ride end time and date ');
-            $table->bigInteger('travel_time');
+            $table->bigInteger('travel_time')->default(0);
             $table->timestamps();
+
         });
     }
 

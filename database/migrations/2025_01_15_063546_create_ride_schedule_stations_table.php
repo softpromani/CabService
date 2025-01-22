@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('point_name');
             $table->string('longitute');
             $table->string('latitude');
+            $table->dateTime('scheduled_time');
             $table->timestamps();
         });
     }

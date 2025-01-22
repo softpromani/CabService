@@ -15,7 +15,18 @@
         <h4 class="mb-4">Add City</h4>
         <div class="row g-3">
             <div class="col-md-4">
-                <x-input-box name="id" label="State Name" value="{{ isset($editcity) ? $editcity->id : '' }}"/>
+                <label for="state_id" class="mb-2">State </label>
+                <select name="state_id" id="state_id"  class="form-control">
+                    <option  selected disabled>Select State</option>
+                    @foreach ($states as  $state)
+                    <option value="{{ $state->id }}"
+                        {{ old('state_id', isset($editcity) ? $editcity->state_id : '') == $state->id ? 'selected' : '' }}>
+                        {{ $state->state_name }}
+                    </option>
+
+                    @endforeach
+
+                </select>
             </div>
             <div class="col-md-4">
                 <x-input-box name="city_name" label="City Name" value="{{ isset($editcity) ? $editcity->city_name : '' }}"/>

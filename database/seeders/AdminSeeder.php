@@ -1,8 +1,8 @@
 <?php
-
 namespace Database\Seeders;
 
 use App\Models\User;
+use Hash;
 use Illuminate\Database\Seeder;
 
 class AdminSeeder extends Seeder
@@ -12,7 +12,7 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        $res = User::updateOrCreate(['email' => 'admin@gmail.com'], ['email' => 'admin@gmail.com', 'password' => bcrypt('12345')]);
+        $res = User::updateOrCreate(['email' => 'admin@gmail.com'], ['email' => 'admin@gmail.com', 'password' => Hash::make('12345')]);
         $res->assignRole('admin');
     }
 }

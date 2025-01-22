@@ -16,8 +16,21 @@
         <h4 class="mb-4">Add State</h4>
         <div class="row g-3">
             <div class="col-md-4">
-                <x-input-box name="id" label="Country ID" value="{{ isset($editstate) ? $editstate->id : '' }}"/>
+                <label for="country_id" class="mb-2">Country ID</label>
+                <select name="country_id" id="country_id"  class="form-control">
+                    <option  selected disabled>Select Country</option>
+                    @foreach ($countries as  $country)
+                    <option value="{{ $country->id }}"
+                        {{ old('country_id', isset($editstate) ? $editstate->country_id : '') == $country->id ? 'selected' : '' }}>
+                        {{ $country->name }}
+                    </option>
+
+                    @endforeach
+
+
+                </select>
             </div>
+
             <div class="col-md-4">
                 <x-input-box name="state_name" label="State Name" value="{{ isset($editstate) ? $editstate->state_name : '' }}"/>
             </div>

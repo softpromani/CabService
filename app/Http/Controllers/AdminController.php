@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Business;
@@ -24,11 +23,11 @@ class AdminController extends Controller
                 ['title' => 'Contact', 'field' => 'phone', 'headerFilter' => "input"],
                 ['title' => 'Role', 'field' => 'role_name', 'headerFilter' => "input"],
             ];
-            // Get query parameters
-            $page = $request->query('page', 1); // Current page
-            $perPage = $request->query('size', 10); // Rows per page
+                                                                  // Get query parameters
+            $page      = $request->query('page', 1);              // Current page
+            $perPage   = $request->query('size', 10);             // Rows per page
             $sortField = $request->query('sort[0][field]', 'id'); // Sort field
-            $sortOrder = $request->query('sort[0][dir]', 'asc'); // Sort order
+            $sortOrder = $request->query('sort[0][dir]', 'asc');  // Sort order
 
             // Query data from the database
             $query = User::query();
@@ -43,10 +42,10 @@ class AdminController extends Controller
 
             // Return response in Tabulator format
             return response()->json([
-                'columns' => $columns,
+                'columns'   => $columns,
                 'last_page' => $users->lastPage(),
-                'data' => $users->items(),
-                'total' => $users->total(),
+                'data'      => $users->items(),
+                'total'     => $users->total(),
             ]);
         }
         $users = User::get();
@@ -54,34 +53,34 @@ class AdminController extends Controller
     }
     public function addUser()
     {
-        $roles = Role::get();
+        $roles = Role::all();
         return view('admin.user.add-user', compact('roles'));
     }
     public function editUser(string $id)
     {
-        $roles = Role::get();
-        $editUser = User::find($id);
+        $roles       = Role::all();
+        $editUser    = User::findOrFail($id);
         $currentRole = $editUser->roles->first()->id ?? null;
-        return view('admin.user.add-user', compact('roles', 'editUser', 'currentRole'));
+        return view('admin.user.userProfile', compact('roles', 'editUser', 'currentRole'));
     }
     public function updateUser(Request $request, string $id)
     {
 
         $validated = $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $id,
-            'phone' => 'required',
-            'gender' => 'nullable',
-            'password' => 'nullable',
-            'user_image' => 'nullable',
-            'roleid' => 'nullable',
+
+            'full_name'  => 'required|string|max:255',
+            'email'      => 'required|email|unique:users,email,' . $id,
+            'phone'      => 'required',
+            'gender'     => 'required',
+            'password'   => 'nullable',
+            'user_image' => 'required',
+            'roleid'     => 'required',
         ]);
 
-        $user = User::find($id);
+        $user         = User::find($id);
         $user->gender = $request->input('gender');
 
-        if (!$user) {
+        if (! $user) {
             toastr()->error('User not found');
             return redirect()->route('admin.user.index');
         }
@@ -107,14 +106,15 @@ class AdminController extends Controller
     public function storeUser(Request $request)
     {
         $validated = $request->validate([
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'email' => 'required|email|unique:users,email',
-            'phone' => 'required',
-            'gender' => 'nullable',
-            'password' => 'nullable',
-            'user_image' => 'nullable',
-            'roleid' => 'nullable',
+
+            'first_name'  => 'required',
+            'last_name'  => 'required',
+            'email'      => 'required|email|unique:users,email',
+            'phone'      => 'required',
+            'gender'     => 'required',
+            'password'   => 'nullable',
+            'user_image' => 'required',
+            'roleid'     => 'required',
         ]);
 
         // Process the image upload if provided
@@ -123,28 +123,29 @@ class AdminController extends Controller
         }
 
         // Hash the password if provided
-        if (!empty($validated['password'])) {
+        if (! empty($validated['password'])) {
             $validated['password'] = Hash::make($validated['password']);
         }
 
         // Create the user
         $user = User::create([
-            'first_name' => $validated['first_name'],
-            'last_name' => $validated['last_name'],
-            'email' => $validated['email'],
-            'phone' => $validated['phone'],
-            'gender' => $validated['gender'] ?? null,
-            'password' => $validated['password'] ?? null,
+
+            'full_name'  => $validated['last_name'],
+            'email'      => $validated['email'],
+            'phone'      => $validated['phone'],
+            'gender'     => $validated['gender'] ?? null,
+            'password'   => $validated['password'] ?? null,
             'user_image' => $validated['user_image'] ?? null,
+            'roleid'     => $validated['roleid'] ?? null,
         ]);
 
-        if (!$user) {
+        if (! $user) {
             toastr()->error('User creation failed');
             return redirect()->route('admin.user.index');
         }
 
         // Assign role if provided
-        if (!empty($validated['roleid'])) {
+        if (! empty($validated['roleid'])) {
             $role = Role::find($validated['roleid']);
             if ($role) {
                 $user->syncRoles($role);
@@ -158,49 +159,48 @@ class AdminController extends Controller
     public function business_setting()
     {
         $business = Business::get();
-        return view('admin.business', compact( 'business'));
+        return view('admin.business', compact('business'));
     }
-
 
     public function business_update(Request $request)
     {
         // dd($request->all());
         // Validate incoming request
         $request->validate([
-            'app_logo' => 'nullable|file|mimes:jpeg,png,jpg,gif',
-            'splash_screen' => 'nullable|file|mimes:jpeg,png,jpg,gif',
-            'primary_color' => 'nullable|string|max:7', // Hex color code
+            'app_logo'        => 'nullable|file|mimes:jpeg,png,jpg,gif',
+            'splash_screen'   => 'nullable|file|mimes:jpeg,png,jpg,gif',
+            'primary_color'   => 'nullable|string|max:7', // Hex color code
             'secondary_color' => 'nullable|string|max:7',
-            'text_color' => 'nullable|string|max:7',
-            'google_map_api' => 'nullable|string',
-            'web_logo' => 'nullable|file|mimes:jpeg,png,jpg,gif',
+            'text_color'      => 'nullable|string|max:7',
+            'google_map_api'  => 'nullable|string',
+            'web_logo'        => 'nullable|file|mimes:jpeg,png,jpg,gif',
         ]);
-        if($request->hasFile('app_logo')){
+        if ($request->hasFile('app_logo')) {
             $file = $request->file('app_logo');
-            $path = $file->store('business','public');
-            Business::updateOrCreate(['key' => 'app_logo'],['value'=>$path,'type'=>'file','device_type'=>'app']);
+            $path = $file->store('business', 'public');
+            Business::updateOrCreate(['key' => 'app_logo'], ['value' => $path, 'type' => 'file', 'device_type' => 'app']);
         }
-        if($request->hasFile('splash_screen')){
+        if ($request->hasFile('splash_screen')) {
             $file = $request->file('splash_screen');
-            $path = $file->store('business','public');
-            Business::updateOrCreate(['key' => 'splash_screen'],['value'=>$path,'type'=>'file','device_type'=>'app']);
+            $path = $file->store('business', 'public');
+            Business::updateOrCreate(['key' => 'splash_screen'], ['value' => $path, 'type' => 'file', 'device_type' => 'app']);
         }
-        if($request->primary_color){
-            Business::updateOrCreate(['key'=>'primary_color'],['value'=>$request->primary_color,'type'=>'string','device_type'=>'app']);
+        if ($request->primary_color) {
+            Business::updateOrCreate(['key' => 'primary_color'], ['value' => $request->primary_color, 'type' => 'string', 'device_type' => 'app']);
         }
-        if($request->secondary_color){
-            Business::updateOrCreate(['key'=>'secondary_color'],['value'=>$request->secondary_color,'type'=>'string','device_type'=>'app']);
+        if ($request->secondary_color) {
+            Business::updateOrCreate(['key' => 'secondary_color'], ['value' => $request->secondary_color, 'type' => 'string', 'device_type' => 'app']);
         }
-        if($request->text_color){
-            Business::updateOrCreate(['key'=>'text_color'],['value'=>$request->text_color,'type'=>'string','device_type'=>'app']);
+        if ($request->text_color) {
+            Business::updateOrCreate(['key' => 'text_color'], ['value' => $request->text_color, 'type' => 'string', 'device_type' => 'app']);
         }
-        if($request->google_map_api){
-            Business::updateOrCreate(['key'=>'google_map_api'],['value'=>$request->google_map_api,'type'=>'string','device_type'=>'app']);
+        if ($request->google_map_api) {
+            Business::updateOrCreate(['key' => 'google_map_api'], ['value' => $request->google_map_api, 'type' => 'string', 'device_type' => 'app']);
         }
-        if($request->hasFile('web_logo')){
+        if ($request->hasFile('web_logo')) {
             $file = $request->file('web_logo');
-            $path = $file->store('business','public');
-            Business::updateOrCreate(['key' => 'web_logo'],['value'=>$path,'type'=>'file','device_type'=>'web']);
+            $path = $file->store('business', 'public');
+            Business::updateOrCreate(['key' => 'web_logo'], ['value' => $path, 'type' => 'file', 'device_type' => 'web']);
         }
 
         return redirect()->route('admin.business')->with('success', 'Business settings updated successfully!');
