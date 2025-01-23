@@ -27,9 +27,14 @@ class AuthController extends Controller
             ['phone' => $phone],
             ['is_profile' => 0]
         );
+        // Generate access token
+        $tokenResult = $user->createToken('Personal Access Token');
+        $token       = $tokenResult->accessToken;
+
         if ($user->is_active == 0) {
             return response()->json([
                 'message' => '!OPPs Your Account Suspended,Please contact with support',
+                'token'   => $token,
             ], 401);
         }
         try {
@@ -38,11 +43,6 @@ class AuthController extends Controller
                 $user->assignRole('Driver');
             }
 
-            // Generate access token
-            $tokenResult = $user->createToken('Personal Access Token');
-            $token       = $tokenResult->accessToken;
-
-            // Determine response message
             $message = $user->wasRecentlyCreated || $user->is_profile == 0
             ? 'Profile is not completed yet. Please complete your profile to login.'
             : 'Login successful';

@@ -5,9 +5,11 @@ use App\Http\Controllers\admin\BrandController;
 use App\Http\Controllers\Admin\BusinessPageController;
 use App\Http\Controllers\Admin\BusinessSettingController;
 use App\Http\Controllers\admin\CscController;
+use App\Http\Controllers\admin\DriverController;
 use App\Http\Controllers\admin\ModelController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SocialMediaController;
+use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\UserProfileController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RolePermissionController;
@@ -36,6 +38,9 @@ Route::group(['name' => 'admin', 'prefix' => 'admin', 'as' => 'admin.', 'middlew
 
     Route::get('/add-user', action: [AdminController::class, 'addUser'])->name(name: 'addUser');
     Route::post('/user/store', action: [AdminController::class, 'storeUser'])->name(name: 'storeUser');
+
+    Route::resource('/driver', DriverController::class);
+    Route::resource('/customer', UserController::class);
 
     Route::get('/role/create', action: [RolePermissionController::class, 'role_create'])->name(name: 'role-create');
     Route::get('/permission/{id}/edit', action: [RolePermissionController::class, 'permission_create'])->name(name: 'permission-edit');
@@ -68,16 +73,15 @@ Route::group(['name' => 'admin', 'prefix' => 'admin', 'as' => 'admin.', 'middlew
         Route::get('/models/{id}/edit', [ModelController::class, 'editModel'])->name('editModel');
         Route::put('/models/update/{id}', [ModelController::class, 'updateModel'])->name('updateModel');
 
-      
     });
-    Route::group([ 'prefix'=>'setting','as'=>'setting.'],function(){
+    Route::group(['prefix' => 'setting', 'as' => 'setting.'], function () {
 
-        Route::resource('business-setting',BusinessSettingController::class);
-        Route::resource('business-pages',BusinessPageController::class);
-        Route::get('third-party-api/{slug?}',[SettingController::class, 'thirdPartyApi'])->name('thirdPartyApi');
-        Route::post('third-party-api-post',[SettingController::class, 'thirdPartyApiPost'])->name('thirdPartyApiPost');
+        Route::resource('business-setting', BusinessSettingController::class);
+        Route::resource('business-pages', BusinessPageController::class);
+        Route::get('third-party-api/{slug?}', [SettingController::class, 'thirdPartyApi'])->name('thirdPartyApi');
+        Route::post('third-party-api-post', [SettingController::class, 'thirdPartyApiPost'])->name('thirdPartyApiPost');
 
-        Route::resource( 'socialmedia',controller: SocialMediaController::class);
+        Route::resource('socialmedia', controller: SocialMediaController::class);
         Route::post('socialmedia/update-status', [SocialMediaController::class, 'updateStatus'])->name('socialmedia.update_status');
 
     });
