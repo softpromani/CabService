@@ -40,53 +40,8 @@
     },
 
 });
+});
 
-document.addEventListener("click", function (e) {
-            if (e.target.classList.contains("delete-btn")) {
-                var rowId = e.target.getAttribute("data-id"); 
-                alert(rowId);
-                if (confirm("Are you sure you want to delete this record?")) {
-                    // Send DELETE request to server
-                    fetch(`{{ url('admin/driver/delete') }}/${rowId}`, {
-                        method: "DELETE",
-                        headers: {
-                            "X-CSRF-TOKEN": "{{ csrf_token() }}", // Include CSRF token
-                            "Content-Type": "application/json",
-                        },
-                    })
-                        .then((response) => {
-                            if (response.ok) {
-                                table.deleteRow(rowId); // Remove row from Tabulator table
-                                alert("Record deleted successfully!");
-                            } else {
-                                alert("Failed to delete record. Please try again.");
-                            }
-                        })
-                        .catch((error) => console.error("Error:", error));
-                }
-            }
-        });
-        
-        fetch(`{{ url('admin/driver/update') }}/${rowData.id}`, {
-            method: "PUT", // Use PUT for updates
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": "{{ csrf_token() }}",
-            },
-            body: JSON.stringify({
-                name: rowData.name, // Send updated fields
-            }),
-        })
-            .then((response) => {
-                if (response.ok) {
-                    alert("Record updated successfully!");
-                } else {
-                    alert("Failed to update record. Please try again.");
-                }
-            })
-            .catch((error) => console.error("Error:", error));
-    },
-);
 
 
 </script>
