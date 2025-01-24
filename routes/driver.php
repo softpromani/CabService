@@ -10,11 +10,11 @@ use Illuminate\Support\Facades\Route;
 
 // Driver Api
 
-Route::group(['prefix' => 'driver', 'as' => 'driver.'], function () {
-    Route::post('login', [AuthController::class, 'login']);
+Route::prefix('driver')->group(function () {
+    Route::post('login', [AuthController::class, 'login'])->name('driver.login');
 
     Route::middleware(['auth:api'])->group(function () {
-        Route::put('/profile-update', [ProfileController::class, 'profile_update']);
+        Route::put('/profile-update', [ProfileController::class, 'profile_update'])->name('profile-update');
 
         Route::post('/ride-schedule', [RideScheduleController::class, 'schedule']);
 

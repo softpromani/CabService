@@ -10,13 +10,32 @@
       </li>
         @if(auth()->user()->hasAnyRole(['admin', 'Super Admin']))
         <li class="nav-item">
-            <a class="nav-link collapsed" href="{{ route('admin.userList') }}">
+            <a class="nav-link collapsed" data-bs-target="#components-nav-user" data-bs-toggle="collapse" href="#">
                 <i class="bi bi-person"></i>
                 <span>User</span>
+                <i class="bi bi-chevron-down ms-auto"></i>
             </a>
-        </li>
+            <ul id="components-nav-user" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                <li>
+                    <a href="{{ route('admin.userList') }}">
+                        <i class="bi bi-circle"></i><span>Admin</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.driver.index') }}">
+                        <i class="bi bi-circle"></i><span>Driver</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.customer.index') }}">
+                        <i class="bi bi-circle"></i><span>Customer</span>
+                    </a>
+                </li>
 
-        @endif
+
+            </ul>
+        </li>
+         @endif
         @if(auth()->user()->hasAnyRole(['admin', 'Super Admin']))
         <li class="nav-item">
             <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
