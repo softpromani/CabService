@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Api\Driver;
 
 use App\Http\Controllers\Controller;
+use App\Models\UserDocument;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
