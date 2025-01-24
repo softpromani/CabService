@@ -14,7 +14,7 @@ Route::group(['prefix' => 'driver', 'as' => 'driver.'], function () {
     Route::post('login', [AuthController::class, 'login'])->name('login');
 
     Route::middleware(['auth:api'])->group(function () {
-        Route::put('/profile-update', [ProfileController::class, 'profile_update'])->name('profile-update');
+        Route::post('/profile-update', [ProfileController::class, 'profile_update'])->name('profile-update');
         Route::post('/ride-schedule', [RideScheduleController::class, 'schedule']);
 
         Route::get('/countries', [CountryStateCityController::class, 'getCountries']);

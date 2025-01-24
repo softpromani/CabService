@@ -31,95 +31,95 @@ class ProfileController extends Controller
             'dob'                    => 'required|date',
         ]);
 
-        // $user             = Auth::user();
-        // $user->first_name = $request->first_name;
-        // $user->last_name  = $request->last_name;
-        // $user->email      = $request->email;
-        // $user->gender     = $request->gender;
-        // $user->dob        = $request->dob;
-        // $user->is_profile = 1;
-        // try {
+        $user             = Auth::user();
+        $user->first_name = $request->first_name;
+        $user->last_name  = $request->last_name;
+        $user->email      = $request->email;
+        $user->gender     = $request->gender;
+        $user->dob        = $request->dob;
+        $user->is_profile = 1;
+        try {
 
-        //     // Handle user image upload
-        //     if ($request->hasFile('user_image')) {
-        //         $image            = $request->file('user_image');
-        //         $path             = $image->store('user_images', 'public');
-        //         $user->user_image = $path;
-        //     }
-        //     $user->save();
+            // Handle user image upload
+            if ($request->hasFile('user_image')) {
+                $image            = $request->file('user_image');
+                $path             = $image->store('user_images', 'public');
+                $user->user_image = $path;
+            }
+            $user->save();
 
-        //     // Handle driving licence uploads
-        //     if ($request->hasFile('driving_licence_front')) {
-        //         $dl_front      = $request->file('driving_licence_front');
-        //         $path_dl_front = $dl_front->store('driver_licence/front', 'public');
+            // Handle driving licence uploads
+            if ($request->hasFile('driving_licence_front')) {
+                $dl_front      = $request->file('driving_licence_front');
+                $path_dl_front = $dl_front->store('driver_licence/front', 'public');
 
-        //         UserDocument::create([
-        //             'user_id'         => auth()->id(),
-        //             'identity_type'   => 'dl',
-        //             'identity_number' => $request->driving_licence_number,
-        //             'document'        => $path_dl_front,
-        //         ]);
-        //     }
+                UserDocument::create([
+                    'user_id'         => auth()->id(),
+                    'identity_type'   => 'dl',
+                    'identity_number' => $request->driving_licence_number,
+                    'document'        => $path_dl_front,
+                ]);
+            }
 
-        //     if ($request->hasFile('driving_licence_back')) {
-        //         $dl_back      = $request->file('driving_licence_back');
-        //         $path_dl_back = $dl_back->store('driver_licence/back', 'public');
+            if ($request->hasFile('driving_licence_back')) {
+                $dl_back      = $request->file('driving_licence_back');
+                $path_dl_back = $dl_back->store('driver_licence/back', 'public');
 
-        //         UserDocument::create([
-        //             'user_id'         => auth()->id(),
-        //             'identity_type'   => 'dl',
-        //             'identity_number' => $request->driving_licence_number,
-        //             'document'        => $path_dl_back,
-        //         ]);
-        //     }
+                UserDocument::create([
+                    'user_id'         => auth()->id(),
+                    'identity_type'   => 'dl',
+                    'identity_number' => $request->driving_licence_number,
+                    'document'        => $path_dl_back,
+                ]);
+            }
 
-        //     // Handle Aadhar uploads
-        //     if ($request->hasFile('aadhar_front')) {
-        //         $aadhar_front      = $request->file('aadhar_front');
-        //         $path_aadhar_front = $aadhar_front->store('driver_aadhar/front', 'public');
+            // Handle Aadhar uploads
+            if ($request->hasFile('aadhar_front')) {
+                $aadhar_front      = $request->file('aadhar_front');
+                $path_aadhar_front = $aadhar_front->store('driver_aadhar/front', 'public');
 
-        //         UserDocument::create([
-        //             'user_id'         => auth()->id(),
-        //             'identity_type'   => 'aadhar',
-        //             'identity_number' => $request->aadhar_number,
-        //             'document'        => $path_aadhar_front,
-        //         ]);
-        //     }
+                UserDocument::create([
+                    'user_id'         => auth()->id(),
+                    'identity_type'   => 'aadhar',
+                    'identity_number' => $request->aadhar_number,
+                    'document'        => $path_aadhar_front,
+                ]);
+            }
 
-        //     if ($request->hasFile('aadhar_back')) {
-        //         $aadhar_back      = $request->file('aadhar_back');
-        //         $path_aadhar_back = $aadhar_back->store('driver_aadhar/back', 'public');
+            if ($request->hasFile('aadhar_back')) {
+                $aadhar_back      = $request->file('aadhar_back');
+                $path_aadhar_back = $aadhar_back->store('driver_aadhar/back', 'public');
 
-        //         UserDocument::create([
-        //             'user_id'         => auth()->id(),
-        //             'identity_type'   => 'aadhar',
-        //             'identity_number' => $request->aadhar_number,
-        //             'document'        => $path_aadhar_back,
-        //         ]);
-        //     }
+                UserDocument::create([
+                    'user_id'         => auth()->id(),
+                    'identity_type'   => 'aadhar',
+                    'identity_number' => $request->aadhar_number,
+                    'document'        => $path_aadhar_back,
+                ]);
+            }
 
-        //     // Handle PAN card upload
-        //     if ($request->hasFile('pan')) {
-        //         $pan     = $request->file('pan');
-        //         $pathpan = $pan->store('driver_pan', 'public');
+            // Handle PAN card upload
+            if ($request->hasFile('pan')) {
+                $pan     = $request->file('pan');
+                $pathpan = $pan->store('driver_pan', 'public');
 
-        //         UserDocument::create([
-        //             'user_id'         => auth()->id(),
-        //             'identity_type'   => 'pan',
-        //             'identity_number' => $request->pan_number,
-        //             'document'        => $pathpan,
-        //         ]);
-        //     }
+                UserDocument::create([
+                    'user_id'         => auth()->id(),
+                    'identity_type'   => 'pan',
+                    'identity_number' => $request->pan_number,
+                    'document'        => $pathpan,
+                ]);
+            }
 
-        //     return response()->json([
-        //         'message' => 'Profile updated successfully',
-        //         'data'    => $user,
-        //     ], 200);
-        // } catch (Exception $ex) {
-        //     return response()->json([
-        //         'message' => $ex->getMessage(),
-        //     ], 500);
-        // }
+            return response()->json([
+                'message' => 'Profile updated successfully',
+                'data'    => $user,
+            ], 200);
+        } catch (Exception $ex) {
+            return response()->json([
+                'message' => $ex->getMessage(),
+            ], 500);
+        }
     }
 
 }
