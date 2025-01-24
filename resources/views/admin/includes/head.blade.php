@@ -20,10 +20,3 @@
   <link href="{{ asset('assets/admin/css/style.css')}}" rel="stylesheet">
   <link href="{{ asset('assets/admin/css/customStyle.css')}}" rel="stylesheet">
 
-  <!-- =======================================================
-  * Template Name: NiceAdmin
-  * Updated: Jan 29 2024 with Bootstrap v5.3.2
-  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->

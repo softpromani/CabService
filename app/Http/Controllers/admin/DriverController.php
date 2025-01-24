@@ -21,7 +21,6 @@ class DriverController extends Controller
                 ['title' => 'Name', 'field' => 'full_name', 'headerFilter' => "input"],
                 ['title' => 'Email', 'field' => 'email', 'headerFilter' => "input"],
                 ['title' => 'Phone', 'field' => 'phone', 'headerFilter' => "input"],
-                ['title' => 'Role', 'field' => 'role_name', 'headerFilter' => "input"],
                 ['title' => 'Action', 'field' => 'delete_action', 'formatter' => 'html'],
             ];
 
@@ -41,7 +40,8 @@ class DriverController extends Controller
             $drivers = $query->paginate($perPage, ['*'], 'page', $page);
 
             $drivers->getCollection()->transform(function ($item) {
-                $item->delete_action = '<i class="fa-solid fa-trash delete-btn text-danger" data-id="' . $item->id . '"></i>&nbsp;&nbsp;&nbsp;&nbsp;
+                $item->delete_action = '<i class="fa-solid fa-trash  text-danger delete_alert" data-id="' . $item->id . '" data-alert_message="Are you sure want to delete Driver?" data-alert_title="Delete"
+                data-alert_type="warning"  data-alert_url="'.route('admin.driver.destroy',$item->id).'"></i>&nbsp;&nbsp;&nbsp;&nbsp;
                 <a href="' . route('admin.master.editBrand', $item->id) . '" class="text-black"><i class="fa-solid fa-pen-to-square text-warning"></i></a>';
 
                 $item->image = $item->user_image

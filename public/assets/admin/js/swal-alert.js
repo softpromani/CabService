@@ -1,5 +1,6 @@
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js" integrity="sha512-AA1Bzp5Q0K1KanKKmvN/4d3IRKVlv9PYgwFPvm32nPO6QS8yH1HO7LbgB1pgiOxPtfeg5zEn2ba64MUcqJx6CA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 $(document).ready(function () {
+    
     // Handle the change event for the toggle-status radio button
     $(document).on('change', '.confirmation_alert', function () {
         let Aid = $(this).data('id'); // Get the city ID
@@ -49,7 +50,7 @@ $(document).ready(function () {
     });
 
     // delete confirmation
-    $(document).on('change', '.delete_alert', function () {
+    $(document).on('click', '.delete_alert', function () {
         let Aid = $(this).data('id'); // Get the city ID
         let confirmationMessage = $(this).data('alert_message')?$(this).data('alert_message'):'Are you sure want to Delete?';
         let title = $(this).data('alert_title');
@@ -72,7 +73,6 @@ $(document).ready(function () {
                     data: {
                         _token: $('meta[name="csrf-token"]').attr('content'), // CSRF token for security
                         id: Aid, // City ID
-                        status: status, // New status
                     },
                     success: function (response) {
                         if (response.success) {

@@ -7,7 +7,7 @@
     <title>Dashboard -Air Travel Services</title>
     <meta content="" name="description">
     <meta content="" name="keywords">
-
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Favicons -->
     <link href="{{ asset('assets/admin/img/cablogo.jpeg') }}" rel="icon">
     <link href="{{ asset('assets/admin/img/cablogo.jpeg') }}" rel="apple-touch-icon">

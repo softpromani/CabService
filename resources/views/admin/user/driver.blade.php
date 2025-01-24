@@ -25,9 +25,11 @@
 @endsection
 
 @section('script-area')
+
 <script>
     $(document).ready(function(){
    var table = new Tabulator("#example-table", {
+    layout: "fitColumns",
     ajaxURL: "{{ route('admin.driver.index') }}", 
     ajaxConfig: "GET", 
     pagination: "remote", 
@@ -41,8 +43,6 @@
 
 });
 });
-
-
 
 </script>
 @endsection
