@@ -50,9 +50,9 @@ class CarController extends Controller
             'data'   => $brand,
         ]);
     }
-    public function model(Brand $brand)
+    public function model(Request $req)
     {
-        $model = $brand?->carModels;
+        $model = Brand::findOrFail($req->brand_id)?->carModels;
 
         return response()->json([
             'status' => 'success',

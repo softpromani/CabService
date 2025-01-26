@@ -3,6 +3,7 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -105,5 +106,15 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function user_suspend_status(Request $request)
+    {
+        try {
+            $res = User::findOrFail($request->id)->update([$request->field => $request->status]);
+            return response()->json(['success' => true], 200);
+        } catch (Exception $ex) {
+            return response()->json(['message' => 'something went wrong'], 500);
+        }
     }
 }

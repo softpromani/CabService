@@ -41,6 +41,7 @@ Route::group(['name' => 'admin', 'prefix' => 'admin', 'as' => 'admin.', 'middlew
 
     Route::resource('/driver', DriverController::class);
     Route::resource('/customer', UserController::class);
+    Route::post('/user-suspend-status', [UserController::class, 'user_suspend_status'])->name('user.status.update'); // for all user
 
     Route::get('/role/create', action: [RolePermissionController::class, 'role_create'])->name(name: 'role-create');
     Route::get('/permission/{id}/edit', action: [RolePermissionController::class, 'permission_create'])->name(name: 'permission-edit');
