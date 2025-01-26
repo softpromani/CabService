@@ -8,6 +8,7 @@ $(document).ready(function () {
         let confirmationMessage = $(this).data('alert_message')?$(this).data('alert_message'):'Are you sure want to make changes';
         let title = $(this).data('alert_title');
         let type = $(this).data('alert_type');
+        let status_field=$(this).data('status_field');
         let url=$(this).data('alert_url');
         // Show SweetAlert confirmation dialog
         Swal.fire({
@@ -27,6 +28,7 @@ $(document).ready(function () {
                         _token: $('meta[name="csrf-token"]').attr('content'), // CSRF token for security
                         id: Aid, // City ID
                         status: status, // New status
+                        field:status_field,
                     },
                     success: function (response) {
                         if (response.success) {

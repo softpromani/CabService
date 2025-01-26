@@ -21,6 +21,8 @@ class DriverController extends Controller
                 ['title' => 'Name', 'field' => 'full_name', 'headerFilter' => "input"],
                 ['title' => 'Email', 'field' => 'email', 'headerFilter' => "input"],
                 ['title' => 'Phone', 'field' => 'phone', 'headerFilter' => "input"],
+                ['title' => 'Active', 'field' => 'suspend_status', 'formatter' => "html"],
+                ['title' => 'Verify', 'field' => 'verify_status', 'formatter' => "html"],
                 ['title' => 'Action', 'field' => 'delete_action', 'formatter' => 'html'],
             ];
 
@@ -41,12 +43,26 @@ class DriverController extends Controller
 
             $drivers->getCollection()->transform(function ($item) {
                 $item->delete_action = '<i class="fa-solid fa-trash  text-danger delete_alert" data-id="' . $item->id . '" data-alert_message="Are you sure want to delete Driver?" data-alert_title="Delete"
-                data-alert_type="warning"  data-alert_url="'.route('admin.driver.destroy',$item->id).'"></i>&nbsp;&nbsp;&nbsp;&nbsp;
+                data-alert_type="warning"  data-alert_url="' . route('admin.driver.destroy', $item->id) . '"></i>&nbsp;&nbsp;&nbsp;&nbsp;
                 <a href="' . route('admin.master.editBrand', $item->id) . '" class="text-black"><i class="fa-solid fa-pen-to-square text-warning"></i></a>';
 
                 $item->image = $item->user_image
                 ? '<img src="' . Storage::url($item->user_image) . '" alt="Driver Image" style="height: 40px;">'
                 : '<span class="text-muted">No Image</span>';
+                $item->suspend_status = '<div class="form-check form-switch">
+                      <input class="form-check-input confirmation_alert" type="checkbox" id="flexSwitchCheckChecked" ';
+                $item->suspend_status .= $item->is_active ? 'checked=""' : '';
+                $item->suspend_status .= 'data-id="' . $item->id . '" data-alert_message="want to change suspend status?"
+                      data-alert_title="Are you sure" data-alert_type="warning" data-alert_url="' . route('admin.user.status.update') . '"
+                      data-status_field="is_active">
+                    </div>';
+                $item->verify_status = '<div class="form-check form-switch">
+                    <input class="form-check-input confirmation_alert" type="checkbox" id="flexSwitchCheckChecked" ';
+                $item->verify_status .= $item->is_verify ? 'checked=""' : '';
+                $item->verify_status .= 'data-id="' . $item->id . '" data-alert_message="want to change verification status?"
+                      data-alert_title="Are you sure" data-alert_type="warning" data-alert_url="' . route('admin.user.status.update') . '"
+                      data-status_field="is_veify">
+                    </div>';
                 return $item;
             });
             // Return response
