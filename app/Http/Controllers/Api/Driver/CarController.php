@@ -12,7 +12,7 @@ class CarController extends Controller
     {
         // Validate the request data
         $request->validate([
-            'model_id'            => 'required',
+            'model_id'            => 'required|exists:car,column',
             'brand_id'            => 'required',
             'color'               => 'required',
             'interior'            => 'required',
