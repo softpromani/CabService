@@ -1,19 +1,19 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\admin\CscController;
+use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\BrandController;
+use App\Http\Controllers\admin\ModelController;
+use App\Http\Controllers\admin\DriverController;
+use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\RolePermissionController;
+use App\Http\Controllers\Admin\SocialMediaController;
+use App\Http\Controllers\admin\UserProfileController;
 use App\Http\Controllers\Admin\BusinessPageController;
 use App\Http\Controllers\Admin\BusinessSettingController;
-use App\Http\Controllers\admin\CscController;
-use App\Http\Controllers\admin\DriverController;
-use App\Http\Controllers\admin\ModelController;
-use App\Http\Controllers\Admin\SettingController;
-use App\Http\Controllers\Admin\SocialMediaController;
-use App\Http\Controllers\admin\UserController;
-use App\Http\Controllers\admin\UserProfileController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\RolePermissionController;
-use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
@@ -27,11 +27,17 @@ Route::group(['name' => 'admin', 'prefix' => 'admin', 'as' => 'admin.', 'middlew
     Route::get('/dashboard', action: [AdminController::class, 'index'])->name(name: 'dashboard');
 
     Route::get('/user-list', action: [AdminController::class, 'userList'])->name(name: 'userList');
-    Route::get('userprofile/{id?}', action: [UserProfileController::class, 'userProfile'])->name('userProfile');
+    Route::put('/update-user/{id?}', action: [AdminController::class, 'updateUser'])->name(name: 'updateUser');
     Route::get('/add-user', action: [UserProfileController::class, 'addUser'])->name(name: 'addUser');
-    Route::put('/edit-user/{id?}', action: [UserProfileController::class, 'editUser'])->name(name: 'editUser');
-    Route::put('/update-user/{id?}', action: [UserProfileController::class, 'updateUserProfile'])->name(name: 'updateUserProfile');
+    Route::get('/edit-user/{id?}', action: [AdminController::class, 'editUser'])->name( 'editUser');
+    Route::get('/edit-user-profile/{id?}', action: [UserProfileController::class, 'userProfile'])->name(name: 'userProfile');
+    Route::put('/update-user-profile/{id?}', action: [UserProfileController::class, 'updateUserProfile'])->name(name: 'updateUserProfile');
+    Route::post('driver/change-password/{id?}', [DriverController::class, 'driverChangePassword'])->name('driverChangePassword');
+
     Route::post('/change-password/{id?}', [UserProfileController::class, 'changePassword'])->name('changePassword');
+
+    Route::get('/get-states/{countryId}', [AdminController::class, 'getStates'])->name('getStates');
+    Route::get('/get-cities/{stateId}', [AdminController::class, 'getCities'])->name('getCities');
 
     Route::get('/business', action: [AdminController::class, 'business_setting'])->name('business');
     Route::post('/business-setting', [AdminController::class, 'business_update'])->name('business-Setting');
@@ -40,6 +46,18 @@ Route::group(['name' => 'admin', 'prefix' => 'admin', 'as' => 'admin.', 'middlew
     Route::post('/user/store', action: [AdminController::class, 'storeUser'])->name(name: 'storeUser');
 
     Route::resource('/driver', DriverController::class);
+    Route::get('driver/profile/{id}', [DriverController::class, 'profile'])->name('driver.profile');
+    Route::get('driver/cars/{id}', [DriverController::class, 'cars'])->name('driver.cars');
+    Route::get('driver/cars/{id}/view', [DriverController::class, 'viewCars'])->name('cars.viewCars');
+    Route::get('driver/cars/{id}/edit', [DriverController::class, 'editcar'])->name('cars.editcar');
+    Route::post('driver/cars/{id}/update', [DriverController::class, 'updateCar'])->name('cars.updateCar');
+    Route::put('driver/update/{id?}',  [DriverController::class, 'updateDriver'])->name( 'updateDriver');
+
+    Route::get('/get-models/{brandId}', [DriverController::class, 'getModels'])->name('getModels');
+    Route::post('driver/car/{id}/delete-image/{image}', [DriverController::class, 'deleteImage'])->name('car.deleteImage');
+
+
+
     Route::resource('/customer', UserController::class);
     Route::post('/user-suspend-status', [UserController::class, 'user_suspend_status'])->name('user.status.update'); // for all user
 
@@ -47,6 +65,7 @@ Route::group(['name' => 'admin', 'prefix' => 'admin', 'as' => 'admin.', 'middlew
     Route::get('/permission/{id}/edit', action: [RolePermissionController::class, 'permission_create'])->name(name: 'permission-edit');
     Route::post('/role/store', action: [RolePermissionController::class, 'role_store'])->name(name: 'role-store');
     Route::put('/permission/{id}/update', action: [RolePermissionController::class, 'permission_update'])->name(name: 'permission-update');
+
     Route::group(['prefix' => 'master-setup', 'as' => 'master.'], function () {
         Route::get('/countries', [CscController::class, 'country_index'])->name('country');
         Route::post('/countries', [CscController::class, 'country_store'])->name('country_store');

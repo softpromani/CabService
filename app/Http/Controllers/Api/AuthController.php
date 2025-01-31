@@ -1,10 +1,10 @@
 <?php
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -27,7 +27,6 @@ class AuthController extends Controller
             ['phone' => $phone],
             ['is_profile' => 0]
         );
-        // Generate access token
         $tokenResult = $user->createToken('Personal Access Token');
         $token       = $tokenResult->accessToken;
 
@@ -38,7 +37,6 @@ class AuthController extends Controller
             ], 401);
         }
         try {
-            // Assign the "Driver" role if not already assigned
             if (! $user->hasRole('Driver')) {
                 $user->assignRole('Driver');
             }
@@ -49,7 +47,6 @@ class AuthController extends Controller
 
             $statusCode = $user->wasRecentlyCreated || $user->is_profile == 0 ? 201 : 200;
 
-            // Return response
             return response()->json([
                 'message' => $message,
                 'data'    => $user,

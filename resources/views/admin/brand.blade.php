@@ -54,14 +54,14 @@
    var table = new Tabulator("#example-table-theme", {
     layout: "fitColumns",
     theme: "bootstrap4",
-    ajaxURL: "{{ route('admin.master.brand') }}", // URL for the Laravel controller
-    ajaxConfig: "GET", // HTTP request type
-    pagination: "remote", // Enable remote pagination
-    paginationSize: 10, // Number of rows per page
-    paginationSizeSelector: [10, 25, 50, 100], // Page size options
+    ajaxURL: "{{ route('admin.master.brand') }}", 
+    ajaxConfig: "GET", 
+    pagination: "remote", 
+    paginationSize: 10, 
+    paginationSizeSelector: [10, 25, 50, 100], 
     ajaxResponse: function (url, params, response) {
         this.setColumns(response.columns);
-        return response.data; // Return the response data for Tabulator to process
+        return response.data; 
     },
 
 });

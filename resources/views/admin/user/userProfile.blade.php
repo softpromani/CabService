@@ -25,15 +25,15 @@
                 <div class="card">
                     <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
 
-                        <img src="{{ isset($editUser->user_image) ? asset('storage/' . $editUser->user_image) : asset('assets/admin/img/default-profile.jpg') }}"
+                        <img src="{{ isset($user->user_image) ? asset('storage/' . $user->user_image) : asset('assets/admin/img/default-profile.jpg') }}"
                             alt="Profile" class="rounded-circle">
                         <h2>
-                            @isset($editUser)
-                                {{ $editUser->full_name }}
+                            @isset($user)
+                                {{ $user->full_name }}
                             @endisset
                         </h2>
-                        <h3> @isset($editUser)
-                                {{ $editUser->role_name }}
+                        <h3> @isset($user)
+                                {{ $user->role_name }}
                             @endisset
                         </h3>
                         <div class="social-links mt-2">
@@ -51,7 +51,6 @@
 
                 <div class="card">
                     <div class="card-body pt-3">
-                        <!-- Bordered Tabs -->
                         <ul class="nav nav-tabs nav-tabs-bordered">
 
                             <li class="nav-item">
@@ -65,12 +64,6 @@
                             </li>
 
 
-
-                            <li class="nav-item">
-                                <button class="nav-link" data-bs-toggle="tab"
-                                    data-bs-target="#profile-change-password">Change Password</button>
-                            </li>
-
                         </ul>
                         <div class="tab-content pt-2">
 
@@ -80,130 +73,88 @@
 
                                 <div class="row">
                                     <div class="col-lg-3 col-md-4 label ">Full Name</div>
-                                    <div class="col-lg-9 col-md-8">
-                                        @isset($editUser)
-                                            {{ $editUser->full_name }}
-                                        @endisset
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-lg-3 col-md-4 label">Company</div>
-                                    <div class="col-lg-9 col-md-8">Go Cab</div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-lg-3 col-md-4 label">Role</div>
-                                    <div class="col-lg-9 col-md-8">
-                                        @isset($editUser)
-                                            {{ $editUser->role_name }}
-                                        @endisset
+                                    <div class="col-lg-9 col-md-8">{{ $user->first_name }}
+                                        {{ $user->last_name }}
                                     </div>
                                 </div>
 
                                 <div class="row">
                                     <div class="col-lg-3 col-md-4 label">Country</div>
-                                    <div class="col-lg-9 col-md-8">USA</div>
+                                    <div class="col-lg-9 col-md-8">{{ $user->country->name ?? 'India' }}</div>
                                 </div>
 
-
-
+                                @isset($user->address)
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-4 label">Address</div>
+                                        <div class="col-lg-9 col-md-8">
+                                            {{ $user->address ?? '' }}
+                                            {{ $user->city ? ', ' . $user->city->city_name : '' }}
+                                            {{ $user->state ? ', ' . $user->state->state_name : '' }}
+                                           
+                                        </div>
+                                    </div>
+                                @endisset
                                 <div class="row">
                                     <div class="col-lg-3 col-md-4 label">Phone</div>
-                                    <div class="col-lg-9 col-md-8"> @isset($editUser)
-                                            {{ $editUser->phone }}
-                                        @endisset
-                                    </div>
+                                    <div class="col-lg-9 col-md-8">{{ $user->phone }}</div>
                                 </div>
 
                                 <div class="row">
                                     <div class="col-lg-3 col-md-4 label">Email</div>
-                                    <div class="col-lg-9 col-md-8"> @isset($editUser)
-                                            {{ $editUser->email }}
-                                        @endisset
-                                    </div>
+                                    <div class="col-lg-9 col-md-8">{{ $user->email }}</div>
                                 </div>
+                                
+
 
                             </div>
 
                             <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
 
-                                <!-- Profile Edit Form -->
-                                <form action="{{ route('admin.updateUserProfile', $editUser->id) }}"
-                                    method="POST" enctype="multipart/form-data">
+                                <form action="{{ route('admin.updateUserProfile', $user->id) }}" method="post"
+                                    enctype="multipart/form-data">
                                     @csrf
-                                    @method('put')
+                                    @if (isset($user))
+                                        @method('put')
+                                    @endif
                                     <div class="row mb-3">
-                                        <label for="user_image" class="col-md-4 col-lg-3 col-form-label">Profile
+                                        <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Profile
                                             Image</label>
                                         <div class="col-md-8 col-lg-9">
-                                            <input type="file" name="user_image" id="user_image" class="form-control" />
-                                            @error('user_image')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
+                                            <img id="previewImage"
+                                                src="{{ isset($user) ? asset('storage/' . $user->user_image) : asset('assets/admin/img/messages-3.jpg') }}"
+                                                alt="Profile Image">
 
+                                            <div class="pt-2">
+                                                <label for="imageUpload" class="btn btn-primary btn-sm"
+                                                    title="Upload new profile image ">
+                                                    <i class="bi bi-upload text-light"></i>
+                                                </label>
+                                                <input type="file" id="imageUpload" name="user_image"
+                                                    style="display: none;" accept="image/*">
+                                            </div>
                                         </div>
                                     </div>
 
                                     <div class="row mb-3">
-                                        <label for="full_name" class="col-md-4 col-lg-3 col-form-label">Full Name</label>
+                                        <label for="first_name" class="col-md-4 col-lg-3 col-form-label">First Name</label>
                                         <div class="col-md-8 col-lg-9">
-                                            <input name="full_name" type="text" class="form-control" id="full_name"
-                                                value="{{ old('full_name', isset($editUser) ? $editUser->full_name : '') }}">
-                                            @error('full_name')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
+                                            <input type="text" name="first_name" class="form-control" id="first_name"
+                                                value="{{ old('first_name', $user->first_name) }}" />
                                         </div>
                                     </div>
-
-
-
-
-
                                     <div class="row mb-3">
-                                        <label for="roleid" class="col-md-4 col-lg-3 col-form-label">Role:<span
-                                                class="text-danger">*</span></label>
-                                                <div class="col-md-8 col-lg-9">
-                                        <select name="roleid" id="roleid" class="form-control">
-                                            <option selected disabled> -- Select Role --</option>
-                                            @foreach ($roles as $role)
-                                                <option value="{{ $role->id }}"
-                                                    {{ isset($currentRole) && $currentRole == $role->id ? 'selected' : '' }}>
-                                                    {{ $role->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                                </div>
+                                        <label for="last_name" class="col-md-4 col-lg-3 col-form-label">Last Name</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <input type="text" name="last_name" class="form-control" id="last_name"
+                                                value="{{ old('last_name', $user->last_name) }}" />
+                                        </div>
                                     </div>
-
-
-                                    <label class="col-form-label">Gender :</label>
-
-                                    <div class="form-check form-check-inline mx-5">
-                                        <label class="form-check-label" for="male">Male</label>
-                                        <input class="form-check-input" type="radio" name="gender" id="male"
-                                            value="male"
-                                            {{ isset($editUser) && $editUser->gender == 'male' ? 'checked' : '' }}>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <label class="form-check-label" for="female">Female</label>
-                                        <input class="form-check-input" type="radio" name="gender" id="female"
-                                            value="female"
-                                            {{ isset($editUser) && $editUser->gender == 'female' ? 'checked' : '' }}>
-                                    </div>
-
-
-
-
-
-
-
 
                                     <div class="row mb-3">
                                         <label for="Address" class="col-md-4 col-lg-3 col-form-label">Address</label>
                                         <div class="col-md-8 col-lg-9">
                                             <input name="address" type="text" class="form-control" id="Address"
-                                                value="A108 Adam Street, New York, NY 535022">
+                                                value="{{ $user->address }}">
                                         </div>
                                     </div>
 
@@ -211,10 +162,7 @@
                                         <label for="Phone" class="col-md-4 col-lg-3 col-form-label">Phone</label>
                                         <div class="col-md-8 col-lg-9">
                                             <input name="phone" type="text" class="form-control" id="Phone"
-                                                value="{{ old('phone', isset($editUser) ? $editUser->phone : '') }}">
-                                            @error('phone')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
+                                                value="{{ $user->phone }}">
                                         </div>
                                     </div>
 
@@ -222,65 +170,107 @@
                                         <label for="Email" class="col-md-4 col-lg-3 col-form-label">Email</label>
                                         <div class="col-md-8 col-lg-9">
                                             <input name="email" type="email" class="form-control" id="Email"
-                                                value="{{ old('email', isset($editUser) ? $editUser->email : '') }}">
-                                            @error('email')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
+                                                value="{{ $user->email }}">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mb-3">
+                                        <label for="country_id" class="col-md-4 col-lg-3 col-form-label">Country</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <select name="country_id" id="country_id" class="form-control">
+                                                <option value="" selected disabled> Select Country</option>
+                                                @foreach ($countries as $country)
+                                                    <option value="{{ $country->id }}"
+                                                        {{ isset($user) && $user->country_id == $country->id ? 'selected' : '' }}>
+                                                        {{ $country->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <label for="state_id" class="col-md-4 col-lg-3 col-form-label">State</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <select name="state_id" id="state_id" class="form-control">
+                                                <option value="" selected disabled> Select State</option>
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <label for="city_id" class="col-md-4 col-lg-3 col-form-label">City</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <select name="city_id" id="city_id" class="form-control">
+                                                <option value="" selected disabled> Select City</option>
+                                            </select>
+
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <label for="gender" class="col-md-4 col-lg-3 col-form-label">Gender</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <select name="gender" id="gender" class="form-control">
+                                                <option value="" selected disabled> Gender</option>
+                                                <option value="female"
+                                                    {{ isset($user) && $user->gender == 'female' ? 'selected' : '' }}>
+                                                    Female</option>
+                                                <option value="male"
+                                                    {{ isset($user) && $user->gender == 'male' ? 'selected' : '' }}>
+                                                    Male</option>
+                                            </select>
+
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <label for="dob" class="col-md-4 col-lg-3 col-form-label">Password</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <input name="password" type="password" class="form-control" id="password">
                                         </div>
                                     </div>
 
+                                    {{-- <div class="row mb-3">
+                                        <label for="Twitter" class="col-md-4 col-lg-3 col-form-label">Twitter
+                                            Profile</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <input name="twitter" type="text" class="form-control" id="Twitter"
+                                                value="https://twitter.com/#">
+                                        </div>
+                                    </div>
 
+                                    <div class="row mb-3">
+                                        <label for="Facebook" class="col-md-4 col-lg-3 col-form-label">Facebook
+                                            Profile</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <input name="facebook" type="text" class="form-control" id="Facebook"
+                                                value="https://facebook.com/#">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label for="Instagram" class="col-md-4 col-lg-3 col-form-label">Instagram
+                                            Profile</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <input name="instagram" type="text" class="form-control" id="Instagram"
+                                                value="https://instagram.com/#">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label for="Linkedin" class="col-md-4 col-lg-3 col-form-label">Linkedin
+                                            Profile</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <input name="linkedin" type="text" class="form-control" id="Linkedin"
+                                                value="https://linkedin.com/#">
+                                        </div>
+                                    </div> --}}
 
                                     <div class="text-center">
                                         <button type="submit" class="btn btn-primary">Save Changes</button>
                                     </div>
-                                </form><!-- End Profile Edit Form -->
+                                </form>
 
                             </div>
 
-
-
-                            <div class="tab-pane fade pt-3" id="profile-change-password">
-                                <!-- Change Password Form -->
-                                <form action="{{ route('admin.changePassword') }}" method="post">
-
-                                    <div class="row mb-3">
-                                        <label for="currentPassword" class="col-md-4 col-lg-3 col-form-label">Current
-                                            Password</label>
-                                        <div class="col-md-8 col-lg-9">
-                                            <input type="password" name="password" class="form-control" />
-                                            @error('password')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    <div class="row mb-3">
-                                        <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">New
-                                            Password</label>
-                                        <div class="col-md-8 col-lg-9">
-                                            <input name="newpassword" type="password" class="form-control"
-                                                id="newPassword">
-                                        </div>
-                                    </div>
-
-                                    <div class="row mb-3">
-                                        <label for="renewPassword" class="col-md-4 col-lg-3 col-form-label">Re-enter New
-                                            Password</label>
-                                        <div class="col-md-8 col-lg-9">
-                                            <input name="renewpassword" type="password" class="form-control"
-                                                id="renewPassword">
-                                        </div>
-                                    </div>
-
-                                    <div class="text-center">
-                                        <button type="submit" class="btn btn-primary">Change Password</button>
-                                    </div>
-                                </form><!-- End Change Password Form -->
-
-                            </div>
-
-                        </div><!-- End Bordered Tabs -->
+                        </div>
 
                     </div>
                 </div>
@@ -288,4 +278,89 @@
             </div>
         </div>
     </section>
+    <script>
+        $(document).ready(function() {
+            $('#country_id').change(function() {
+                var countryId = $(this).val();
+                if (countryId) {
+                    $.ajax({
+                        url: "{{ route('admin.getStates', '') }}/" + countryId,
+                        type: 'GET',
+                        success: function(data) {
+                            $('#state_id').html(
+                                '<option value="" selected disabled>Select State</option>'
+                            );
+
+                            $('#state_id').prop('disabled', false);
+                            $.each(data, function(key, state) {
+                                $('#state_id').append(
+                                    `<option value="${state.id}" ${state.id == "{{ isset($user) ? $user->state_id : '' }}" ? 'selected' : ''}>${state.state_name}</option>`
+                                );
+                            });
+
+                            if ('{{ isset($user) }}') {
+                                var selectedState =
+                                    "{{ isset($user) ? $user->state_id : '' }}";
+                                $('#state_id').val(selectedState).change();
+                            }
+                        },
+                        error: function() {
+                            alert('Error fetching states. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#state_id').html('<option value="" selected disabled>Select State</option>');
+                    $('#state_id').prop('disabled', true);
+                    $('#city_id').html('<option value="" selected disabled>Select City</option>');
+                    $('#city_id').prop('disabled', true);
+                }
+            });
+
+            $('#state_id').change(function() {
+                var stateId = $(this).val();
+                if (stateId) {
+                    $.ajax({
+                        url: "{{ route('admin.getCities', '') }}/" + stateId,
+                        type: 'GET',
+                        success: function(data) {
+                            $('#city_id').html(
+                                '<option value="" selected disabled>Select City</option>');
+                            $('#city_id').prop('disabled', false);
+                            $.each(data, function(key, city) {
+                                $('#city_id').append(
+                                    `<option value="${city.id}" ${city.id == "{{ isset($user) ? $user->city_id : '' }}" ? 'selected' : ''}>${city.city_name}</option>`
+                                );
+                            });
+                        },
+                        error: function() {
+                            alert('Error fetching cities. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#city_id').html('<option value="" selected disabled>Select City</option>');
+                    $('#city_id').prop('disabled', true);
+                }
+            });
+            if ('{{ isset($user) }}') {
+                var selectedCountry = "{{ isset($user) ? $user->country_id : '' }}";
+                var selectedState = "{{ isset($user) ? $user->state_id : '' }}";
+                var selectedCity = "{{ isset($user) ? $user->city_id : '' }}";
+
+                $('#country_id').val(selectedCountry).change();
+
+                $('#state_id').val(selectedState).change();
+            }
+
+            $('#imageUpload').change(function(e) {
+                if (e.target.files && e.target.files[0]) {
+                    let reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#previewImage').attr('src', e.target.result);
+                    }
+
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
+        });
+    </script>
 @endsection

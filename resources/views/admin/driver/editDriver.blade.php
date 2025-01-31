@@ -12,7 +12,7 @@
     <section class="section">
         <div class="row">
             <div class="col-lg-12">
-                <form action="{{ isset($editUser) ? route('admin.updateUser', $editUser->id) : route('admin.storeUser') }}"
+                <form action="{{ isset($editUser) ? route('admin.updateDriver', $editUser->id) : route('admin.storeUser') }}"
                     method="POST" enctype="multipart/form-data">
                     @csrf
                     @if (isset($editUser))
@@ -63,6 +63,18 @@
                                         @enderror
                                     </div>
                                 </div>
+                                <div class="col-12 col-md-6 col-xl-6 mt-3">
+                                    <div class="form-group local-forms">
+                                        <label for="dob">D.O.B. <span class="text-danger">*</span></label>
+                                        <input type="date" name="dob" class="form-control"
+                                            value="{{ old('dob', isset($editUser) ? $editUser->dob : '') }}" />
+                                        @error('dob')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+
+
                                 <div class="col-12 col-md-6 col-xl-6 mt-3">
 
                                     <div class="form-group local-forms">
@@ -144,26 +156,33 @@
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-6 col-xl-6 mt-3">
-                                    <div class="form-group local-forms">
-                                        <label for="city_id">City </label>
-                                        <select name="city_id" id="city_id" class="form-control">
+                                    <div class="row">
+                                        <div class="col-12 col-md-12 col-xl-12 mt-3">
+                                            <div class="form-group local-forms">
+                                                <label for="city_id">City </label>
+                                                <select name="city_id" id="city_id" class="form-control">
 
 
-                                        </select>
-                                        @error('city_id')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
+                                                </select>
+                                                @error('city_id')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-12 col-xl-12 mt-3">
+                                            <div class="form-group local-forms">
+                                                <label for="address">Address </label>
+                                                <textarea name="address" id="address" class="form-control" cols="" rows="5">{{ old('address', isset($editUser) ? $editUser->address : '') }}</textarea>
+                                                @error('address')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
                                     </div>
+
                                 </div>
-                                <div class="col-12 col-md-12 col-xl-6 mt-3">
-                                    <div class="form-group local-forms">
-                                        <label for="address">Address </label>
-                                        <textarea name="address" id="address" class="form-control" cols="" rows="5">{{ old('address', isset($editUser) ? $editUser->address : '') }}</textarea>
-                                        @error('address')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
+
+
 
                                 <div class="col-12 col-md-6 col-xl-6 mt-4">
                                     <div class="form-group local-forms">
@@ -183,15 +202,88 @@
                                         @endif
                                     </div>
                                 </div>
-                                <div class="col-md-12 mt-5 text-end">
-                                    <button class="btn btn-primary" type="submit">Submit</button>
-                                </div>
 
                             </div>
 
 
                         </div>
                     </div>
+                    <div class="card mt-2">
+                        <div class="card-body">
+                            <h4 class="card-title">User Documents</h4>
+
+                            @php
+                                $documentTypes = [
+                                    ['label' => 'Driving Licence', 'name' => 'driving_licence', 'prefix' => 'dl'],
+                                    ['label' => 'Aadhar Card', 'name' => 'adhar_card', 'prefix' => 'aadhar'],
+                                    ['label' => 'PAN Card', 'name' => 'pan_card', 'prefix' => 'pan'],
+                                ];
+                            @endphp
+
+                            @foreach ($documentTypes as $doc)
+                                <div class="row mb-3">
+                                    <b>{{ $doc['label'] }}</b>
+                                    <input type="hidden" value="{{ $doc['name'] }}"
+                                        name="{{ $doc['prefix'] }}_identity_name" />
+
+                                    @foreach (['front', 'back'] as $side)
+                                        <div class="col-12 col-md-6 col-xl-4 mt-3">
+                                            <div class="form-group local-forms">
+                                                <label
+                                                    for="{{ $doc['prefix'] }}_{{ $side }}">{{ ucfirst($side) }}</label>
+                                                <input type="file" name="{{ $doc['prefix'] }}_{{ $side }}"
+                                                    id="{{ $doc['prefix'] }}_{{ $side }}"
+                                                    class="form-control" />
+
+                                                @php
+                                                    
+                                                    $filePath =
+                                                        $documents->where('identity_type', $doc['name'])->first()
+                                                            ->{$doc['prefix'] . '_document_' . $side} ?? null;
+                                                @endphp
+
+                                                @if ($filePath)
+                                                    @if (pathinfo($filePath, PATHINFO_EXTENSION) == 'pdf')
+                                                        <!-- Display PDF Link -->
+                                                        <a href="{{ asset('storage/' . $filePath) }}" target="_blank"
+                                                            class="btn btn-info mt-2">View PDF</a>
+                                                    @else
+                                                        <!-- Display Image -->
+                                                        <img src="{{ asset('storage/' . $filePath) }}"
+                                                            alt="{{ $doc['label'] }} {{ ucfirst($side) }}"
+                                                            class="img-thumbnail mt-2" width="150">
+                                                    @endif
+                                                @endif
+
+                                                @error($doc['prefix'] . '_' . $side)
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    @endforeach
+
+                                    <!-- Input for Document Number -->
+                                    <div class="col-12 col-md-6 col-xl-4 mt-3">
+                                        <div class="form-group local-forms">
+                                            <label for="{{ $doc['prefix'] }}_number">Number</label>
+                                            <input type="text" name="{{ $doc['prefix'] }}_number"
+                                                id="{{ $doc['prefix'] }}_number" class="form-control"
+                                                value="{{ $documents->where('identity_type', $doc['name'])->first()->identity_number ?? '' }}" />
+
+                                            @error($doc['prefix'] . '_number')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+
+                            <div class="col-md-12 mt-5 text-end">
+                                <button class="btn btn-primary" type="submit">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+
 
 
 

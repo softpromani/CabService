@@ -2,16 +2,17 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles, HasApiTokens;
+    use HasFactory, Notifiable, HasRoles, HasApiTokens ,SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -75,5 +76,21 @@ class User extends Authenticatable
     public function car()
     {
         return $this->hasOne(Car::class, 'driver_id');
+    }
+    public function country()
+    {
+        return $this->belongsTo(Country::class);
+    }
+    public function state()
+    {
+        return $this->belongsTo(State::class);
+    }
+    public function city()
+    {
+        return $this->belongsTo(City::class);
+    }
+    public function documents()
+    {
+        return $this->hasMany(UserDocument::class, 'user_id');
     }
 }
