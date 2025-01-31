@@ -20,50 +20,9 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="card-title">User</h5>
+                            <h5 class="card-title">Admin</h5>
                             <a href="{{ route('admin.addUser') }}" class="btn btn-primary">Add User</a>
                         </div>
-                        <table class="table datatable">
-                            <thead>
-                                <tr>
-                                    <th>Sr No.</th>
-                                    <th>Image</th>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Phone</th>
-                                    <th>Role</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($users as $user)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td><img width="70px" height="70px"
-                                            src="{{ asset('storage/' . $user->user_image) }}"
-                                            class="rounded-circle m-r-5" alt="User Image"></td>
-                                        <td>{{ $user->first_name . ' ' . $user->last_name }}</td>
-                                        <td>{{ $user->email }}</td>
-                                        <td>{{ $user->phone }}</td>
-                                        <td> {{ $user->roles[0]->name ?? '' }}</td>
-                                        <td style="white-space: nowrap;">
-
-                                            <a href="{{ route('admin.editUser' , $user->id) }}" class="btn bg-success-light" style="margin-right: 5px;">
-                                                <i class="fa-solid fa-pen-to-square text-warning"></i>
-                                            </a>
-
-                                        </td>
-                                        <td style="white-space: nowrap;">
-
-                                            <a href="{{ route('admin.userProfile' , $user->id) }}" class="btn bg-success-light" style="margin-right: 5px;">
-                                                <i class="fa-solid fa-eye text-warning"></i>
-                                            </a>
-
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
 
                         <div id="example-table"></div>
                     </div>

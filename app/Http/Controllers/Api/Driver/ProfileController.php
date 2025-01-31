@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Controllers\Api\Driver;
 
-use App\Http\Controllers\Controller;
 use App\Models\UserDocument;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
@@ -15,110 +15,70 @@ class ProfileController extends Controller
      */
     public function profile_update(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'first_name'             => 'required',
             'last_name'              => 'required',
             'email'                  => 'required|email|unique:users,email,' . Auth::id(),
             'gender'                 => 'required|in:male,female',
-            'user_image'             => 'required|image|max:2024',
-            'driving_licence_number' => 'required',
-            'driving_licence_front'  => 'required|image|max:2024',
-            'driving_licence_back'   => 'required|image|max:2024',
-            'aadhar_number'          => 'required',
-            'aadhar_front'           => 'required|image|max:2024',
-            'aadhar_back'            => 'required|image|max:2024',
-            'pan_number'             => 'sometimes',
-            'pan'                    => 'required_if:pan_number,!=,null|image|max:2024',
             'dob'                    => 'required|date',
+            'user_image'             => 'nullable|image|max:2024',
+            'driving_licence_number' => 'required',
+            'driving_licence_front'  => 'nullable',
+            'driving_licence_back'   => 'nullable',
+            'aadhar_number'          => 'required',
+            'aadhar_front'           => 'nullable',
+            'aadhar_back'            => 'nullable',
+            'pan_number'             => 'sometimes',
+            'pan'                    => 'nullable',
         ]);
 
         $user             = Auth::user();
-        $user->first_name = $request->first_name;
-        $user->last_name  = $request->last_name;
-        $user->email      = $request->email;
-        $user->gender     = $request->gender;
-        $user->dob        = $request->dob;
+        $user->first_name = $validated['first_name'];
+        $user->last_name  = $validated['last_name'];
+        $user->email      = $validated['email'];
+        $user->gender     = $validated['gender'];
+        $user->dob        = $validated['dob'];
         $user->is_profile = 1;
-        try {
 
-            // Handle user image upload
+        try {
+            // Upload Profile Image
             if ($request->hasFile('user_image')) {
-                $image            = $request->file('user_image');
-                $path             = $image->store('user_images', 'public');
-                $user->user_image = $path;
+                $user->user_image = $request->file('user_image')->store('user_images', 'public');
             }
             $user->save();
 
-            // Handle driving licence uploads
-            if ($request->hasFile('driving_licence_front')) {
-                $dl_front      = $request->file('driving_licence_front');
-                $path_dl_front = $dl_front->store('driver_licence/front', 'public');
+            // Document Handling
+            $documentTypes = [
+                'driving_licence' => ['number' => 'driving_licence_number', 'front' => 'driving_licence_front', 'back' => 'driving_licence_back'],
+                'adhar_card'          => ['number' => 'aadhar_number', 'front' => 'aadhar_front', 'back' => 'aadhar_back'],
+                'pan_card'             => ['number' => 'pan_number', 'front' => 'pan'],
+            ];
 
-                UserDocument::create([
-                    'user_id'         => auth()->id(),
-                    'identity_type'   => 'dl',
-                    'identity_number' => $request->driving_licence_number,
-                    'document'        => $path_dl_front,
-                ]);
-            }
+            foreach ($documentTypes as $type => $fields) {
+                $identityNumber = $validated[$fields['number']] ?? null;
+                $documentFront  = $request->hasFile($fields['front']) ? $request->file($fields['front'])->store('userDocuments', 'public') : null;
+                $documentBack   = isset($fields['back']) && $request->hasFile($fields['back']) ? $request->file($fields['back'])->store('userDocuments', 'public') : null;
 
-            if ($request->hasFile('driving_licence_back')) {
-                $dl_back      = $request->file('driving_licence_back');
-                $path_dl_back = $dl_back->store('driver_licence/back', 'public');
-
-                UserDocument::create([
-                    'user_id'         => auth()->id(),
-                    'identity_type'   => 'dl',
-                    'identity_number' => $request->driving_licence_number,
-                    'document'        => $path_dl_back,
-                ]);
-            }
-
-            // Handle Aadhar uploads
-            if ($request->hasFile('aadhar_front')) {
-                $aadhar_front      = $request->file('aadhar_front');
-                $path_aadhar_front = $aadhar_front->store('driver_aadhar/front', 'public');
-
-                UserDocument::create([
-                    'user_id'         => auth()->id(),
-                    'identity_type'   => 'aadhar',
-                    'identity_number' => $request->aadhar_number,
-                    'document'        => $path_aadhar_front,
-                ]);
-            }
-
-            if ($request->hasFile('aadhar_back')) {
-                $aadhar_back      = $request->file('aadhar_back');
-                $path_aadhar_back = $aadhar_back->store('driver_aadhar/back', 'public');
-
-                UserDocument::create([
-                    'user_id'         => auth()->id(),
-                    'identity_type'   => 'aadhar',
-                    'identity_number' => $request->aadhar_number,
-                    'document'        => $path_aadhar_back,
-                ]);
-            }
-
-            // Handle PAN card upload
-            if ($request->hasFile('pan')) {
-                $pan     = $request->file('pan');
-                $pathpan = $pan->store('driver_pan', 'public');
-
-                UserDocument::create([
-                    'user_id'         => auth()->id(),
-                    'identity_type'   => 'pan',
-                    'identity_number' => $request->pan_number,
-                    'document'        => $pathpan,
-                ]);
+                if ($identityNumber) {
+                    UserDocument::updateOrCreate(
+                        ['user_id' => $user->id, 'identity_type' => $type],
+                        [
+                            'identity_number' => $identityNumber,
+                            'document'        => $documentFront,
+                            'document_back'   => $documentBack,
+                        ]
+                    );
+                }
             }
 
             return response()->json([
                 'message' => 'Profile updated successfully',
                 'data'    => $user,
             ], 200);
+
         } catch (Exception $ex) {
             return response()->json([
-                'message' => $ex->getMessage(),
+                'message' => 'Error updating profile: ' . $ex->getMessage(),
             ], 500);
         }
     }

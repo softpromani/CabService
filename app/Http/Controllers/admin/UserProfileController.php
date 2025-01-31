@@ -1,48 +1,57 @@
 <?php
 namespace App\Http\Controllers\admin;
 
-use App\Http\Controllers\Controller;
+use App\Models\City;
 use App\Models\User;
+use App\Models\State;
+use App\Models\Country;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Role;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
 
 class UserProfileController extends Controller
 {
     public function userProfile($id)
     {
-        $roles = Role::all();
-        $editUser = User::findOrFail($id);
-        $currentRole = $editUser->roles->first()->id ?? null;
+        $roles       = Role::all();
+        $user    = User::findOrFail($id);
+        $countries = Country::get();
+        $states    = State::get();
+        $cities    = City::get();
+        $currentRole = $user->roles->first()->id ?? null;
 
-        return view('admin.user.userProfile', compact('roles', 'editUser', 'currentRole'));
+        return view('admin.user.userProfile', compact('roles', 'user', 'currentRole','countries','states','cities'));
     }
-
-
 
     public function updateUserProfile(Request $request, $id)
     {
         $validated = $request->validate([
-            'full_name'  => 'required',
+            'first_name' => 'required',
+            'last_name'  => 'required',
             'email'      => 'required|email|unique:users,email,' . $id,
             'phone'      => 'required',
             'gender'     => 'required',
-            'password'   => 'nullable|min:8',
-            'user_image' => 'nullable|image|max:2048',
+            'password'   => 'nullable',
+            'user_image' => 'nullable',
+
         ]);
 
         $user = User::findOrFail($id);
-        $nameParts = explode(' ', $request->input('full_name'), 2);
-        $user->first_name = $nameParts[0];
-        $user->last_name = isset($nameParts[1]) ? $nameParts[1] : '';
 
-        $user->email = $request->input('email');
-        $user->phone = $request->input('phone');
-        $user->gender = $request->input('gender');
+        $user->email      = $request->input('email');
+        $user->phone      = $request->input('phone');
+        $user->gender     = $request->input('gender');
+        $user->dob        = $request->input('dob');
+        $user->country_id = $request->input('country_id');
+        $user->state_id   = $request->input('state_id');
+        $user->city_id    = $request->input('city_id');
+        $user->address    = $request->input('address');
+        $user->first_name = $request->input('first_name');
+        $user->last_name  = $request->input('last_name');
 
         if ($request->hasFile('user_image')) {
-            $imageName = $request->file('user_image')->store('userImages', 'public');
+            $imageName        = $request->file('user_image')->store('userImages', 'public');
             $user->user_image = $imageName;
         }
 
@@ -52,37 +61,28 @@ class UserProfileController extends Controller
 
         $user->save();
 
-        // Sync roles
-
-
-        return redirect()->route('admin.userProfile', $id)
+        return redirect()->back()
             ->with('success', 'Profile updated successfully!');
     }
 
-    public function changePassword(Request $request)
-{
-    $validated = $request->validate([
-        'password'       => 'required', // Current password
-        'newpassword'    => 'required|min:8|confirmed', // New password must match confirmation
-    ], [
-        'newpassword.confirmed' => 'The new password confirmation does not match.',
-    ]);
+    public function changePassword(Request $request, $id)
+    {
+        $request->validate([
+            'current_password'          => ['required', 'string', 'min:8'],
+            'new_password'              => ['required', 'string', 'min:8', 'different:current_password'],
+            'new_password_confirmation' => ['required', 'same:new_password'],
+        ]);
 
-    $user = Auth::user(); // Get the currently authenticated user
+        $driver = User::findOrFail($id);
+        if (! Hash::check($request->current_password, $driver->password)) {
+            return back()->withErrors(['current_password' => 'Current password is incorrect.'])->with('active_tab', 'profile-change-password');
+        }
 
-    // Check if the current password matches
-    if (!Hash::check($validated['password'], $user->password)) {
-        return back()->withErrors(['password' => 'The current password is incorrect.']);
+        // Update the password
+        $driver->password = Hash::make($request->new_password);
+        $driver->save();
+
+        return back()->with('success', 'Password changed successfully.')->with('active_tab', 'profile-change-password');
     }
 
-    // Update the user's password
-    $user->password = Hash::make($validated['newpassword']);
-    $user->save();
-
-    return back()->with('success', 'Password changed successfully!');
 }
-
-}
-
-
-
