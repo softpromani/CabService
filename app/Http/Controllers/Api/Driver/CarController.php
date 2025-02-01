@@ -1,10 +1,10 @@
 <?php
 namespace App\Http\Controllers\Api\Driver;
 
-use App\Models\Car;
-use App\Models\Brand;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Brand;
+use App\Models\Car;
+use Illuminate\Http\Request;
 
 class CarController extends Controller
 {
@@ -12,7 +12,7 @@ class CarController extends Controller
     public function car(Request $request)
     {
         $request->validate([
-            'model_id'            => 'required|exists:car,column',
+            'model_id'            => 'required',
             'brand_id'            => 'required',
             'color'               => 'nullable',
             'interior'            => 'nullable',
@@ -21,9 +21,8 @@ class CarController extends Controller
             'insurance_number'    => 'nullable|string|max:255',
             'pollution_number'    => 'nullable|string|max:255',
             'rc_number'           => 'required|string|max:255|unique:cars,rc_number',
-
-            'car_images.*'        => 'nullable|image|',
-            'rc_document'         => 'nullable',
+            'car_images.*'        => 'nullable|image',
+            'rc_document'         => 'sometimes|image',
         ]);
 
         $car = Car::create([
