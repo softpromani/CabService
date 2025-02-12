@@ -3,7 +3,7 @@
     <ul class="sidebar-nav" id="sidebar-nav">
 
       <li class="nav-item">
-        <a class="nav-link " href="index.html">
+        <a class="nav-link " href="{{ route('admin.dashboard') }}">
           <i class="bi bi-grid"></i>
           <span>Dashboard</span>
         </a>
@@ -120,6 +120,23 @@
                         <div data-i18n="List">Third Party API</div>
                     </a>
                 </li>
+
+            </ul>
+        </li>
+        @endif
+        @if(auth()->user()->hasAnyRole(['admin', 'Super Admin']))
+        <li class="nav-item">
+            <a class="nav-link collapsed" data-bs-target="#components3-nav" data-bs-toggle="collapse" href="#">
+                <i class="bi bi-menu-button-wide"></i><span> Ticket</span><i
+                    class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="components3-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                <li class="menu-item">
+                    <a href="{{ route('admin.support-ticket.view') }}" class="menu-link">
+                        <div data-i18n="List">Support Ticket</div>
+                    </a>
+                </li>
+                
 
             </ul>
         </li>

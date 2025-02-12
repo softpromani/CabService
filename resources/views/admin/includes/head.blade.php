@@ -19,4 +19,11 @@
   <!-- Template Main CSS File -->
   <link href="{{ asset('assets/admin/css/style.css')}}" rel="stylesheet">
   <link href="{{ asset('assets/admin/css/customStyle.css')}}" rel="stylesheet">
+  
+  <!-- Lightbox2 CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css">
+
+<!-- Lightbox2 JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
+
 

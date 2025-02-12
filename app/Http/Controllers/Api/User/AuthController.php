@@ -2,104 +2,107 @@
 
 namespace App\Http\Controllers\Api\User;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+    
+
     public function userLogin(Request $request)
     {
-        return $this->login($request, 'User');
-    }
-
-    private function login(Request $request, $role)
-    {
-        $validated = $request->validate([
-            'phone' => 'required|numeric',
-        ]);
-
-        $user = User::updateOrCreate(
-            ['phone' => $validated['phone']],
-            ['is_profile' => $validated['phone'] ? 1 : 0]
-        );
-
-        // Assign role if not already assigned
-        if (!$user->hasRole($role)) {
-            $user->assignRole($role);
-        }
-
-        // Token generation
-        $tokenResult = $user->createToken('Personal Access Token');
-        $token = $tokenResult->accessToken;
-
-        if ($user->is_profile == 1) {
-            return response()->json([
-                'message' => 'Login successful',
-                'role' => $role,
-                'data' => $user,
-                'token' => $token,
-            ], 200);
-        } else {
-            return response()->json([
-                'message' => 'Profile is not completed. Please complete your profile to login.',
-                'token' => $token,
-            ], 201);
-        }
-    }
-
-    public function updateProfile(Request $request)
-    {
-        $user = Auth::user();
-
-        if (!$user) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
-
         $validated = Validator::make($request->all(), [
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => 'nullable|email|unique:users,email,' . $user->id,
-            'gender' => 'nullable|string|max:10',
-            'user_image' => 'nullable|image|max:2048',
+            'phone'         => 'required|numeric',
+            'is_otp_verify' => 'required|in:true',
         ]);
 
         if ($validated->fails()) {
-            return response()->json($validated->errors(), 422);
+            return response()->json(['errors' => $validated->errors()], 422);
         }
 
-        $user->fill([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'email' => $request->email,
-            'gender' => $request->gender,
-            'is_profile' => 1,
+        $validatedData = $validated->validated();
+        $phone         = $validatedData['phone'];
+
+        $user = User::firstOrCreate(
+            ['phone' => $phone],
+            ['is_profile' => 0],
+            ['is_active' => 1],
+        );
+        $tokenResult = $user->createToken('Personal Access Token');
+        $token       = $tokenResult->accessToken;
+
+        
+        try {
+            if (! $user->hasRole('user')) {
+                $user->assignRole('user');
+            }
+
+            $message = $user->wasRecentlyCreated || $user->is_profile == 0
+            ? 'Profile is not completed yet. Please complete your profile to login.'
+            : 'Login successful';
+
+            $statusCode = $user->wasRecentlyCreated || $user->is_profile == 0 ? 201 : 200;
+
+            return response()->json([
+                'message' => $message,
+                'data'    => $user,
+                'token'   => $token,
+            ], $statusCode);
+        } catch (\Exception $e) {
+            Log::error('Error processing login: ' . $e->getMessage());
+
+            return response()->json([
+                'message' => 'An error occurred while processing your login.',
+            ], 500);
+        }
+    }
+
+    public function userProfileupdate(Request $request)
+    {
+        $validated = $request->validate([
+            'first_name'             => 'required',
+            'last_name'              => 'required',
+            'email'                  => 'required|email|unique:users,email,' . Auth::id(),
+            'gender'                 => 'required|in:male,female',
+            'dob'                    => 'required|date',
+            'user_image'             => 'nullable|image|max:2024',
+            
         ]);
 
-        // Handle user image upload
-        if ($request->hasFile('user_image')) {
-            $path = $request->file('user_image')->store('user_images', 'public');
-            $user->user_image = $path;
+        $user             = Auth::user();
+        $user->first_name = $validated['first_name'];
+        $user->last_name  = $validated['last_name'];
+        $user->email      = $validated['email'];
+        $user->gender     = $validated['gender'];
+        $user->dob        = $validated['dob'];
+        $user->country_id = $request->country_id;
+        $user->state_id   = $request->state_id;
+        $user->city_id    = $request->city_id;
+        $user->address    = $request->address;
+        $user->is_profile = 1;
+        $user->is_verify = 1; 
+
+        try {
+            if ($request->hasFile('user_image')) {
+                $user->user_image = $request->file('user_image')->store('user_images', 'public');
+            }
+            $user->save();  
+
+           
+
+            return response()->json([
+                'message' => 'Profile updated successfully',
+                'data'    => $user,
+            ], 200);
+
+        } catch (Exception $ex) {
+            return response()->json([
+                'message' => 'Error updating profile: ' . $ex->getMessage(),
+            ], 500);
         }
-
-        // Ensure the User role is assigned
-        if (!$user->hasRole('User')) {
-            $user->assignRole('User');
-        }
-
-        $user->save();
-
-        // Remove roles from the user object in the response
-        $userArray = $user->toArray();
-        unset($userArray['roles']);
-
-        return response()->json([
-            'message' => 'Profile updated successfully',
-            'role' => 'User',
-            'data' => $userArray,
-        ], 200);
     }
 
 }

@@ -8,6 +8,7 @@ use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\BrandController;
 use App\Http\Controllers\admin\ModelController;
 use App\Http\Controllers\admin\DriverController;
+use App\Http\Controllers\admin\TicketController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\Admin\SocialMediaController;
@@ -105,5 +106,16 @@ Route::group(['name' => 'admin', 'prefix' => 'admin', 'as' => 'admin.', 'middlew
         Route::post('socialmedia/update-status', [SocialMediaController::class, 'updateStatus'])->name('socialmedia.update_status');
 
     });
+
+    Route::group(['prefix' => 'support-ticket', 'as' => 'support-ticket.'], function () {
+        Route::controller(TicketController::class)->group(function () {
+            Route::get('list', 'index')->name('view');
+            Route::post('status', 'updateStatus')->name('status');
+            Route::get('single-ticket' . '/{id}', 'getView')->name('singleTicket');
+            Route::post('reply' . '/{id}', 'reply')->name('reply');
+          
+        });
+    });
+    
 
 });
