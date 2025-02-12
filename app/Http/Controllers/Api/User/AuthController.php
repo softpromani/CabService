@@ -4,18 +4,16 @@ namespace App\Http\Controllers\Api\User;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    
 
     public function userLogin(Request $request)
     {
         $request->validate([
             'phone' => 'required|numeric',
         ]);
+
         return $this->login($request, 'User');
     }
 
@@ -25,15 +23,11 @@ class AuthController extends Controller
             'phone' => 'required|numeric',
         ]);
 
+        // Update or create user based on phone number
         $user = User::updateOrCreate(
-            ['phone' => $validated['phone']],
+            ['phone' => $validated['phone']], // Lookup condition
+            []                                // Defaults (add fields here if needed)
         );
-        if ($validated->fails()) {
-            return response()->json(['errors' => $validated->errors()], 422);
-        }
-
-        $validatedData = $validated->validated();
-        $phone         = $validatedData['phone'];
 
         // Assign role if not already assigned
         if (! $user->hasRole($role)) {
@@ -43,19 +37,20 @@ class AuthController extends Controller
         // Token generation
         $tokenResult = $user->createToken('Personal Access Token');
         $token       = $tokenResult->accessToken;
-        $token       = $tokenResult->accessToken;
 
-        
         try {
             if (! $user->hasRole('user')) {
                 $user->assignRole('user');
             }
 
-            $message = $user->wasRecentlyCreated || $user->is_profile == 0
-            ? 'Profile is not completed yet. Please complete your profile to login.'
-            : 'Login successful';
-
-            $statusCode = $user->wasRecentlyCreated || $user->is_profile == 0 ? 201 : 200;
+            if ($user->wasRecentlyCreated || $user->is_profile == 0) {
+                return response()->json([
+                    'message' => 'Profile is not completed yet. Please complete your profile to login.',
+                    'role'    => $role,
+                    'data'    => $user,
+                    'token'   => $token,
+                ], 201);
+            }
 
             return response()->json([
                 'message' => 'Login successful',
@@ -63,11 +58,11 @@ class AuthController extends Controller
                 'data'    => $user,
                 'token'   => $token,
             ], 200);
-        } else {
+        } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Profile is not completed. Please complete your profile to login.',
-                'token'   => $token,
-            ], 201);
+                'message' => 'Something went wrong. Please try again.',
+                'error'   => $e->getMessage(),
+            ], 500);
         }
     }
 
