@@ -11,14 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ride_schedule_stations', function (Blueprint $table) {
+        Schema::create('routes', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('ride_schedule_id');
-            $table->unsignedBigInteger('city_id');
-            $table->string('point_name');
-            $table->string('longitute');
-            $table->string('latitude');
-            $table->dateTime('scheduled_time');
+            $table->string('name');
+            $table->decimal('distance')->default(1);
+            $table->boolean('is_active')->default(1);
             $table->timestamps();
         });
     }
@@ -28,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ride_schedule_stations');
+        Schema::dropIfExists('routes');
     }
 };

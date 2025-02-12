@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Api\Users\ProfileController;
 use App\Http\Controllers\Api\User\AuthController;
+use App\Http\Controllers\Api\User\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('user')->as('user.')->group(function () {

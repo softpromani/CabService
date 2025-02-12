@@ -87,6 +87,16 @@
                         <i class="bi bi-circle"></i><span>Model</span>
                   </a>
                 </li>
+                <li>
+                    <a href="{{ route('admin.master.fare-setup.index') }}">
+                        <i class="bi bi-circle"></i><span>Fare-Setup</span>
+                  </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.master.route-setup.index') }}">
+                        <i class="bi bi-circle"></i><span>Route-Setup</span>
+                  </a>
+                </li>
 
 
             </ul>

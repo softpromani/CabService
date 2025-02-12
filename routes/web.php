@@ -1,19 +1,21 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\admin\CscController;
-use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\BrandController;
-use App\Http\Controllers\admin\ModelController;
-use App\Http\Controllers\admin\DriverController;
-use App\Http\Controllers\Admin\SettingController;
-use App\Http\Controllers\RolePermissionController;
-use App\Http\Controllers\Admin\SocialMediaController;
-use App\Http\Controllers\admin\UserProfileController;
 use App\Http\Controllers\Admin\BusinessPageController;
 use App\Http\Controllers\Admin\BusinessSettingController;
+use App\Http\Controllers\admin\CscController;
+use App\Http\Controllers\admin\DriverController;
+use App\Http\Controllers\Admin\FareSetupController;
+use App\Http\Controllers\admin\ModelController;
+use App\Http\Controllers\admin\RouteController;
+use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\SocialMediaController;
+use App\Http\Controllers\admin\UserController;
+use App\Http\Controllers\admin\UserProfileController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RolePermissionController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
@@ -29,7 +31,7 @@ Route::group(['name' => 'admin', 'prefix' => 'admin', 'as' => 'admin.', 'middlew
     Route::get('/user-list', action: [AdminController::class, 'userList'])->name(name: 'userList');
     Route::put('/update-user/{id?}', action: [AdminController::class, 'updateUser'])->name(name: 'updateUser');
     Route::get('/add-user', action: [UserProfileController::class, 'addUser'])->name(name: 'addUser');
-    Route::get('/edit-user/{id?}', action: [AdminController::class, 'editUser'])->name( 'editUser');
+    Route::get('/edit-user/{id?}', action: [AdminController::class, 'editUser'])->name('editUser');
     Route::get('/edit-user-profile/{id?}', action: [UserProfileController::class, 'userProfile'])->name(name: 'userProfile');
     Route::put('/update-user-profile/{id?}', action: [UserProfileController::class, 'updateUserProfile'])->name(name: 'updateUserProfile');
     Route::post('driver/change-password/{id?}', [DriverController::class, 'driverChangePassword'])->name('driverChangePassword');
@@ -51,12 +53,10 @@ Route::group(['name' => 'admin', 'prefix' => 'admin', 'as' => 'admin.', 'middlew
     Route::get('driver/cars/{id}/view', [DriverController::class, 'viewCars'])->name('cars.viewCars');
     Route::get('driver/cars/{id}/edit', [DriverController::class, 'editcar'])->name('cars.editcar');
     Route::post('driver/cars/{id}/update', [DriverController::class, 'updateCar'])->name('cars.updateCar');
-    Route::put('driver/update/{id?}',  [DriverController::class, 'updateDriver'])->name( 'updateDriver');
+    Route::put('driver/update/{id?}', [DriverController::class, 'updateDriver'])->name('updateDriver');
 
     Route::get('/get-models/{brandId}', [DriverController::class, 'getModels'])->name('getModels');
     Route::post('driver/car/{id}/delete-image/{image}', [DriverController::class, 'deleteImage'])->name('car.deleteImage');
-
-
 
     Route::resource('/customer', UserController::class);
     Route::post('/user-suspend-status', [UserController::class, 'user_suspend_status'])->name('user.status.update'); // for all user
@@ -92,6 +92,8 @@ Route::group(['name' => 'admin', 'prefix' => 'admin', 'as' => 'admin.', 'middlew
         Route::delete('/models/delete/{id}', [ModelController::class, 'model_destroy'])->name('model_destroy');
         Route::get('/models/{id}/edit', [ModelController::class, 'editModel'])->name('editModel');
         Route::put('/models/update/{id}', [ModelController::class, 'updateModel'])->name('updateModel');
+        Route::resource('fare-setup', FareSetupController::class);
+        Route::resource('route-setup', RouteController::class);
 
     });
     Route::group(['prefix' => 'setting', 'as' => 'setting.'], function () {
