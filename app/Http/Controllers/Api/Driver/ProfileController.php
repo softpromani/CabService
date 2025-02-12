@@ -38,16 +38,21 @@ class ProfileController extends Controller
         $user->email      = $validated['email'];
         $user->gender     = $validated['gender'];
         $user->dob        = $validated['dob'];
+        $user->country_id = $request->country_id;
+        $user->state_id   = $request->state_id;
+        $user->city_id    = $request->city_id;
+        $user->address    = $request->address;
         $user->is_profile = 1;
+        
 
         try {
-            // Upload Profile Image
             if ($request->hasFile('user_image')) {
                 $user->user_image = $request->file('user_image')->store('user_images', 'public');
             }
+            
             $user->save();
 
-            // Document Handling
+           
             $documentTypes = [
                 'driving_licence' => ['number' => 'driving_licence_number', 'front' => 'driving_licence_front', 'back' => 'driving_licence_back'],
                 'adhar_card'          => ['number' => 'aadhar_number', 'front' => 'aadhar_front', 'back' => 'aadhar_back'],

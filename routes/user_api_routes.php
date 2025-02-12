@@ -1,8 +1,9 @@
 <?php
 
-use App\Http\Controllers\Api\User\AuthController;
-use App\Http\Controllers\Api\User\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\User\AuthController;
+use App\Http\Controllers\Api\Users\ProfileController;
+use App\Http\Controllers\Api\User\CustomerTicketController;
 
 Route::prefix('user')->as('user.')->group(function () {
     Route::post('login', [AuthController::class, 'userLogin'])->name('login');
