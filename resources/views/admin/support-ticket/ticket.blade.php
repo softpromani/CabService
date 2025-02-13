@@ -136,7 +136,7 @@
                 searchValue: searchValue
             },
             success: function (response) {
-                $('#ticket-list').html(response.html); // Replace ticket list with filtered data
+                $('#ticket-list').html(response.html); 
             }
         });
     });

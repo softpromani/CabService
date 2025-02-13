@@ -95,6 +95,7 @@ Route::group(['name' => 'admin', 'prefix' => 'admin', 'as' => 'admin.', 'middlew
         Route::put('/models/update/{id}', [ModelController::class, 'updateModel'])->name('updateModel');
         Route::resource('fare-setup', FareSetupController::class);
         Route::resource('route-setup', RouteController::class);
+        Route::post('/route-setup-status', [RouteController::class, 'route_status'])->name('route-setup.status');
 
     });
     Route::group(['prefix' => 'setting', 'as' => 'setting.'], function () {
