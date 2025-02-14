@@ -54,35 +54,6 @@
             },
         });
 
-        // Toggle Switch Event Listener
-        $(document).on('change', '.confirmation_alert', function () {
-            let toggleSwitch = $(this);
-            let status = toggleSwitch.prop('checked') ? 1 : 0;
-            let id = toggleSwitch.data('id');
-            let field = toggleSwitch.data('status_field');
-            let url = toggleSwitch.data('alert_url');
-
-            $.ajax({
-                url: url,
-                type: "POST",
-                data: {
-                    id: id,
-                    field: field,
-                    status: status,
-                    _token: "{{ csrf_token() }}"
-                },
-                success: function (response) {
-                    if (response.success) {
-                        toastr.success("Status updated successfully!");
-                    } else {
-                        toastr.error("Something went wrong.");
-                    }
-                },
-                error: function (xhr) {
-                    toastr.error("Error: " + xhr.responseJSON.message);
-                }
-            });
-        });
 
     });
 </script>

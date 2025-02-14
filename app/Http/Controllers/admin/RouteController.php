@@ -1,10 +1,12 @@
 <?php
 namespace App\Http\Controllers\admin;
 
-use App\Models\Route;
-use Illuminate\Http\Request;
-use App\Models\Route as RouteModel;
 use App\Http\Controllers\Controller;
+use App\Models\City;
+use App\Models\Route;
+use App\Models\Route as RouteModel;
+use App\Models\RouteStation;
+use Illuminate\Http\Request;
 
 class RouteController extends Controller
 {
@@ -38,16 +40,18 @@ class RouteController extends Controller
 
                 $item->delete_action = '
                 <a href="' . route('admin.master.route-setup.edit', $item->id) . '" class="text-black">
-                <i class="fa-solid fa-pen-to-square text-success"></i></a>';
+                <i class="fa-solid fa-pen-to-square text-primary"></i></a>';
+                $item->delete_action .= '<a href="' . route('admin.master.route-setup.stations', $item->id) . '" class="text-black">
+               <i class="fa-solid fa-map-location-dot text-danger ms-2"></i></a>';
 
                 // Toggle Switch for Status
                 $item->suspend_status = '<div class="form-check form-switch">
-                <input class="form-check-input confirmation_alert" type="checkbox" 
-                    '.($item->is_active ? 'checked' : '').' 
-                    data-id="' . $item->id . '" 
+                <input class="form-check-input confirmation_alert" type="checkbox"
+                    ' . ($item->is_active ? 'checked' : '') . '
+                    data-id="' . $item->id . '"
                     data-alert_message="Want to change suspend status?"
-                    data-alert_title="Are you sure?" 
-                    data-alert_type="warning" 
+                    data-alert_title="Are you sure?"
+                    data-alert_type="warning"
                     data-alert_url="' . route('admin.master.route-setup.status') . '"
                     data-status_field="is_active">
                 </div>';
@@ -89,11 +93,10 @@ class RouteController extends Controller
     }
     public function edit($id)
     {
-        $editRoute= RouteModel::find($id);
-        $routeModel   = RouteModel::all();
-        return view('admin.route-setup.index', compact('editRoute', 'routeModel'));
+        $editRoute = RouteModel::find($id);
+        return view('admin.route-setup.index', compact('editRoute'));
     }
-    public function update(Request $req , $id)
+    public function update(Request $req, $id)
     {
         $data = $req->validate([
             'name'     => 'required',
@@ -102,6 +105,24 @@ class RouteController extends Controller
         toastr()->success('Route updated successfully');
         return redirect()->route('admin.master.route-setup.index');
 
+    }
+
+    public function stations(RouteModel $routeModel)
+    {
+       $arrview=['route'=>$routeModel->first(),'stations'=>$routeModel->first()->stations,'cities'=>City::pluck('city_name', 'id')->toArray()];
+       return view('admin.route-setup.stations',$arrview);
+    }
+    public function  station_store(Request $req,$route_id){
+        $data=$req->validate([
+            'city_id'=>'required|exists:cities,id',
+            'point_name'=>'required',
+            'scheduled_time'=>'required',
+            'latitude'=>'required',
+            'longitute'=>'required'
+        ]);
+        $data['route_id']=$route_id;
+        RouteStation::create($data);
+        return redirect()->back();
     }
 
 }

@@ -1,22 +1,22 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\admin\CscController;
-use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\BrandController;
-use App\Http\Controllers\admin\ModelController;
-use App\Http\Controllers\admin\RouteController;
-use App\Http\Controllers\admin\DriverController;
-use App\Http\Controllers\admin\TicketController;
-use App\Http\Controllers\Admin\SettingController;
-use App\Http\Controllers\RolePermissionController;
-use App\Http\Controllers\Admin\FareSetupController;
-use App\Http\Controllers\Admin\SocialMediaController;
-use App\Http\Controllers\admin\UserProfileController;
 use App\Http\Controllers\Admin\BusinessPageController;
 use App\Http\Controllers\Admin\BusinessSettingController;
+use App\Http\Controllers\admin\CscController;
+use App\Http\Controllers\admin\DriverController;
+use App\Http\Controllers\Admin\FareSetupController;
+use App\Http\Controllers\admin\ModelController;
+use App\Http\Controllers\admin\RouteController;
+use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\SocialMediaController;
+use App\Http\Controllers\admin\TicketController;
+use App\Http\Controllers\admin\UserController;
+use App\Http\Controllers\admin\UserProfileController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RolePermissionController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
@@ -95,6 +95,8 @@ Route::group(['name' => 'admin', 'prefix' => 'admin', 'as' => 'admin.', 'middlew
         Route::put('/models/update/{id}', [ModelController::class, 'updateModel'])->name('updateModel');
         Route::resource('fare-setup', FareSetupController::class);
         Route::resource('route-setup', RouteController::class);
+        Route::get('route-setup/stations/{id}', [RouteController::class, 'stations'])->name('route-setup.stations');
+        Route::post('route-setup/stations/{id}', [RouteController::class, 'station_store'])->name('route-setup.station-store');
         Route::post('/route-setup-status', [RouteController::class, 'route_status'])->name('route-setup.status');
 
     });
@@ -116,9 +118,8 @@ Route::group(['name' => 'admin', 'prefix' => 'admin', 'as' => 'admin.', 'middlew
             Route::post('status', 'updateStatus')->name('status');
             Route::get('single-ticket/{id}', 'getView')->name('singleTicket');
             Route::post('reply/{id}', 'reply')->name('reply');
-          
+
         });
     });
-    
 
 });
