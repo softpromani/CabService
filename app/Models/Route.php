@@ -7,7 +7,12 @@ class Route extends Model
 {
     protected $guarded = [];
 
-    public function stations(){
-        return $this->hasMany(RouteStation::class,'route_id');
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', 1);
+    }
+    public function stations()
+    {
+        return $this->hasMany(RouteStation::class, 'route_id');
     }
 }

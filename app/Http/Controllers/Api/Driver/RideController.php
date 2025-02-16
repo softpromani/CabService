@@ -2,106 +2,71 @@
 namespace App\Http\Controllers\Api\Driver;
 
 use App\Http\Controllers\Controller;
-use App\Models\Car;
-use App\Models\RideSchedule;
-use App\Models\RideScheduleStation;
+use App\Models\Ride;
+use App\Models\RideStations;
+use App\Models\Route as RouteModel;
 use Carbon\Carbon;
+use DB;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class RideController extends Controller
 {
-    public function addRoute(Request $request)
+    public function getStations(RouteModel $route)
     {
-        $validated = Validator::make($request->all(), [
-            'start_at' => 'required|date|after_or_equal:now',
-            'end_at'   => 'required|date|after:start_at',
-        ]);
-        if ($validated->fails()) {
-            return response()->json(['errors' => $validated->errors()], 422);
-        }
-
-        $driver_id = auth()->id();
-        $car       = Car::where('driver_id', $driver_id)->first();
-        if (! $car) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No car associated with this driver.',
-            ], 404);
-        }
-
-        $start_at               = Carbon::parse($request->start_at);
-        $end_at                 = Carbon::parse($request->end_at);
-        $travel_time_in_minutes = $start_at->diffInMinutes($end_at);
-
-        $travel_time = [
-            'minutes' => "{$travel_time_in_minutes} min",
-            'hours'   => round($travel_time_in_minutes / 60, 2) . " hr",
-            'seconds' => ($travel_time_in_minutes * 60) . " sec",
-        ];
-
-        $route = RideSchedule::create([
-            'driver_id'   => $driver_id,
-            'car_id'      => $car->id,
-            'start_at'    => $request->start_at,
-            'end_at'      => $request->end_at,
-            'travel_time' => $travel_time_in_minutes,
-        ]);
-
-        return response()->json([
-            'status'  => 'success',
-            'message' => 'Route added successfully!',
-            'data'    => [
-                'route'       => $route,
-                'travel_time' => $travel_time,
-            ],
-        ]);
-    }
-
-    public function addStation(Request $request)
-    {
-
-        $station = RideScheduleStation::create([
-            'ride_schedule_id' => $request->ride_schedule_id,
-            'city_id'          => $request->city_id,
-            'point_name'       => $request->point_name,
-            'longitute'        => $request->longitude,
-            'latitude'         => $request->latitude,
-            'scheduled_time'   => $request->scheduled_time,
-        ]);
-
-        return response()->json([
-            'status'  => 'success',
-            'message' => 'Station added successfully!',
-            'data'    => $station,
-        ]);
-    }
-
-    public function getStations($route_id)
-    {
-        // Validate if the route exists
-        $stations = RideScheduleStation::where('ride_schedule_id', $route_id)->get();
-
-        if ($stations->isEmpty()) {
-            return response()->json([
-                'status'  => 'error',
-                'message' => 'No stations found for this route.',
-            ], 404);
-        }
-
         return response()->json([
             'status' => 'success',
-            'data'   => $stations,
+            'data'   => $route->first()->stations,
         ]);
     }
     public function getRoutes()
     {
         // Fetch all routes with their related driver and car
-        $routes = RideSchedule::with(['driver', 'car'])->get();
-
+        $routes = RouteModel::active()->get();
         return response()->json([
             'status' => 'success',
             'data'   => $routes,
         ]);
+    }
+    public function store(Request $request)
+    {
+        $request->validate([
+            'route_id'                         => 'required|exists:routes,id',
+            'available_seats'                  => 'required|integer|min:1',
+            'departure_time'                   => 'required|date',
+            'station_timings'                  => 'required|array', // Array of stations with timings
+            'station_timings.*.station_id'     => 'required|exists:stations,id',
+            'station_timings.*.arrival_time'   => 'required|date_format:Y-m-d H:i:s',
+            'station_timings.*.departure_time' => 'nullable|date_format:Y-m-d H:i:s|after_or_equal:station_timings.*.arrival_time',
+
+        ]);
+        DB::beginTransaction(); // Start the transaction
+        try {
+            $ride = Ride::create([
+                'driver_id'       => auth()->id(),
+                'route_id'        => $request->route_id,
+                'available_seats' => $request->available_seats,
+                'status'          => 'schedule',
+            ]);
+
+            // Store Station Timings
+            foreach ($request->station_timings as $station) {
+                RideStations::create([
+                    'ride_id'    => $ride->id,
+                    'station_id' => $station['station_id'],
+                    'arrival'    => Carbon::parse($station['arrival_time']),
+                    'departure'  => isset($station['departure_time']) ? Carbon::parse($station['departure_time']) : null,
+                ]);
+
+            }
+            DB::commit(); // Commit the transaction if everything is successful
+            return response()->json(['message' => 'Ride scheduled successfully!', 'ride' => $ride], 200);
+        } catch (\Exception $e) {
+            DB::rollBack(); // Rollback the transaction on any failure
+
+            return response()->json([
+                'message' => 'Failed to schedule ride!',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
     }
 }
