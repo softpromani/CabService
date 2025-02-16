@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('latitude');
             $table->dateTime('scheduled_time');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
