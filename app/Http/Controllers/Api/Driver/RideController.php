@@ -94,6 +94,9 @@ class RideController extends Controller
                     $routeQuery->where('name', 'like', '%' . $routeName . '%');
                 });
             })
+            ->when($request->input('status'), function ($query, $status) {
+                $query->where('status', $status);
+            })
             ->paginate(10);
 
         return response()->json([
