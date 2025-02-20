@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('route_id');
             $table->unsignedBigInteger('car_id');
             $table->integer('available_seats')->default(1);
+            $table->dateTime('ride_schedule_at');
             $table->enum('status', ['schedule', 'start', 'cancel']);
             $table->timestamps();
         });

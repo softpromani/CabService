@@ -91,7 +91,7 @@ class CarController extends Controller
             'insurance_number'    => 'nullable',
             'pollution_number'    => 'nullable',
             'rc_number'           => 'required',
-            'car_images.*'        => 'nullable',
+            'car_images.*'        => 'nullable|image|max:1024',
             'rc_document'         => 'nullable',
         ]);
 

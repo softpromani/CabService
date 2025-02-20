@@ -34,6 +34,7 @@ Route::group(['prefix' => 'driver', 'as' => 'driver.'], function () {
             Route::get('/', [RideController::class, 'getRoutes']);
             Route::get('/station/{route_id}', [RideController::class, 'getStations']);
             Route::post('/create', [RideController::class, 'store']);
+            Route::post('/your-ride', [RideController::class, 'driver_rides']);
         });
 
     });

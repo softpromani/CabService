@@ -31,10 +31,11 @@ class RideController extends Controller
     {
         $request->validate([
             'route_id'                         => 'required|exists:routes,id',
+            'car_id'                           => 'required|exists:cars,id',
             'available_seats'                  => 'required|integer|min:1',
-            'departure_time'                   => 'required|date',
+            'ride_schedule_at'                 => 'required|date_format:Y-m-d H:i:s',
             'station_timings'                  => 'required|array', // Array of stations with timings
-            'station_timings.*.station_id'     => 'required|exists:stations,id',
+            'station_timings.*.station_id'     => 'required|exists:route_stations,id',
             'station_timings.*.arrival_time'   => 'required|date_format:Y-m-d H:i:s',
             'station_timings.*.departure_time' => 'nullable|date_format:Y-m-d H:i:s|after_or_equal:station_timings.*.arrival_time',
 
@@ -42,10 +43,12 @@ class RideController extends Controller
         DB::beginTransaction(); // Start the transaction
         try {
             $ride = Ride::create([
-                'driver_id'       => auth()->id(),
-                'route_id'        => $request->route_id,
-                'available_seats' => $request->available_seats,
-                'status'          => 'schedule',
+                'driver_id'        => auth()->id(),
+                'route_id'         => $request->route_id,
+                'car_id'           => $request->car_id,
+                'available_seats'  => $request->available_seats,
+                'ride_schedule_at' => Carbon::parse($request->ride_schedule_at),
+                'status'           => 'schedule',
             ]);
 
             // Store Station Timings
@@ -68,5 +71,34 @@ class RideController extends Controller
                 'error'   => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function driver_rides(Request $request)
+    {
+        $request->validate([
+            'ride_schedule_at' => 'nullable|date',
+            'station_id'       => 'nullable|exists:ride_stations,id',
+            'route_name'       => 'nullable|string',
+        ]);
+        $rides = Ride::with(['route', 'car', 'ride_stations'])
+            ->when($request->input('ride_date'), function ($query, $date) {
+                $query->whereDate('ride_schedule_at', $date);
+            })
+            ->when($request->input('station_id'), function ($query, $stationId) {
+                $query->whereHas('ride_stations', function ($stationQuery) use ($stationId) {
+                    $stationQuery->where('station_id', $stationId);
+                });
+            })
+            ->when($request->input('route_name'), function ($query, $routeName) {
+                $query->whereHas('route', function ($routeQuery) use ($routeName) {
+                    $routeQuery->where('name', 'like', '%' . $routeName . '%');
+                });
+            })
+            ->paginate(10);
+
+        return response()->json([
+            'status' => 'success',
+            'rides'  => $rides,
+        ]);
     }
 }
