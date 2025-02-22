@@ -1,45 +1,33 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\ThirtPartApiRequest;
 
 class SettingController extends Controller
 {
-    function businessPages()
+    public function businessPages()
     {
         return view('admin.setting.business-pages');
     }
 
-    function thirdPartyApi($config=null)
+    public function thirdPartyApi($config = null)
     {
-        $data = getBusinessSetting($config);
+        $data = json_decode(getBusinessSetting($config));
         $page = $config;
-        return view('admin.setting.third-party-api', compact('data','page'));
+        return view('admin.setting.third-party-api', compact('data', 'page'));
     }
 
-    function thirdPartyApiPost(Request $request)
+    public function thirdPartyApiPost(ThirtPartApiRequest $request)
     {
-        $type = $request->type;
-
-        // Remove _token from request data
-        $value = json_encode($request->except('_token'));
-
-        // Update or create the setting
-        $data = updateBusinessSetting($type, $value);
-
-        if ($data === true) {
-            sweetalert()->success('Data updated successfully');
-        } else {
-            sweetalert()->error('Something went wrong!');
-        }
-
+        // dd($request->all());
+        $data = $request->validated();
+        updateBusinessSetting($request->type, json_encode($data));
+        toastr()->success('Data updated successfully');
         return redirect()->back();
     }
 
-
-    function socialMediaLinks()
+    public function socialMediaLinks()
     {
         $blogcategories = BlogCategory::get();
         return view('admin.setting.social-media-links', compact('blogcategories'));

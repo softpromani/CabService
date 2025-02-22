@@ -1,22 +1,22 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\admin\CscController;
-use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\BrandController;
-use App\Http\Controllers\admin\ModelController;
-use App\Http\Controllers\admin\RouteController;
-use App\Http\Controllers\admin\DriverController;
-use App\Http\Controllers\admin\TicketController;
-use App\Http\Controllers\Admin\SettingController;
-use App\Http\Controllers\RolePermissionController;
-use App\Http\Controllers\Admin\FareSetupController;
-use App\Http\Controllers\Admin\SocialMediaController;
-use App\Http\Controllers\admin\UserProfileController;
 use App\Http\Controllers\Admin\BusinessPageController;
 use App\Http\Controllers\Admin\BusinessSettingController;
+use App\Http\Controllers\admin\CscController;
+use App\Http\Controllers\admin\DriverController;
+use App\Http\Controllers\Admin\FareSetupController;
+use App\Http\Controllers\admin\ModelController;
+use App\Http\Controllers\admin\RouteController;
+use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\SocialMediaController;
+use App\Http\Controllers\admin\TicketController;
+use App\Http\Controllers\admin\UserController;
+use App\Http\Controllers\admin\UserProfileController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RolePermissionController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
@@ -108,7 +108,6 @@ Route::group(['name' => 'admin', 'prefix' => 'admin', 'as' => 'admin.', 'middlew
         Route::resource('business-pages', BusinessPageController::class);
         Route::get('third-party-api/{slug?}', [SettingController::class, 'thirdPartyApi'])->name('thirdPartyApi');
         Route::post('third-party-api-post', [SettingController::class, 'thirdPartyApiPost'])->name('thirdPartyApiPost');
-
         Route::resource('socialmedia', controller: SocialMediaController::class);
         Route::post('socialmedia/update-status', [SocialMediaController::class, 'updateStatus'])->name('socialmedia.update_status');
 

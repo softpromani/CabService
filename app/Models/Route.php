@@ -13,6 +13,6 @@ class Route extends Model
     }
     public function stations()
     {
-        return $this->hasMany(RouteStation::class, 'route_id');
+        return $this->hasMany(RouteStation::class, 'route_id', 'id');
     }
 }

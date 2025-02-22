@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\User\AuthController;
+use App\Http\Controllers\Api\User\BookingController;
 use App\Http\Controllers\Api\User\CustomerTicketController;
+use Illuminate\Support\Facades\Route;
 
 Route::prefix('user')->as('user.')->group(function () {
     Route::post('login', [AuthController::class, 'userLogin'])->name('login');
@@ -17,6 +18,11 @@ Route::prefix('user')->as('user.')->group(function () {
                 Route::post('reply/{ticket_id}', 'reply_support_ticket');
                 Route::get('close/{id}', 'support_ticket_close');
 
+            });
+            Route::group(['prefix' => 'booking', 'as' => 'booking.'], function () {
+                Route::controller(BookingController::class)->group(function () {
+                    Route::post('apply', 'apply_booking');
+                });
             });
         });
 
