@@ -84,7 +84,7 @@
 @section('script-area')
 
     <!-- Google Maps Script -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhXmXSE2JxpvyCwPct8nfZK2yJYH605kk&libraries=places">
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ getBusinessSetting('google-map')?->google_api_key }}&libraries=places">
     </script>
     <script>
         function initMap() {

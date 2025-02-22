@@ -13,7 +13,7 @@ class SettingController extends Controller
 
     public function thirdPartyApi($config = null)
     {
-        $data = json_decode(getBusinessSetting($config));
+        $data = getBusinessSetting($config);
         $page = $config;
         return view('admin.setting.third-party-api', compact('data', 'page'));
     }

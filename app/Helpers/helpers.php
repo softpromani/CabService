@@ -9,15 +9,44 @@ if (! function_exists('greet')) {
     }
 }
 
+if (! function_exists('isJson')) {
+    /**
+     * Check if a given string is a valid JSON.
+     *
+     * @param mixed $string
+     * @return bool
+     */
+    function isJson($string): bool
+    {
+        if (! is_string($string)) {
+            return false;
+        }
+
+        json_decode($string);
+        return json_last_error() === JSON_ERROR_NONE;
+    }
+}
+
 if (! function_exists('getBusinessSetting')) {
-    function getBusinessSetting($key)
+    /**
+     * Retrieve a business setting by key.
+     * If the stored value is JSON, it will be decoded as an object.
+     *
+     * @param string $key
+     * @return mixed|null
+     */
+    function getBusinessSetting(string $key)
     {
         $setting = BusinessSetting::where('type', $key)->first();
+
         if ($setting) {
-            return $setting->value;
-        } else {
-            return null;
+            $value = $setting->value;
+
+            // Check if the value is JSON and decode it as an object
+            return isJson($value) ? json_decode($value) : $value;
         }
+
+        return null;
     }
 }
 
