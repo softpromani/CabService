@@ -1,6 +1,8 @@
 <?php
 use App\Models\BusinessSetting;
 use Illuminate\Support\Facades\Log;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 if (! function_exists('greet')) {
     function greet($name)
@@ -91,5 +93,43 @@ if (! function_exists('distance_calculator')) {
         }
 
         return null;
+    }
+}
+
+if (! function_exists('uploadImage')) {
+    function uploadImage($image, $path = 'images')
+    {
+        if (! $image || ! $image->isValid()) {
+            return false;
+        }
+
+        $extension = $image->getClientOriginalExtension();
+        $filename  = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME);
+        $filename  = $filename . '_' . time();
+
+        try {
+            // ✅ Create ImageManager with GD driver (Mandatory in v3)
+            $manager = new ImageManager(new Driver());
+
+            if ($extension === 'gif') {
+                // Store GIF as is
+                $storedPath = $image->storeAs($path, $filename . '.gif', 'local');
+            } else {
+                // Convert to WebP
+                $webpPath = storage_path('app/' . $path . '/' . $filename . '.webp');
+
+                // ✅ Use `read` instead of `make` in v3
+                $manager->read($image)
+                    ->encode('webp', 90)
+                    ->save($webpPath);
+
+                $storedPath = $path . '/' . $filename . '.webp';
+            }
+
+            return $storedPath;
+        } catch (\Exception $e) {
+            \Log::error('Image upload failed: ' . $e->getMessage());
+            return false;
+        }
     }
 }

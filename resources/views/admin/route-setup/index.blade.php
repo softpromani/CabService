@@ -9,7 +9,7 @@
             Add New Route
         </div>
         <div class="card-body">
-            <form action="{{ isset($editRoute) ? route('admin.master.route-setup.update', $editRoute->id) : route('admin.master.route-setup.store') }}" method="POST">
+            <form action="{{ isset($editRoute) ? route('admin.master.route-setup.update', $editRoute->id) : route('admin.master.route-setup.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @if (isset($editRoute))
                     @method('put')
@@ -20,6 +20,9 @@
                     </div>
                     <div class="col-4 mt-3">
                         <x-input-box type="number" name="distance" required="true" value="{{ isset($editRoute) ? $editRoute->distance : '' }}" />
+                    </div>
+                    <div class="col-4 mt-3">
+                        <x-input-box type="file" name="image" required="true" />
                     </div>
                     <div class="col-4 mt-3">
                         <button type="submit" class="btn btn-primary mt-4">Submit</button>

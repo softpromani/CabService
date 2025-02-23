@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->decimal('distance')->default(1);
+            $table->string('image')->nullable();
             $table->boolean('is_active')->default(1);
             $table->timestamps();
         });

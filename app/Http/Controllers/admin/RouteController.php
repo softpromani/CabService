@@ -1,12 +1,12 @@
 <?php
 namespace App\Http\Controllers\admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\City;
 use App\Models\Route;
+use App\Models\Route as RouteModel;
 use App\Models\RouteStation;
 use Illuminate\Http\Request;
-use App\Models\Route as RouteModel;
-use App\Http\Controllers\Controller;
 
 class RouteController extends Controller
 {
@@ -74,7 +74,12 @@ class RouteController extends Controller
     {
         $data = $req->validate([
             'name'     => 'required|string|unique:routes,name',
-            'distance' => 'required|numeric']);
+            'distance' => 'required|numeric',
+            'image'    => 'required|image|max:512',
+        ]);
+        if ($req->hasFile('image')) {
+            $data['image'] = uploadImage($req->image, 'route-image');
+        }
         RouteModel::create($data);
         return redirect()->back();
 
