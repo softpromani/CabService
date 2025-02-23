@@ -41,7 +41,7 @@ return [
             'provider' => 'users',
         ],
         'api' => [
-            'driver' => 'passport', // Change this line to 'passport'
+            'driver' => 'sanctum', // Change this line to 'passport'
             'provider' => 'users',
         ],
     ],
