@@ -116,14 +116,15 @@ if (! function_exists('uploadImage')) {
                 $storedPath = $image->storeAs($path, $filename . '.gif', 'local');
             } else {
                 // Convert to WebP
-                $webpPath = storage_path('app/' . $path . '/' . $filename . '.webp');
+                // $webpPath = storage_path('app/' . $path . '/' . $filename . '.webp');
 
-                // ✅ Use `read` instead of `make` in v3
-                $manager->read($image)
-                    ->encode('webp', 90)
-                    ->save($webpPath);
+                // // ✅ Use `read` instead of `make` in v3
+                // $manager->read($image)
+                //     ->encode('webp', 90)
+                //     ->save($webpPath);
 
-                $storedPath = $path . '/' . $filename . '.webp';
+                // $storedPath = $path . '/' . $filename . '.webp';
+                $image->storeAs($path,$filename.'.'.$extension,'local');
             }
 
             return $storedPath;
