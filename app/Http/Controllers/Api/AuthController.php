@@ -1,10 +1,10 @@
 <?php
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -28,7 +28,7 @@ class AuthController extends Controller
             ['is_profile' => 0]
         );
         $tokenResult = $user->createToken('Personal Access Token');
-        $token       = $tokenResult->accessToken;
+        $token       = $tokenResult->plainTextToken;
 
         if ($user->is_active == 0) {
             return response()->json([
