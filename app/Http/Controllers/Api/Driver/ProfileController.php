@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Controllers\Api\Driver;
 
+use App\Http\Controllers\Controller;
 use App\Models\UserDocument;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
@@ -21,7 +21,7 @@ class ProfileController extends Controller
             'email'                  => 'required|email|unique:users,email,' . Auth::id(),
             'gender'                 => 'required|in:male,female',
             'dob'                    => 'required|date',
-            'user_image'             => 'nullable|image|max:2024',
+            'user_image'             => 'sometimes|image|max:2024',
             'driving_licence_number' => 'required',
             'driving_licence_front'  => 'nullable',
             'driving_licence_back'   => 'nullable',
@@ -43,20 +43,18 @@ class ProfileController extends Controller
         $user->city_id    = $request->city_id;
         $user->address    = $request->address;
         $user->is_profile = 1;
-        
 
         try {
             if ($request->hasFile('user_image')) {
                 $user->user_image = $request->file('user_image')->store('user_images', 'public');
             }
-            
+
             $user->save();
 
-           
             $documentTypes = [
                 'driving_licence' => ['number' => 'driving_licence_number', 'front' => 'driving_licence_front', 'back' => 'driving_licence_back'],
-                'adhar_card'          => ['number' => 'aadhar_number', 'front' => 'aadhar_front', 'back' => 'aadhar_back'],
-                'pan_card'             => ['number' => 'pan_number', 'front' => 'pan'],
+                'adhar_card'      => ['number' => 'aadhar_number', 'front' => 'aadhar_front', 'back' => 'aadhar_back'],
+                'pan_card'        => ['number' => 'pan_number', 'front' => 'pan'],
             ];
 
             foreach ($documentTypes as $type => $fields) {
