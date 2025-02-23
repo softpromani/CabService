@@ -124,7 +124,7 @@ if (! function_exists('uploadImage')) {
                 //     ->save($webpPath);
 
                 // $storedPath = $path . '/' . $filename . '.webp';
-                $image->storeAs($path,$filename.'.'.$extension,'local');
+              $storedPath=  $image->storeAs($path,$filename.'.'.$extension,'local');
             }
 
             return $storedPath;
