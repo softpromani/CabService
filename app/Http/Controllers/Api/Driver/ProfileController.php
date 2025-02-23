@@ -29,7 +29,7 @@ class ProfileController extends Controller
             'aadhar_front'           => 'required|image|max:1024',
             'aadhar_back'            => 'required|image|max:1024',
             'pan_number'             => 'sometimes',
-            'pan'                    => 'nullable',
+            'pan'                    => 'required_if:pan_number,!null|image|max:1024',
         ]);
 
         $user             = Auth::user();
