@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => 'driver', 'as' => 'driver.'], function () {
     Route::post('login', [AuthController::class, 'login'])->name('login');
 
-    Route::middleware(['auth:api'])->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/profile-update', [ProfileController::class, 'profile_update'])->name('profile-update');
         Route::post('/ride-schedule', [RideScheduleController::class, 'schedule']);
 
