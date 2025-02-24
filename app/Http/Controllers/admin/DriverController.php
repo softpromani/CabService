@@ -1,18 +1,18 @@
 <?php
 namespace App\Http\Controllers\admin;
 
-use App\Models\Car;
-use App\Models\City;
-use App\Models\User;
+use App\Http\Controllers\Controller;
 use App\Models\Brand;
-use App\Models\State;
-use App\Models\Country;
+use App\Models\Car;
 use App\Models\CarModel;
+use App\Models\City;
+use App\Models\Country;
+use App\Models\State;
+use App\Models\User;
 use App\Models\UserDocument;
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Role;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
+use Spatie\Permission\Models\Role;
 
 class DriverController extends Controller
 {
@@ -50,7 +50,7 @@ class DriverController extends Controller
             $startIndex = ($page - 1) * $perPage + 1;
 
             $drivers->getCollection()->transform(function ($item) use (&$startIndex) {
-                $item->index = $startIndex++; 
+                $item->index = $startIndex++;
 
                 $item->delete_action = '
                     <i class="fa-solid fa-trash text-danger delete_alert" data-id="' . $item->id . '" data-alert_message="Are you sure want to delete Driver?" data-alert_title="Delete"
@@ -61,8 +61,8 @@ class DriverController extends Controller
                 ';
 
                 $item->image = $item->user_image
-                    ? '<img src="' . Storage::url($item->user_image) . '" alt="Driver Image" style="height: 40px;">'
-                    : '<span class="text-muted">No Image</span>';
+                ? '<img src="' . Storage::url($item->user_image) . '" alt="Driver Image" style="height: 40px;">'
+                : '<span class="text-muted">No Image</span>';
 
                 $item->suspend_status = '<div class="form-check form-switch">
                     <input class="form-check-input confirmation_alert" type="checkbox" id="flexSwitchCheckChecked" ';
@@ -76,7 +76,7 @@ class DriverController extends Controller
                 $item->verify_status .= $item->is_verify ? 'checked=""' : '';
                 $item->verify_status .= 'data-id="' . $item->id . '" data-alert_message="want to change verification status?"
                     data-alert_title="Are you sure" data-alert_type="warning" data-alert_url="' . route('admin.user.status.update') . '"
-                    data-status_field="is_veify">
+                    data-status_field="is_verify">
                     </div>';
                 return $item;
             });
@@ -94,7 +94,6 @@ class DriverController extends Controller
         $drivers = User::role('Driver')->where('is_profile', 1)->get();
         return view('admin.user.driver', compact('drivers'));
     }
-
 
     /**
      * Show the form for creating a new resource.
@@ -132,10 +131,9 @@ class DriverController extends Controller
         $countries   = Country::get();
         $states      = State::get();
         $cities      = City::get();
-    
-        $documents    = $editUser->documents; 
-        
-        
+
+        $documents = $editUser->documents;
+
         return view('admin.driver.editDriver', compact('editUser', 'drivers', 'roles', 'currentRole', 'countries', 'states', 'cities', 'documents'));
     }
 
@@ -146,13 +144,13 @@ class DriverController extends Controller
     {
         $validated = $request->validate([
             'first_name' => 'required',
-            'last_name' => 'required',
-            'email' => 'required|email|unique:users,email,' . $id,
-            'phone' => 'required',
-            'gender' => 'required',
-            'password' => 'nullable',
+            'last_name'  => 'required',
+            'email'      => 'required|email|unique:users,email,' . $id,
+            'phone'      => 'required',
+            'gender'     => 'required',
+            'password'   => 'nullable',
             'user_image' => 'nullable',
-            
+
         ]);
 
         $user = User::find($id);
@@ -160,27 +158,27 @@ class DriverController extends Controller
             toastr()->error('User not found');
             return redirect()->route('admin.driver.index');
         }
-        $user->gender = $request->input( 'gender' );
-        $user->dob = $request->input( 'dob' );
-        $user->country_id = $request->input( 'country_id' );
-        $user->state_id = $request->input( 'state_id' );
-        $user->city_id = $request->input( 'city_id' );
-        $user->address = $request->input( 'address' );
+        $user->gender     = $request->input('gender');
+        $user->dob        = $request->input('dob');
+        $user->country_id = $request->input('country_id');
+        $user->state_id   = $request->input('state_id');
+        $user->city_id    = $request->input('city_id');
+        $user->address    = $request->input('address');
 
-        if ( $request->hasFile( 'user_image' ) ) {
-            $imageName = $request->file( 'user_image' )->store( 'userImages', 'public' );
+        if ($request->hasFile('user_image')) {
+            $imageName        = $request->file('user_image')->store('userImages', 'public');
             $user->user_image = $imageName;
         }
-        if ( $request->filled( 'password' ) ) {
-            $validated[ 'password' ] = Hash::make( $request->input( 'password' ) );
+        if ($request->filled('password')) {
+            $validated['password'] = Hash::make($request->input('password'));
         } else {
-            unset( $validated[ 'password' ] );
+            unset($validated['password']);
         }
 
         $user->update($validated);
-        $role_name = Role::find( $request->roleid );
-        if ( $role_name ) {
-            $user->syncRoles( [ $role_name->name ] );
+        $role_name = Role::find($request->roleid);
+        if ($role_name) {
+            $user->syncRoles([$role_name->name]);
         }
         $role = $user->getRoleNames()->first();
 
@@ -188,8 +186,8 @@ class DriverController extends Controller
 
         foreach ($documentTypes as $type => $prefix) {
             $identityNumber = $request->input("{$prefix}_number");
-            $documentFront = $request->file("{$prefix}_front") ? $request->file("{$prefix}_front")->store('userDocuments', 'public') : null;
-            $documentBack = $request->file("{$prefix}_back") ? $request->file("{$prefix}_back")->store('userDocuments', 'public') : null;
+            $documentFront  = $request->file("{$prefix}_front") ? $request->file("{$prefix}_front")->store('userDocuments', 'public') : null;
+            $documentBack   = $request->file("{$prefix}_back") ? $request->file("{$prefix}_back")->store('userDocuments', 'public') : null;
 
             if ($identityNumber) {
                 UserDocument::updateOrCreate(
@@ -206,8 +204,6 @@ class DriverController extends Controller
         toastr()->success('User and documents updated successfully');
         return redirect()->route('admin.driver.index');
     }
-
-
 
     /**
      * Remove the specified resource from storage.
@@ -228,7 +224,7 @@ class DriverController extends Controller
         $countries = Country::get();
         $states    = State::get();
         $cities    = City::get();
-        $user    = User::role('Driver')->with('documents')->findOrFail($id);
+        $user      = User::role('Driver')->with('documents')->findOrFail($id);
         return view('admin.user.driverProfile', compact('user', 'countries', 'states', 'cities'));
     }
 
@@ -241,8 +237,8 @@ class DriverController extends Controller
         if ($request->ajax()) {
             $columns = [
                 ['title' => 'ID', 'field' => 'id'],
-                ['title' => 'Brand', 'field' => 'brand_name', 'headerFilter' => "input"], 
-                ['title' => 'Model', 'field' => 'model_name', 'headerFilter' => "input"], 
+                ['title' => 'Brand', 'field' => 'brand_name', 'headerFilter' => "input"],
+                ['title' => 'Model', 'field' => 'model_name', 'headerFilter' => "input"],
                 ['title' => 'Interior', 'field' => 'interior', 'headerFilter' => "input"],
                 ['title' => 'Color', 'field' => 'color', 'headerFilter' => "input"],
                 ['title' => 'Registration Number', 'field' => 'registration_number', 'headerFilter' => "input"],
@@ -262,18 +258,18 @@ class DriverController extends Controller
             $paginatedCars = $query->paginate($perPage, ['*'], 'page', $page);
 
             $paginatedCars->getCollection()->transform(function ($item) {
-                $item->brand_name = $item->brand->brand_name ?? 'N/A'; 
-                $item->model_name = $item->model->model_name ?? 'N/A'; 
+                $item->brand_name = $item->brand->brand_name ?? 'N/A';
+                $item->model_name = $item->model->model_name ?? 'N/A';
 
-                // Add actions with View and Edit buttons
-                $viewUrl = route('admin.cars.viewCars', $item->id); // Adjust route name as needed
-                $editUrl = route('admin.cars.editcar', $item->id); // Adjust route name as needed
+                                                                          // Add actions with View and Edit buttons
+                $viewUrl       = route('admin.cars.viewCars', $item->id); // Adjust route name as needed
+                $editUrl       = route('admin.cars.editcar', $item->id);  // Adjust route name as needed
                 $item->actions = '
                     <a href="' . $viewUrl . '" class="btn btn-sm ">
-                        <i class="fa-solid fa-eye text-primary"></i> 
+                        <i class="fa-solid fa-eye text-primary"></i>
                     </a>
                     <a href="' . $editUrl . '" class="btn btn-sm ">
-                        <i class="fa-solid fa-pen-to-square text-warning"></i> 
+                        <i class="fa-solid fa-pen-to-square text-warning"></i>
                     </a>
                 ';
                 return $item;
@@ -291,18 +287,17 @@ class DriverController extends Controller
         return view('admin.driver.car', compact('driver', 'cars'));
     }
 
-
     public function viewCars($id)
     {
         $car = Car::with(['brand', 'model'])->findOrFail($id);
-        return view('admin.driver.car.viewCar', compact( 'car'));
+        return view('admin.driver.car.viewCar', compact('car'));
     }
     public function editcar($id)
     {
-        $brands = Brand::get();
+        $brands    = Brand::get();
         $carModels = CarModel::get();
-        $car = Car::findOrFail($id);
-        return view('admin.driver.car.editCar', compact('car','brands','carModels')); 
+        $car       = Car::findOrFail($id);
+        return view('admin.driver.car.editCar', compact('car', 'brands', 'carModels'));
     }
     public function updateCar(Request $request, $id)
     {
@@ -316,8 +311,8 @@ class DriverController extends Controller
             'insurance_number'    => 'nullable|string|max:255',
             'pollution_number'    => 'nullable|string|max:255',
             'rc_number'           => 'nullable|string|max:255',
-            'car_images.*'        => 'nullable', 
-            'rc_document'         => 'nullable', 
+            'car_images.*'        => 'nullable',
+            'rc_document'         => 'nullable',
         ]);
 
         $car = Car::findOrFail($id);
@@ -337,10 +332,10 @@ class DriverController extends Controller
         if ($request->hasFile('car_images')) {
             $carImages = [];
             foreach ($request->file('car_images') as $image) {
-                $path = $image->store('car_images', 'public'); 
+                $path        = $image->store('car_images', 'public');
                 $carImages[] = $path;
             }
-            $car->car_images = json_encode($carImages); 
+            $car->car_images = json_encode($carImages);
         }
 
         if ($request->hasFile('rc_document')) {
@@ -348,7 +343,7 @@ class DriverController extends Controller
                 Storage::disk('public')->delete($car->rc_document);
             }
 
-            $rcPath = $request->file('rc_document')->store('rc_documents', 'public');
+            $rcPath           = $request->file('rc_document')->store('rc_documents', 'public');
             $car->rc_document = $rcPath;
         }
 
@@ -361,25 +356,22 @@ class DriverController extends Controller
         $models = CarModel::where('brand_id', $brandId)->get();
 
         return response()->json([
-            'models' => $models
+            'models' => $models,
         ]);
     }
     public function deleteImage($id, $image)
     {
-        $car = Car::findOrFail($id);
-        $images = json_decode($car->car_images, true);  
+        $car    = Car::findOrFail($id);
+        $images = json_decode($car->car_images, true);
 
         $images = array_filter($images, fn($img) => $img !== 'car_images/' . $image);
 
-        $car->car_images = json_encode($images);  
+        $car->car_images = json_encode($images);
         $car->save();
 
         Storage::delete('public/car_images/' . $image);
 
         return back()->with('success', 'Image deleted successfully.');
     }
-
-
-
 
 }
