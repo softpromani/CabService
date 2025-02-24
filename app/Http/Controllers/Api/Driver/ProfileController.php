@@ -11,6 +11,7 @@ class ProfileController extends Controller
    
     public function profile_update(Request $request)
     {
+        return response()->json($request->all());
         $validated = $request->validate([
             'first_name'             => 'required',
             'last_name'              => 'required',
