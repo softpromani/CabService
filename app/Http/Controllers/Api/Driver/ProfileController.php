@@ -8,11 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
-    /**
-     * @param \Illuminate\Http\Request $request
-     * @return void
-     * @header Bearer
-     */
+   
     public function profile_update(Request $request)
     {
         $validated = $request->validate([
