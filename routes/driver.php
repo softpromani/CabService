@@ -5,7 +5,6 @@ use App\Http\Controllers\Api\Driver\CarController;
 use App\Http\Controllers\Api\Driver\CountryStateCityController;
 use App\Http\Controllers\Api\Driver\ProfileController;
 use App\Http\Controllers\Api\Driver\RideController;
-use App\Http\Controllers\Api\Driver\RideScheduleController;
 use Illuminate\Support\Facades\Route;
 
 // Driver Api
@@ -15,8 +14,6 @@ Route::group(['prefix' => 'driver', 'as' => 'driver.'], function () {
 
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/profile-update', [ProfileController::class, 'profile_update'])->name('profile-update');
-        Route::post('/ride-schedule', [RideScheduleController::class, 'schedule']);
-
         Route::get('/countries', [CountryStateCityController::class, 'getCountries']);
         Route::get('/states/{country_id}', [CountryStateCityController::class, 'getStates']);
         Route::get('/cities/{state_id}', [CountryStateCityController::class, 'getCities']);

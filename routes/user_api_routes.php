@@ -21,7 +21,10 @@ Route::prefix('user')->as('user.')->group(function () {
             });
             Route::group(['prefix' => 'booking', 'as' => 'booking.'], function () {
                 Route::controller(BookingController::class)->group(function () {
+                    Route::get('get-route', 'get_route');
+                    Route::post('ride-find', 'find_rides');
                     Route::post('apply', 'apply_booking');
+                    Route::post('confirm', 'confirm_booking');
                 });
             });
         });

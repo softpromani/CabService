@@ -1,12 +1,14 @@
 <?php
 namespace App\Services;
 
+use App\Models\MasterFare;
+
 class FareCalculator
 {
     public static function calculateFare($distance, $time, $vehicleType)
     {
         // Fetch all applicable slabs for the vehicle type in ascending order of min_km
-        $fareSlabs = Fare::where('vehicle_type', $vehicleType)
+        $fareSlabs = MasterFare::where('vehicle_type', $vehicleType)
             ->orderBy('min_km', 'asc')
             ->get();
 

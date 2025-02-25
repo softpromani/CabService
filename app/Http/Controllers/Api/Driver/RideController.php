@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Api\Driver;
 
 use App\Http\Controllers\Controller;
 use App\Models\Ride;
+use App\Models\RideSeatSegment;
 use App\Models\RideStations;
 use App\Models\Route as RouteModel;
 use Carbon\Carbon;
@@ -34,14 +35,16 @@ class RideController extends Controller
             'car_id'                           => 'required|exists:cars,id',
             'available_seats'                  => 'required|integer|min:1',
             'ride_schedule_at'                 => 'required|date_format:Y-m-d H:i:s',
-            'station_timings'                  => 'required|array', // Array of stations with timings
+            'station_timings'                  => 'required|array',
             'station_timings.*.station_id'     => 'required|exists:route_stations,id',
             'station_timings.*.arrival_time'   => 'required|date_format:Y-m-d H:i:s',
             'station_timings.*.departure_time' => 'nullable|date_format:Y-m-d H:i:s|after_or_equal:station_timings.*.arrival_time',
-
         ]);
-        DB::beginTransaction(); // Start the transaction
+
+        DB::beginTransaction();
+
         try {
+            // Create Ride
             $ride = Ride::create([
                 'driver_id'        => auth()->id(),
                 'route_id'         => $request->route_id,
@@ -52,24 +55,35 @@ class RideController extends Controller
             ]);
 
             // Store Station Timings
+            $stations = [];
             foreach ($request->station_timings as $station) {
                 RideStations::create([
                     'ride_id'    => $ride->id,
                     'station_id' => $station['station_id'],
                     'arrival'    => Carbon::parse($station['arrival_time']),
-                    'departure'  => isset($station['departure_time']) ? Carbon::parse($station['departure_time']) : null,
+                    'departure'  => $station['departure_time'] ? Carbon::parse($station['departure_time']) : null,
                 ]);
-
+                $stations[] = $station['station_id'];
             }
-            DB::commit(); // Commit the transaction if everything is successful
-            return response()->json(['message' => 'Ride scheduled successfully!', 'ride' => $ride], 200);
-        } catch (\Exception $e) {
-            DB::rollBack(); // Rollback the transaction on any failure
 
-            return response()->json([
-                'message' => 'Failed to schedule ride!',
-                'error'   => $e->getMessage(),
-            ], 500);
+            // Generate Ride Seat Segments
+            for ($i = 0; $i < count($stations) - 1; $i++) {
+                for ($j = $i + 1; $j < count($stations); $j++) {
+                    RideSeatSegment::create([
+                        'ride_id'         => $ride->id,
+                        'from_station_id' => $stations[$i],
+                        'to_station_id'   => $stations[$j],
+                        'occupied_seats'  => 0,
+                    ]);
+                }
+            }
+
+            DB::commit();
+            return response()->json(['message' => 'Ride scheduled successfully!', 'ride' => $ride], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Failed to schedule ride!', 'error' => $e->getMessage()], 500);
         }
     }
 

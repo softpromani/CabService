@@ -69,15 +69,14 @@ if (! function_exists('updateBusinessSetting')) {
     }
 }
 
-if (! function_exists('distance_calculator')) {
+if (! function_exists('getDistanceByRoad')) {
     function getDistanceByRoad($origin, $destination)
     {
-        $apiKey   = env('GOOGLE_MAPS_API_KEY');
         $response = Http::get('https://maps.googleapis.com/maps/api/distancematrix/json', [
             'origins'      => $origin,
             'destinations' => $destination,
             'mode'         => 'driving',
-            'key'          => 'AIzaSyBhXmXSE2JxpvyCwPct8nfZK2yJYH605kk',
+            'key'          => getBusinessSetting('google-map')?->google_api_key,
         ]);
 
         if ($response->successful()) {
@@ -124,7 +123,7 @@ if (! function_exists('uploadImage')) {
                 //     ->save($webpPath);
 
                 // $storedPath = $path . '/' . $filename . '.webp';
-              $storedPath=  $image->storeAs($path,$filename.'.'.$extension,'local');
+                $storedPath = $image->storeAs($path, $filename . '.' . $extension, 'local');
             }
 
             return $storedPath;

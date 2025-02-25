@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('rider_id');
+            $table->unsignedBigInteger('ride_id');
             $table->unsignedBigInteger('pickup_station_id');
             $table->unsignedBigInteger('dropoff_station_id');
-            $table->decimal('total_distance',10,2);
-            $table->decimal('fare_amount',10,2);
-            $table->enum('status',['pending', 'confirmed', 'cancelled'])->default('pending');
+            $table->decimal('total_distance', 10, 2);
+            $table->decimal('fare_amount', 10, 2);
+            $table->enum('status', ['pending', 'confirmed', 'cancelled'])->default('pending');
             $table->timestamps();
         });
     }
