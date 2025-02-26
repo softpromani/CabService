@@ -23,24 +23,23 @@ class FareSetupController extends Controller
             $perPage   = $request->query('size', 10);
             $sortField = $request->query('sort.0.field', 'id');
             $sortOrder = $request->query('sort.0.dir', 'asc');
-            $query     = MasterFare::query();
+
+            $query = MasterFare::query();
             if ($sortField && $sortOrder) {
                 $query->orderBy($sortField, $sortOrder);
             }
 
-            $fares        = $query->paginate($perPage, ['*'], 'page', $page);
-            $serialNumber = ($page - 1) * $perPage + 1;
-            $fares->getCollection()->transform(function ($item) use (&$serialNumber) {
-                $item->fare_id = $serialNumber++;
-            });
+            $fares = $query->paginate($perPage, ['*'], 'page', $page);
+
+            // Debugging Output
             return response()->json([
                 'columns'   => $columns,
                 'last_page' => $fares->lastPage(),
                 'data'      => $fares->items(),
                 'total'     => $fares->total(),
             ]);
-
         }
+
         return view('admin.fare-setup.index');
     }
 
