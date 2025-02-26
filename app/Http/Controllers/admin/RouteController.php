@@ -120,15 +120,9 @@ class RouteController extends Controller
             return response()->json(['message' => 'Route not found'], 404);
         }
 
-        $arrview = [
-            'route'    => $route,
-            'stations' => $route->stations,
-            'cities'   => City::pluck('city_name', 'id')->toArray(),
-        ];
-
         if ($request->ajax()) {
             $columns = [
-                ['title' => 'ID', 'field' => 'id'],
+                ['title' => 'S.No', 'field' => 'serial_number'], // ID ki jagah Serial Number
                 ['title' => 'Point Name', 'field' => 'point_name', 'headerFilter' => "input"],
                 ['title' => 'City', 'field' => 'city_name', 'headerFilter' => "input"],
                 ['title' => 'Scheduled Time', 'field' => 'scheduled_time', 'headerFilter' => "input"],
@@ -142,7 +136,6 @@ class RouteController extends Controller
             $sortField = $request->query('sort.0.field', 'id');
             $sortOrder = $request->query('sort.0.dir', 'asc');
 
-            // Route ID ka filter yahan ensure karna hai
             $query = RouteStation::where('route_id', $route_id)->with('city');
 
             if ($sortField && $sortOrder) {
@@ -151,7 +144,12 @@ class RouteController extends Controller
 
             $stations = $query->paginate($perPage, ['*'], 'page', $page);
 
-            $stations->getCollection()->transform(function ($station) {
+            // **Adding Serial Number Instead of Database ID**
+            $startSerial = ($stations->currentPage() - 1) * $perPage + 1;
+
+            $stations->getCollection()->transform(function ($station) use (&$startSerial) {
+                $station->serial_number = $startSerial++; // Serial Number Set
+
                 $station->city_name = $station->city ? $station->city->city_name : 'N/A';
 
                 $station->delete_action = '
@@ -178,7 +176,11 @@ class RouteController extends Controller
             ]);
         }
 
-        return view('admin.route-setup.stations', $arrview);
+        return view('admin.route-setup.stations', [
+            'route'    => $route,
+            'stations' => $route->stations,
+            'cities'   => City::pluck('city_name', 'id')->toArray(),
+        ]);
     }
 
     public function station_store(Request $req, $route_id)
