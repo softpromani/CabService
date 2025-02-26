@@ -112,14 +112,17 @@ class RouteController extends Controller
 
     }
 
-    public function stations(Request $request, RouteModel $routeModel)
+    public function stations(Request $request, RouteModel $routeModel, $route_id)
     {
+        $route = $routeModel->find($route_id);
 
-        $route = $routeModel->first();
+        if (! $route) {
+            return response()->json(['message' => 'Route not found'], 404);
+        }
 
         $arrview = [
             'route'    => $route,
-            'stations' => $route ? $route->stations : [],
+            'stations' => $route->stations,
             'cities'   => City::pluck('city_name', 'id')->toArray(),
         ];
 
@@ -139,9 +142,9 @@ class RouteController extends Controller
             $sortField = $request->query('sort.0.field', 'id');
             $sortOrder = $request->query('sort.0.dir', 'asc');
 
-            $query = RouteStation::where('route_id', $route->id)->with('city');
+            // Route ID ka filter yahan ensure karna hai
+            $query = RouteStation::where('route_id', $route_id)->with('city');
 
-            // Apply sorting
             if ($sortField && $sortOrder) {
                 $query->orderBy($sortField, $sortOrder);
             }
@@ -152,17 +155,17 @@ class RouteController extends Controller
                 $station->city_name = $station->city ? $station->city->city_name : 'N/A';
 
                 $station->delete_action = '
-                <i class="fa-solid fa-trash text-danger delete_alert" data-id="' . $station->id . '" data-alert_message="Are you sure want to delete Station?" data-alert_title="Delete"
-                    data-alert_type="warning" data-alert_url="' . route('admin.master.route-setup.station_destroy', $station->id) . '"></i>&nbsp;&nbsp;
-                    <a href="javascript:void(0)" class="text-black edit-station" data-bs-target="#stationModal" data-bs-toggle="modal"
-                        data-id="' . $station->id . '"
-                        data-city_id="' . $station->city_id . '"
-                        data-point_name="' . $station->point_name . '"
-                        data-scheduled_time="' . $station->scheduled_time . '"
-                        data-latitude="' . $station->latitude . '"
-                        data-longitute="' . $station->longitute . '">
-                        <i class="fa-solid fa-pen-to-square text-primary"></i>
-                    </a>';
+            <i class="fa-solid fa-trash text-danger delete_alert" data-id="' . $station->id . '" data-alert_message="Are you sure want to delete Station?" data-alert_title="Delete"
+                data-alert_type="warning" data-alert_url="' . route('admin.master.route-setup.station_destroy', $station->id) . '"></i>&nbsp;&nbsp;
+                <a href="javascript:void(0)" class="text-black edit-station" data-bs-target="#stationModal" data-bs-toggle="modal"
+                    data-id="' . $station->id . '"
+                    data-city_id="' . $station->city_id . '"
+                    data-point_name="' . $station->point_name . '"
+                    data-scheduled_time="' . $station->scheduled_time . '"
+                    data-latitude="' . $station->latitude . '"
+                    data-longitute="' . $station->longitute . '">
+                    <i class="fa-solid fa-pen-to-square text-primary"></i>
+                </a>';
 
                 return $station;
             });
