@@ -13,7 +13,7 @@ class SocialMediaController extends Controller
     public function index()
     {
         $socialmedias = SocialMedia::get();
-        return view('admin.setting.social-media-links', compact('socialmedias'));
+        return view('admin.Setting.social-media-links', compact('socialmedias'));
     }
 
     /**

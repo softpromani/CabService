@@ -3,7 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\admin\BrandController;
 use App\Http\Controllers\admin\BusinessPageController;
-use App\Http\Controllers\Admin\BusinessSettingController;
+use App\Http\Controllers\admin\BusinessSettingController;
 use App\Http\Controllers\admin\CscController;
 use App\Http\Controllers\admin\DriverController;
 use App\Http\Controllers\admin\FareSetupController;

@@ -13,7 +13,7 @@ class BusinessPageController extends Controller
     {
         $data = getBusinessSetting($request->page);
         $page = $request->page;
-        return view('admin.setting.business-pages', compact('page', 'data'));
+        return view('admin.Setting.business-pages', compact('page', 'data'));
     }
 
     /**
