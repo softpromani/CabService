@@ -2,15 +2,15 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\admin\BrandController;
-use App\Http\Controllers\Admin\BusinessPageController;
+use App\Http\Controllers\admin\BusinessPageController;
 use App\Http\Controllers\Admin\BusinessSettingController;
 use App\Http\Controllers\admin\CscController;
 use App\Http\Controllers\admin\DriverController;
-use App\Http\Controllers\Admin\FareSetupController;
+use App\Http\Controllers\admin\FareSetupController;
 use App\Http\Controllers\admin\ModelController;
 use App\Http\Controllers\admin\RouteController;
-use App\Http\Controllers\Admin\SettingController;
-use App\Http\Controllers\Admin\SocialMediaController;
+use App\Http\Controllers\admin\SettingController;
+use App\Http\Controllers\admin\SocialMediaController;
 use App\Http\Controllers\admin\TicketController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\UserProfileController;
