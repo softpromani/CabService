@@ -11,7 +11,7 @@
         @if(auth()->user()->hasAnyRole(['admin', 'Super Admin']))
         <li class="nav-item">
             <a class="nav-link collapsed" data-bs-target="#components-nav-user" data-bs-toggle="collapse" href="#">
-                <i class="bi bi-person"></i>
+                <i class="bi bi-person-check"></i>
                 <span>User</span>
                 <i class="bi bi-chevron-down ms-auto"></i>
             </a>
@@ -39,7 +39,7 @@
         @if(auth()->user()->hasAnyRole(['admin', 'Super Admin']))
         <li class="nav-item">
             <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
-                <i class="bi bi-menu-button-wide"></i><span>Role / Permision</span><i
+                <i class="bi bi-shield-lock"></i><span>Role / Permision</span><i
                     class="bi bi-chevron-down ms-auto"></i>
             </a>
             <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
@@ -57,7 +57,7 @@
         @if(auth()->user()->hasAnyRole(['admin', 'Super Admin']))
         <li class="nav-item">
             <a class="nav-link collapsed" data-bs-target="#components1-nav" data-bs-toggle="collapse" href="#">
-                <i class="bi bi-menu-button-wide"></i><span>Master Setup</span><i
+                <i class="bi bi-database-gear"></i><span>Master Setup</span><i
                     class="bi bi-chevron-down ms-auto"></i>
             </a>
             <ul id="components1-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
@@ -106,7 +106,7 @@
         @if(auth()->user()->hasAnyRole(['admin', 'Super Admin']))
         <li class="nav-item">
             <a class="nav-link collapsed" data-bs-target="#components2-nav" data-bs-toggle="collapse" href="#">
-                <i class="bi bi-menu-button-wide"></i><span>Business Setup</span><i
+                <i class="bi bi-briefcase"></i><span>Business Setup</span><i
                     class="bi bi-chevron-down ms-auto"></i>
             </a>
             <ul id="components2-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
@@ -137,7 +137,7 @@
         @if(auth()->user()->hasAnyRole(['admin', 'Super Admin']))
         <li class="nav-item">
             <a class="nav-link collapsed" data-bs-target="#components3-nav" data-bs-toggle="collapse" href="#">
-                <i class="bi bi-menu-button-wide"></i><span> Ticket</span><i
+                <i class="bi bi-ticket-detailed"></i><span> Ticket</span><i
                     class="bi bi-chevron-down ms-auto"></i>
             </a>
             <ul id="components3-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
