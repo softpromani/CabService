@@ -14,7 +14,7 @@ class BusinessSettingController extends Controller
     public function index()
     {
         $countries = Country::get();
-        return view('admin.setting.business-setting', compact('countries'));
+        return view('admin.Setting.business-setting', compact('countries'));
     }
 
     /**
