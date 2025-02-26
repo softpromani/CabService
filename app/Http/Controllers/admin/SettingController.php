@@ -15,7 +15,7 @@ class SettingController extends Controller
     {
         $data = getBusinessSetting($config);
         $page = $config;
-        return view('admin.setting.third-party-api', compact('data', 'page'));
+        return view('admin.Setting.third-party-api', compact('data', 'page'));
     }
 
     public function thirdPartyApiPost(ThirtPartApiRequest $request)
