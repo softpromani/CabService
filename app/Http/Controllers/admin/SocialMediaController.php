@@ -1,6 +1,5 @@
 <?php
-
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\SocialMedia;
@@ -13,8 +12,8 @@ class SocialMediaController extends Controller
      */
     public function index()
     {
-        $socialmedias=SocialMedia::get();
-        return view('admin.setting.social-media-links',compact(  'socialmedias'));
+        $socialmedias = SocialMedia::get();
+        return view('admin.setting.social-media-links', compact('socialmedias'));
     }
 
     /**
@@ -32,8 +31,8 @@ class SocialMediaController extends Controller
     {
         $data = [
             //Database column_name => Form field name
-            'name'=>$request->name,
-            'link'=>$request->link,
+            'name' => $request->name,
+            'link' => $request->link,
         ];
 
         $socialmedia = SocialMedia::create($data);
@@ -53,7 +52,7 @@ class SocialMediaController extends Controller
      */
     public function edit(SocialMedia $socialmedia)
     {
-        $editsocialmedia= $socialmedia;
+        $editsocialmedia = $socialmedia;
         // dd(vars: $editsocialmedia);
 
         $socialmedias = SocialMedia::get();
@@ -63,10 +62,10 @@ class SocialMediaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request,SocialMedia $socialmedia)
+    public function update(Request $request, SocialMedia $socialmedia)
     {
         // dd($request->all());
-        $socialmedia= SocialMedia::find($request->id);
+        $socialmedia = SocialMedia::find($request->id);
 
         if ($socialmedia) {
             $socialmedia->status = $request->status;

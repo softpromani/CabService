@@ -1,6 +1,5 @@
 <?php
-
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -14,7 +13,7 @@ class BusinessPageController extends Controller
     {
         $data = getBusinessSetting($request->page);
         $page = $request->page;
-        return view('admin.setting.business-pages',compact('page','data'));
+        return view('admin.setting.business-pages', compact('page', 'data'));
     }
 
     /**
@@ -31,7 +30,7 @@ class BusinessPageController extends Controller
     public function store(Request $request)
     {
         $data = updateBusinessSetting($request->page, $request->data);
-        if($data == true){
+        if ($data == true) {
             sweetalert()->success('Data updated successfully');
         } else {
             sweetalert()->error('Something went wrong!');

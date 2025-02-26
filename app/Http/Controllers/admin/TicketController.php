@@ -1,46 +1,44 @@
 <?php
 namespace App\Http\Controllers\admin;
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Models\supportTicket;
 use App\Models\supportTicketConv;
-use App\Http\Controllers\Controller;
-use App\Http\Controllers\admin\TicketController;
+use Illuminate\Http\Request;
 
 class TicketController extends Controller
 {
 
     public function index(Request $request)
-{
-    $query = SupportTicket::orderBy('id', 'desc');
+    {
+        $query = SupportTicket::orderBy('id', 'desc');
 
-    // Search by subject
-    if ($request->has('searchValue') && !empty($request->searchValue)) {
-        $search = $request->searchValue;
-        $query->where('subject', 'LIKE', "%{$search}%");
+        // Search by subject
+        if ($request->has('searchValue') && ! empty($request->searchValue)) {
+            $search = $request->searchValue;
+            $query->where('subject', 'LIKE', "%{$search}%");
+        }
+
+        // Filter by priority
+        if ($request->has('priority') && $request->priority != 'all') {
+            $query->where('priority', $request->priority);
+        }
+
+        // Filter by status
+        if ($request->has('status') && $request->status != 'all') {
+            $query->where('status', $request->status);
+        }
+
+        $tickets = $query->get();
+
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('admin.support-ticket.ticket', compact('tickets'))->render(),
+            ]);
+        }
+
+        return view('admin.support-ticket.ticket', compact('tickets'));
     }
-
-    // Filter by priority
-    if ($request->has('priority') && $request->priority != 'all') {
-        $query->where('priority', $request->priority);
-    }
-
-    // Filter by status
-    if ($request->has('status') && $request->status != 'all') {
-        $query->where('status', $request->status);
-    }
-
-    $tickets = $query->get();
-
-    if ($request->ajax()) {
-        return response()->json([
-            'html' => view('admin.support-ticket.ticket', compact('tickets'))->render(),
-        ]);
-    }
-
-    return view('admin.support-ticket.ticket', compact('tickets'));
-}
-
 
     public function updateStatus(Request $request)
     {
@@ -61,7 +59,7 @@ class TicketController extends Controller
 
     public function reply(Request $request)
     {
-        
+
         if ($request->attachment == null && $request->replay == null) {
             toastr()->error('Type something!');
             return back();
