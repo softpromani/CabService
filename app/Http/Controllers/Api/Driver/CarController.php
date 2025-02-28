@@ -21,8 +21,9 @@ class CarController extends Controller
             'insurance_number'    => 'nullable|string|max:255',
             'pollution_number'    => 'nullable|string|max:255',
             'rc_number'           => 'required|string|max:255|unique:cars,rc_number',
+            'car_images'          => 'sometimes|array',
             'car_images.*'        => 'nullable|image',
-            'rc_document'         => 'sometimes|image',
+            'rc_document'         => 'sometimes|file',
         ]);
 
         $car = Car::create([
