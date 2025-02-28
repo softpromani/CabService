@@ -13,6 +13,7 @@ Route::group(['prefix' => 'driver', 'as' => 'driver.'], function () {
     Route::post('login', [AuthController::class, 'login'])->name('login');
 
     Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('profile', [ProfileController::class, 'get_profile']);
         Route::post('/profile-update', [ProfileController::class, 'profile_update'])->name('profile-update');
         Route::get('/countries', [CountryStateCityController::class, 'getCountries']);
         Route::get('/states/{country_id}', [CountryStateCityController::class, 'getStates']);
@@ -32,6 +33,7 @@ Route::group(['prefix' => 'driver', 'as' => 'driver.'], function () {
             Route::get('/station/{route_id}', [RideController::class, 'getStations']);
             Route::post('/create', [RideController::class, 'store']);
             Route::post('/your-ride', [RideController::class, 'driver_rides']);
+            Route::post('/change-status', [RideController::class, 'ride_status_change']);
         });
 
     });

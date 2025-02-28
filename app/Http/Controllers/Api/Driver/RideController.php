@@ -118,4 +118,18 @@ class RideController extends Controller
             'rides'  => $rides,
         ]);
     }
+
+    public function ride_status_change(Request $req)
+    {
+        $data = $req->validate([
+            'ride_id' => 'required|exists:rides,id',
+            'status'  => 'required|in:started,completed',
+        ]);
+        $ride = Ride::find($data['ride_id']);
+        if ($ride->driver_id != auth()->user()->id) {
+            return response()->json(['error' => 'You are not authorise to change this ride status']);
+        }
+        $ride->update(['status' => $data['status']]);
+        return response()->json(['message' => 'Status Changed Successfully']);
+    }
 }

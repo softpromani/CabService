@@ -3,12 +3,13 @@ namespace App\Http\Controllers\Api\Driver;
 
 use App\Http\Controllers\Controller;
 use App\Models\UserDocument;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
-   
+
     public function profile_update(Request $request)
     {
         // return response()->json($request->all());
@@ -81,6 +82,24 @@ class ProfileController extends Controller
                 'message' => 'Error updating profile: ' . $ex->getMessage(),
             ], 500);
         }
+    }
+
+    public function get_profile()
+    {
+        $createdAt = Carbon::parse(auth()->user()->created_at); // Force Carbon instance
+        $now       = Carbon::now();
+
+        $years  = $createdAt->diff($now)->y; // Get only years
+        $months = $createdAt->diff($now)->m; // Get only months
+
+        $data = [
+            'user'              => auth()->user(),
+            'orders'            => 10,
+            'registered_months' => "{$years}y {$months}m", // Correct string formatting
+            'cars_registration' => optional(auth()->user()->car)->registration_number,
+            'documents'         => auth()->user()->documents,
+        ];
+        return response()->json(['data' => $data, 'message' => 'Profile Fetch Successfully']);
     }
 
 }
