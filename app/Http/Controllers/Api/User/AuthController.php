@@ -37,7 +37,7 @@ class AuthController extends Controller
 
         // Token generation
         $tokenResult = $user->createToken('Personal Access Token');
-        $token       = $tokenResult->accessToken->plainTextToken;
+        $token       = $tokenResult->plainTextToken;
 
         try {
             if (! $user->hasRole('user')) {
