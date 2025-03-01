@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Controllers\Api\User;
 
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class AuthController extends Controller
 {
@@ -36,7 +36,7 @@ class AuthController extends Controller
 
         // Token generation
         $tokenResult = $user->createToken('Personal Access Token');
-        $token       = $tokenResult->accessToken;
+        $token       = $tokenResult->accessToken->plainTextToken;
 
         try {
             if (! $user->hasRole('user')) {
