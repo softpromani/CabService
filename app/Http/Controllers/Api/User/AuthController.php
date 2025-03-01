@@ -20,7 +20,8 @@ class AuthController extends Controller
     private function login(Request $request, $role)
     {
         $validated = $request->validate([
-            'phone' => 'required|numeric',
+            'phone'         => 'required|numeric',
+            'is_otp_verify' => 'required|in:true',
         ]);
 
         // Update or create user based on phone number
