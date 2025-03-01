@@ -129,7 +129,7 @@ class CarController extends Controller
     }
     public function carView()
     {
-        $car = Car::where('driver_id', auth()->id())->get();
+        $car = Car::with(['brand','model'])->where('driver_id', auth()->id())->get();
 
         if (! $car) {
             return response()->json([
