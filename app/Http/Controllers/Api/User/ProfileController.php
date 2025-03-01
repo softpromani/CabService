@@ -12,9 +12,9 @@ class ProfileController extends Controller
         $validated = $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name'  => 'required|string|max:255',
-            'email'      => 'nullable|email|unique:users,email,' . auth()->id(),
-            'gender'     => 'nullable|string|max:10',
-            'user_image' => 'nullable|image|max:2048',
+            'email'      => 'sometimes|email|unique:users,email,' . auth()->id(),
+            'gender'     => 'sometimes|string|max:10',
+            'user_image' => 'sometimes|image|max:2048',
         ]);
         $user = Auth::user();
         $user->fill([
