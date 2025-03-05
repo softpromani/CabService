@@ -18,9 +18,12 @@ class Ride extends Model
 
     public function ride_stations()
     {
-        return $this->hasMany(RideStations::class, 'ride_id');
+        return $this->belongsToMany(RouteStation::class, 'ride_stations', 'ride_id', 'station_id')
+            ->withPivot('arrival', 'departure') // Access pivot columns
+            ->withTimestamps();
     }
-    public function car(){
-        return $this->belongsTo(Car::class,'car_id');
+    public function car()
+    {
+        return $this->belongsTo(Car::class, 'car_id');
     }
 }
