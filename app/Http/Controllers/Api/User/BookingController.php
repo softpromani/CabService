@@ -10,6 +10,7 @@ use App\Models\RideStations;
 use App\Models\RouteStation;
 use App\Models\Transaction;
 use App\Services\FareCalculator;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -41,22 +42,25 @@ class BookingController extends Controller
             'pickup_station_id'  => 'required|exists:ride_stations,station_id',
             'dropoff_station_id' => 'required|exists:ride_stations,station_id',
             'seats'              => 'required|integer|min:1',
+            'travel_date'        => 'required|date_format:Y-m-d', // User only provides start date
         ]);
 
         $pickupStationId  = $request->pickup_station_id;
         $dropoffStationId = $request->dropoff_station_id;
         $requiredSeats    = $request->seats;
+        $travelDate       = Carbon::parse($request->travel_date)->toDateString(); // Convert to Y-m-d
 
-        // 🚕 Get all rides that pass through both pickup & dropoff stations
+        // 🚕 Get rides where the pickup station has an arrival on the selected date
         $rides = Ride::where('status', 'schedule')
-            ->whereHas('ride_stations', function ($query) use ($pickupStationId) {
-                return $query->where('station_id', $pickupStationId);
+            ->whereHas('ride_stations', function ($query) use ($pickupStationId, $travelDate) {
+                $query->where('station_id', $pickupStationId)
+                    ->whereDate('arrival', $travelDate);
             })
             ->whereHas('ride_stations', function ($query) use ($dropoffStationId) {
                 $query->where('station_id', $dropoffStationId);
             })
             ->with(['ride_stations' => function ($query) use ($pickupStationId, $dropoffStationId) {
-                return $query->whereIn('station_id', [$pickupStationId, $dropoffStationId])
+                $query->whereIn('station_id', [$pickupStationId, $dropoffStationId])
                     ->orderBy('arrival'); // Ensure correct order
             }, 'car'])
             ->get();
@@ -79,10 +83,11 @@ class BookingController extends Controller
             if ($availableSeats < $requiredSeats) {
                 continue; // Skip if not enough seats
             }
+
             // 🗺️ Get distance between stations
             $pickupStation  = $ride->ride_stations()->where('station_id', $pickupStationId)->first();
             $dropoffStation = $ride->ride_stations()->where('station_id', $dropoffStationId)->first();
-            // Ensure both stations exist before calling getDistanceByRoad()
+
             if (! $pickupStation || ! $dropoffStation) {
                 return response()->json([
                     'message' => 'Invalid pickup or drop-off station.',
@@ -134,7 +139,7 @@ class BookingController extends Controller
         }
 
         if (empty($availableRides)) {
-            return response()->json(['message' => 'No available rides found.'], 404);
+            return response()->json(['message' => 'No available rides found for the selected date.'], 404);
         }
 
         return response()->json([
