@@ -49,14 +49,14 @@ class BookingController extends Controller
 
         // 🚕 Get all rides that pass through both pickup & dropoff stations
         $rides = Ride::where('status', 'schedule')
-            ->whereHas('rideStations', function ($query) use ($pickupStationId) {
-                $query->where('station_id', $pickupStationId);
+            ->whereHas('ride_stations', function ($query) use ($pickupStationId) {
+                return $query->where('station_id', $pickupStationId);
             })
-            ->whereHas('rideStations', function ($query) use ($dropoffStationId) {
+            ->whereHas('ride_stations', function ($query) use ($dropoffStationId) {
                 $query->where('station_id', $dropoffStationId);
             })
-            ->with(['rideStations' => function ($query) use ($pickupStationId, $dropoffStationId) {
-                $query->whereIn('station_id', [$pickupStationId, $dropoffStationId])
+            ->with(['ride_stations' => function ($query) use ($pickupStationId, $dropoffStationId) {
+                return $query->whereIn('station_id', [$pickupStationId, $dropoffStationId])
                     ->orderBy('arrival'); // Ensure correct order
             }, 'car'])
             ->get();
@@ -65,7 +65,7 @@ class BookingController extends Controller
 
         foreach ($rides as $ride) {
             // 🔍 Ensure pickup comes before dropoff in the ride stations
-            $stations     = $ride->rideStations->pluck('station_id')->toArray();
+            $stations     = $ride->ride_stations->pluck('pivot.station_id')->toArray();
             $pickupIndex  = array_search($pickupStationId, $stations);
             $dropoffIndex = array_search($dropoffStationId, $stations);
 
@@ -79,19 +79,42 @@ class BookingController extends Controller
             if ($availableSeats < $requiredSeats) {
                 continue; // Skip if not enough seats
             }
-
             // 🗺️ Get distance between stations
-            $distanceData = getDistanceByRoad(
-                $ride->rideStations->where('station_id', $pickupStationId)->first()->station->location,
-                $ride->rideStations->where('station_id', $dropoffStationId)->first()->station->location
-            );
+            $pickupStation  = $ride->ride_stations()->where('station_id', $pickupStationId)->first();
+            $dropoffStation = $ride->ride_stations()->where('station_id', $dropoffStationId)->first();
+            // Ensure both stations exist before calling getDistanceByRoad()
+            if (! $pickupStation || ! $dropoffStation) {
+                return response()->json([
+                    'message' => 'Invalid pickup or drop-off station.',
+                ], 400);
+            }
 
+            // Extract latitude & longitude
+            $pickupLocation = [
+                'latitude'  => $pickupStation->latitude ?? null,
+                'longitude' => $pickupStation->longitute ?? null,
+            ];
+
+            $dropoffLocation = [
+                'latitude'  => $dropoffStation->latitude ?? null,
+                'longitude' => $dropoffStation->longitute ?? null,
+            ];
+
+            // Validate if coordinates exist
+            if (! $pickupLocation['latitude'] || ! $pickupLocation['longitude'] || ! $dropoffLocation['latitude'] || ! $dropoffLocation['longitude']) {
+                return response()->json([
+                    'message' => 'Missing location data for pickup or drop-off station.',
+                ], 400);
+            }
+
+            // Call function with valid coordinates
+            $distanceData = getDistanceByRoad($pickupLocation, $dropoffLocation);
             if (! $distanceData) {
                 continue; // Skip if unable to fetch distance
             }
 
-            $distance = floatval(str_replace(' km', '', $distanceData['distance']));
-            $time     = intval(str_replace(' mins', '', $distanceData['duration']));
+            $distance = $distanceData['distance_km'];
+            $time     = $distanceData['duration_in_minute'];
 
             // 💰 Calculate fare for the requested seats
             $farePerSeat = FareCalculator::calculateFare($distance, $time, $ride->car->vehicle_type);

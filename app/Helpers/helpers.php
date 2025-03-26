@@ -70,28 +70,68 @@ if (! function_exists('updateBusinessSetting')) {
 }
 
 if (! function_exists('getDistanceByRoad')) {
-    function getDistanceByRoad($origin, $destination)
+    function getDistanceByRoad(array $origin, array $destination)
     {
-        $response = Http::get('https://maps.googleapis.com/maps/api/distancematrix/json', [
-            'origins'      => $origin,
-            'destinations' => $destination,
-            'mode'         => 'driving',
-            'key'          => getBusinessSetting('google-map')?->google_api_key,
+        $response = Http::withHeaders([
+            'Content-Type'     => 'application/json',
+            'X-Goog-Api-Key'   => getBusinessSetting('google-map')?->google_api_key,
+            'X-Goog-FieldMask' => 'originIndex,destinationIndex,duration,distanceMeters,status',
+        ])->post('https://routes.googleapis.com/distanceMatrix/v2:computeRouteMatrix', [
+            'origins'           =>
+            [
+                'waypoint' => [
+                    'location' => [
+                        'latLng' => [
+                            'latitude'  => $origin['latitude'],
+                            'longitude' => $origin['longitude'],
+                        ],
+                    ],
+                ],
+            ],
+            'destinations'      => [
+                'waypoint' => [
+                    'location' => [
+                        'latLng' => [
+                            'latitude'  => $destination['latitude'],
+                            'longitude' => $destination['longitude'],
+                        ],
+                    ],
+                ],
+            ],
+            'travelMode'        => 'DRIVE',
+            'routingPreference' => 'TRAFFIC_AWARE',
         ]);
 
-        if ($response->successful()) {
-            $data = $response->json();
-            if (! empty($data['rows'][0]['elements'][0]['distance'])) {
-                $distance = $data['rows'][0]['elements'][0]['distance']['text'];
-                $duration = $data['rows'][0]['elements'][0]['duration']['text'];
-                return [
-                    'distance' => $distance,
-                    'duration' => $duration,
+        $data = $response->json();
+        // Process distances and durations
+        $results = [];
+        foreach ($data as $route) {
+            if (isset($route['distanceMeters']) && isset($route['duration'])) {
+                $distanceKm  = $route['distanceMeters'] / 1000; // Convert meters to km
+                $durationSec = $route['duration'];              // Duration in seconds
+                                                                // Extract numeric seconds from duration (e.g., "677s" -> 677)
+                preg_match('/(\d+)s/', $route['duration'], $matches);
+                $durationSec = isset($matches[1]) ? (int) $matches[1] : 0;
+                $durationMin = (isset($matches[1]) ? (int) $matches[1] : 0) / 60;
+                // Convert duration to HH:MM:SS format
+                $hours   = floor($durationSec / 3600);
+                $minutes = floor(($durationSec % 3600) / 60);
+                $seconds = $durationSec % 60;
+
+                $formattedTime = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+
+                $results[] = [
+                    'originIndex'        => $route['originIndex'],
+                    'destinationIndex'   => $route['destinationIndex'],
+                    'distance_km'        => round($distanceKm, 2),
+                    'duration'           => $formattedTime,
+                    'duration_in_minute' => $durationMin,
+                    'status'             => $route['status'],
                 ];
             }
-        }
 
-        return null;
+            return $results[0];
+        }
     }
 }
 

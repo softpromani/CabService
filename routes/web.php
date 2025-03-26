@@ -1,22 +1,23 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\admin\BrandController;
-use App\Http\Controllers\admin\BusinessPageController;
-use App\Http\Controllers\admin\BusinessSettingController;
 use App\Http\Controllers\admin\CscController;
-use App\Http\Controllers\admin\DriverController;
-use App\Http\Controllers\admin\FareSetupController;
+use App\Http\Controllers\admin\UserController;
+use App\Http\Controllers\admin\BrandController;
+use App\Http\Controllers\admin\ChartController;
 use App\Http\Controllers\admin\ModelController;
 use App\Http\Controllers\admin\RouteController;
-use App\Http\Controllers\admin\SettingController;
-use App\Http\Controllers\admin\SocialMediaController;
+use App\Http\Controllers\admin\DriverController;
 use App\Http\Controllers\admin\TicketController;
-use App\Http\Controllers\admin\UserController;
-use App\Http\Controllers\admin\UserProfileController;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\admin\SettingController;
 use App\Http\Controllers\RolePermissionController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\admin\FareSetupController;
+use App\Http\Controllers\admin\SocialMediaController;
+use App\Http\Controllers\admin\UserProfileController;
+use App\Http\Controllers\admin\BusinessPageController;
+use App\Http\Controllers\admin\BusinessSettingController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -66,6 +67,7 @@ Route::group(['name' => 'admin', 'prefix' => 'admin', 'as' => 'admin.', 'middlew
     Route::get('/permission/{id}/edit', action: [RolePermissionController::class, 'permission_create'])->name(name: 'permission-edit');
     Route::post('/role/store', action: [RolePermissionController::class, 'role_store'])->name(name: 'role-store');
     Route::put('/permission/{id}/update', action: [RolePermissionController::class, 'permission_update'])->name(name: 'permission-update');
+    Route::get('/chart-data', [ChartController::class, 'getChartData'])->name('chart.data');
 
     Route::group(['prefix' => 'master-setup', 'as' => 'master.'], function () {
         Route::get('/countries', [CscController::class, 'country_index'])->name('country');
