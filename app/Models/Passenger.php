@@ -3,7 +3,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Passanger extends Model
+class Passenger extends Model
 {
     protected $fillable = ['booking_id', 'name', 'age', 'gender'];
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\User;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\City;
+use App\Models\Passenger;
 use App\Models\Ride;
 use App\Models\RideSeatSegment;
 use App\Models\RideStations;
