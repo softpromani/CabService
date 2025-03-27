@@ -151,74 +151,98 @@ class BookingController extends Controller
     public function apply_booking(Request $request)
     {
         $request->validate([
-            'ride_id'            => 'required|exists:rides,id',
-            'pickup_station_id'  => 'required|exists:ride_stations,id',
-            'dropoff_station_id' => 'required|exists:ride_stations,id',
-            'seats'              => 'required|integer|min:1',
-            'payment_method'     => 'required|string',
+            'ride_id'             => 'required|exists:rides,id',
+            'pickup_station_id'   => 'required|exists:ride_stations,id',
+            'dropoff_station_id'  => 'required|exists:ride_stations,id',
+            'seats'               => 'required|integer|min:1',
+            'payment_method'      => 'required|string',
+            'passengers'          => 'required|array|min:1', // Passengers array
+            'passengers.*.name'   => 'required|string|max:255',
+            'passengers.*.age'    => 'required|integer|min:1|max:120',
+            'passengers.*.gender' => 'required|in:male,female,other',
         ]);
 
-        $ride = Ride::findOrFail($request->ride_id);
+        DB::beginTransaction(); // 🔄 Use transaction to ensure atomicity
 
-        // 🔍 Check seat availability
-        $availableSeats = RideSeatSegment::checkAvailableSeats(
-            $ride->id,
-            $request->pickup_station_id,
-            $request->dropoff_station_id
-        );
+        try {
+            $ride = Ride::findOrFail($request->ride_id);
 
-        if ($availableSeats < $request->seats) {
-            return response()->json(['message' => 'Insufficient seats available.'], 422);
+            // 🔍 Check seat availability
+            $availableSeats = RideSeatSegment::checkAvailableSeats(
+                $ride->id,
+                $request->pickup_station_id,
+                $request->dropoff_station_id
+            );
+
+            if ($availableSeats < $request->seats) {
+                return response()->json(['message' => 'Insufficient seats available.'], 422);
+            }
+
+            // 📍 Get station details
+            $pickupStation  = RideStations::where('ride_id', $ride->id)->where('station_id', $request->pickup_station_id)->first();
+            $dropoffStation = RideStations::where('ride_id', $ride->id)->where('station_id', $request->dropoff_station_id)->first();
+
+            if (! $pickupStation || ! $dropoffStation) {
+                return response()->json(['message' => 'Invalid pickup or dropoff station.'], 400);
+            }
+
+            // 🗺️ Calculate distance & duration using Google Maps API
+            $distanceData = getDistanceByRoad($pickupStation->station->location, $dropoffStation->station->location);
+
+            if (! $distanceData) {
+                return response()->json(['message' => 'Unable to calculate distance.'], 500);
+            }
+
+            $distance = floatval(str_replace(' km', '', $distanceData['distance'])); // Extract numeric value
+            $time     = intval(str_replace(' mins', '', $distanceData['duration'])); // Extract numeric value
+
+            // 🧮 Calculate fare using `FareCalculator`
+            $farePerSeat = FareCalculator::calculateFare($distance, $time, $ride->car->vehicle_type);
+            $totalFare   = $farePerSeat * $request->seats;
+
+            // 🎟️ Create booking
+            $booking = Booking::create([
+                'user_id'            => auth()->id(),
+                'ride_id'            => $ride->id,
+                'pickup_station_id'  => $request->pickup_station_id,
+                'dropoff_station_id' => $request->dropoff_station_id,
+                'total_distance'     => $distance,
+                'fare_amount'        => $totalFare,
+                'seats'              => $request->seats,
+                'status'             => 'pending',
+            ]);
+
+            // 🏷️ Save passengers
+            foreach ($request->passengers as $passenger) {
+                Passenger::create([
+                    'booking_id' => $booking->id,
+                    'name'       => $passenger['name'],
+                    'age'        => $passenger['age'],
+                    'gender'     => $passenger['gender'],
+                ]);
+            }
+
+            // 💰 Create transaction
+            $transaction = Transaction::create([
+                'booking_id'     => $booking->id,
+                'user_id'        => auth()->id(),
+                'amount'         => $totalFare,
+                'payment_method' => $request->payment_method,
+                'status'         => 'pending',
+            ]);
+
+            DB::commit(); // ✅ Commit transaction if everything is successful
+
+            return response()->json([
+                'message'     => 'Booking created. Proceed with payment.',
+                'booking'     => $booking,
+                'passengers'  => $booking->passengers, // Return passenger details
+                'transaction' => $transaction,
+            ], 201);
+        } catch (\Exception $e) {
+            DB::rollBack(); // ❌ Rollback transaction in case of error
+            return response()->json(['message' => 'Booking failed.', 'error' => $e->getMessage()], 500);
         }
-
-        // 📍 Get station details
-        $pickupStation  = RideStations::where('ride_id', $ride->id)->where('station_id', $request->pickup_station_id)->first();
-        $dropoffStation = RideStations::where('ride_id', $ride->id)->where('station_id', $request->dropoff_station_id)->first();
-
-        if (! $pickupStation || ! $dropoffStation) {
-            return response()->json(['message' => 'Invalid pickup or dropoff station.'], 400);
-        }
-
-        // 🗺️ Calculate distance & duration using Google Maps API
-        $distanceData = getDistanceByRoad($pickupStation->station->location, $dropoffStation->station->location);
-
-        if (! $distanceData) {
-            return response()->json(['message' => 'Unable to calculate distance.'], 500);
-        }
-
-        $distance = floatval(str_replace(' km', '', $distanceData['distance'])); // Extract numeric value
-        $time     = intval(str_replace(' mins', '', $distanceData['duration'])); // Extract numeric value
-
-        // 🧮 Calculate fare using `FareCalculator`
-        $farePerSeat = FareCalculator::calculateFare($distance, $time, $ride->car->vehicle_type);
-        $totalFare   = $farePerSeat * $request->seats;
-
-        // 🎟️ Create booking
-        $booking = Booking::create([
-            'user_id'            => auth()->id(),
-            'ride_id'            => $ride->id,
-            'pickup_station_id'  => $request->pickup_station_id,
-            'dropoff_station_id' => $request->dropoff_station_id,
-            'total_distance'     => $distance,
-            'fare_amount'        => $totalFare,
-            'seats'              => $request->seats,
-            'status'             => 'pending',
-        ]);
-
-        // 💰 Create transaction
-        $transaction = Transaction::create([
-            'booking_id'     => $booking->id,
-            'user_id'        => auth()->id(),
-            'amount'         => $totalFare,
-            'payment_method' => $request->payment_method,
-            'status'         => 'pending',
-        ]);
-
-        return response()->json([
-            'message'     => 'Booking created. Proceed with payment.',
-            'booking'     => $booking,
-            'transaction' => $transaction,
-        ], 201);
     }
 
     public function confirm_booking(Request $request)
