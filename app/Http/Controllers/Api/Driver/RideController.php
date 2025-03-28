@@ -112,6 +112,7 @@ class RideController extends Controller
             ->when($request->input('status'), function ($query, $status) {
                 $query->where('status', $status);
             })
+            ->latest()
             ->paginate(10);
 
         return response()->json([
