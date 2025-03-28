@@ -12,11 +12,12 @@ use Illuminate\Http\Request;
 
 class RideController extends Controller
 {
-    public function getStations(RouteModel $route)
+    public function getStations($route)
     {
+        $routedata = RouteModel::find($route);
         return response()->json([
             'status' => 'success',
-            'data'   => $route->first()->stations,
+            'data'   => $routedata->stations,
         ]);
     }
     public function getRoutes()

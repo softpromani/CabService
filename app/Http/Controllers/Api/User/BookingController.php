@@ -324,7 +324,7 @@ class BookingController extends Controller
     public function my_booking()
     {
         try {
-            $bookings = Booking::where('user_id', auth()->id())->paginate(10);
+            $bookings = Booking::withCount('passengers')->where('user_id', auth()->id())->paginate(10);
             return response()->json(['data' => $bookings, 'message' => 'Booking Fetch successfully']);
         } catch (\Exception $ex) {
             return response()->json(['message' => 'something went wrong'], 500);
