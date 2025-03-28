@@ -5,6 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class RideSeatSegment extends Model
 {
+    protected $guarded = [];
     public static function checkAvailableSeats($rideId, $pickupStationId, $dropoffStationId)
     {
         // Get total seats in the ride
