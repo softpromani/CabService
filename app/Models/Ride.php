@@ -26,4 +26,13 @@ class Ride extends Model
     {
         return $this->belongsTo(Car::class, 'car_id');
     }
+    public function getRideOriginDestinationAttribute()
+    {
+        $origin      = $this->ride_stations()->first();
+        $destination = $this->ride_stations()->latest()->first();
+        $data        = ['origin' => ['point_name' => $origin?->point_name, 'arrival' => $origin?->pivot?->arrival], 'destination' =>
+            ['point_name' => $destination?->point_name, 'arrival' => $destination?->pivot?->arrival],
+        ];
+        return $data;
+    }
 }

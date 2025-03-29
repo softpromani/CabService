@@ -44,9 +44,9 @@ class BookingController extends Controller
             'dropoff_station_id' => 'required|exists:ride_stations,station_id',
             'seats'              => 'required|integer|min:1',
             'travel_date'        => 'required|date_format:Y-m-d', // User only provides start date
-        ],[
-            'pickup_station_id.exists'=>'No Ride available for selected pickup station',
-            'dropoff_station_id.exists'=>'No Ride available for selected destination station',
+        ], [
+            'pickup_station_id.exists'  => 'No Ride available for selected pickup station',
+            'dropoff_station_id.exists' => 'No Ride available for selected destination station',
         ]);
 
         $pickupStationId  = $request->pickup_station_id;
@@ -128,15 +128,21 @@ class BookingController extends Controller
             // 💰 Calculate fare for the requested seats
             $farePerSeat = FareCalculator::calculateFare($distance, $time, $ride->car->vehicle_type);
             $totalFare   = $farePerSeat * $requiredSeats;
-
+            $car         = $ride->car;
             // 📋 Prepare ride details
             $availableRides[] = [
                 'ride_id'         => $ride->id,
                 'driver'          => $ride->driver->full_name,
-                'car'             => $ride->car->model,
+                'car'             => [
+                    'model'               => $car->model->model_name,
+                    'brand'               => $car->brand->brand_name,
+                    'registration_number' => $car->registration_number,
+                    'images'              => $car->images,
+                ],
+                'ride_travel'=>$ride->ride_origin_destination,
                 'available_seats' => $availableSeats,
                 'distance'        => $distance . ' km',
-                'estimated_time'  => $time . ' mins',
+                'estimated_time'  => $time,
                 'fare_per_seat'   => round($farePerSeat, 2),
                 'total_fare'      => round($totalFare, 2),
             ];
