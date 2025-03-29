@@ -44,6 +44,9 @@ class BookingController extends Controller
             'dropoff_station_id' => 'required|exists:ride_stations,station_id',
             'seats'              => 'required|integer|min:1',
             'travel_date'        => 'required|date_format:Y-m-d', // User only provides start date
+        ],[
+            'pickup_station_id.exists'=>'No Ride available for selected pickup station',
+            'dropoff_station_id.exists'=>'No Ride available for selected destination station',
         ]);
 
         $pickupStationId  = $request->pickup_station_id;
@@ -91,7 +94,7 @@ class BookingController extends Controller
 
             if (! $pickupStation || ! $dropoffStation) {
                 return response()->json([
-                    'message' => 'No Ride B/W given stations.',
+                    'message' => 'No Ride found for selected stations.',
                 ], 400);
             }
 
