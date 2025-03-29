@@ -24,7 +24,7 @@ class BookingController extends Controller
         ]);
         $query  = $request->search;
         $cities = City::where('city_name', 'LIKE', "%$query%")->pluck('id');
-        $points = RouteStation::whereIn('city_id', $cities)
+        $points = RouteStation::with('route')->whereIn('city_id', $cities)
             ->orWhere('point_name', 'LIKE', "%$query%")
             ->with('city:id,city_name') // Fetch city name
             ->get();
