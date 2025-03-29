@@ -55,7 +55,7 @@ class BookingController extends Controller
         $travelDate       = Carbon::parse($request->travel_date)->toDateString(); // Convert to Y-m-d
 
         // 🚕 Get rides where the pickup station has an arrival on the selected date
-        $rides = Ride::with(['driver'])->where('status', 'schedule')
+        $rides = Ride::where('status', 'schedule')
             ->whereHas('ride_stations', function ($query) use ($pickupStationId, $travelDate) {
                 $query->where('station_id', $pickupStationId)
                     ->whereDate('arrival', $travelDate);
@@ -132,7 +132,7 @@ class BookingController extends Controller
             // 📋 Prepare ride details
             $availableRides[] = [
                 'ride_id'         => $ride->id,
-                'driver'          => $ride->driver->name,
+                'driver'          => $ride->driver->full_name,
                 'car'             => $ride->car->model,
                 'available_seats' => $availableSeats,
                 'distance'        => $distance . ' km',
