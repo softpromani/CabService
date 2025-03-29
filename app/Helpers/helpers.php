@@ -129,8 +129,6 @@ if (! function_exists('getDistanceByRoad')) {
                     'status'             => $route['status'],
                 ];
             }
-
-            return $results[0];
         }
     }
 }
