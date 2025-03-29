@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 class Car extends Model
 {
     protected $guarded = [];
+    protected $cats    = ['car_images' => 'array'];
     public function driver()
     {
         return $this->belongsTo(User::class, 'driver_id');

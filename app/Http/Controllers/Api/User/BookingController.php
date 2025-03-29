@@ -137,7 +137,7 @@ class BookingController extends Controller
                     'model'               => $car->model->model_name,
                     'brand'               => $car->brand->brand_name,
                     'registration_number' => $car->registration_number,
-                    'images'              => $car->car_images,
+                    'images'              => getFileUrl(json_decode($car->car_images ?? [])),
                 ],
                 'ride_travel'     => $ride->ride_origin_destination,
                 'available_seats' => $availableSeats,

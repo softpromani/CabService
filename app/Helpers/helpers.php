@@ -70,13 +70,13 @@ if (! function_exists('updateBusinessSetting')) {
 }
 
 if (! function_exists('getDistanceByRoad')) {
-    function getDistanceByRoad(array $origin, array $destination, array $stops=[])
+    function getDistanceByRoad(array $origin, array $destination, array $stops = [])
     {
-        $intermediates=null;
-        foreach($stops as $stop){
-            $intermediates[]['latlng']=$stop;
+        $intermediates = null;
+        foreach ($stops as $stop) {
+            $intermediates[]['latlng'] = $stop;
         }
-        $pointdata=[
+        $pointdata = [
             'origins'           =>
             [
                 'waypoint' => [
@@ -101,8 +101,8 @@ if (! function_exists('getDistanceByRoad')) {
             'travelMode'        => 'DRIVE',
             'routingPreference' => 'TRAFFIC_AWARE',
         ];
-        if($intermediates!=null){
-            $pointdata['intermediates']=$intermediates;
+        if ($intermediates != null) {
+            $pointdata['intermediates'] = $intermediates;
         }
         $response = Http::withHeaders([
             'Content-Type'     => 'application/json',
@@ -134,11 +134,11 @@ if (! function_exists('getDistanceByRoad')) {
                     'duration'           => $formattedTime,
                     'duration_in_minute' => $durationMin,
                     'status'             => $route['status'],
-                    'data'               => $data
+                    'data'               => $data,
                 ];
             }
         }
-        return $results[0]??null;
+        return $results[0] ?? null;
     }
 }
 if (! function_exists('uploadImage')) {
@@ -177,5 +177,15 @@ if (! function_exists('uploadImage')) {
             \Log::error('Image upload failed: ' . $e->getMessage());
             return false;
         }
+    }
+    function getFileUrl($files)
+    {
+        $baseUrl = asset('storage'); // Adjust if needed
+
+        if (is_array($files)) {
+            return array_map(fn($file) => $file ? "$baseUrl/$file" : null, $files);
+        }
+
+        return $files ? "$baseUrl/$files" : null;
     }
 }
