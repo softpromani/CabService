@@ -70,13 +70,13 @@ if (! function_exists('updateBusinessSetting')) {
 }
 
 if (! function_exists('getDistanceByRoad')) {
-    function getDistanceByRoad(array $origin, array $destination)
+    function getDistanceByRoad(array $origin, array $destination, array $stops=[])
     {
-        $response = Http::withHeaders([
-            'Content-Type'     => 'application/json',
-            'X-Goog-Api-Key'   => getBusinessSetting('google-map')?->google_api_key,
-            'X-Goog-FieldMask' => 'originIndex,destinationIndex,duration,distanceMeters,status',
-        ])->post('https://routes.googleapis.com/distanceMatrix/v2:computeRouteMatrix', [
+        $intermediates=null;
+        foreach($stops as $stop){
+            $intermediates[]['latlng']=$stop;
+        }
+        $pointdata=[
             'origins'           =>
             [
                 'waypoint' => [
@@ -100,8 +100,15 @@ if (! function_exists('getDistanceByRoad')) {
             ],
             'travelMode'        => 'DRIVE',
             'routingPreference' => 'TRAFFIC_AWARE',
-        ]);
-
+        ];
+        if($intermediates!=null){
+            $pointdata['intermediates']=$intermediates;
+        }
+        $response = Http::withHeaders([
+            'Content-Type'     => 'application/json',
+            'X-Goog-Api-Key'   => getBusinessSetting('google-map')?->google_api_key,
+            'X-Goog-FieldMask' => 'originIndex,destinationIndex,duration,distanceMeters,status',
+        ])->post('https://routes.googleapis.com/distanceMatrix/v2:computeRouteMatrix', $pointdata);
         $data = $response->json();
         // Process distances and durations
         $results = [];
@@ -127,12 +134,13 @@ if (! function_exists('getDistanceByRoad')) {
                     'duration'           => $formattedTime,
                     'duration_in_minute' => $durationMin,
                     'status'             => $route['status'],
+                    'data'               => $data
                 ];
             }
         }
+        return $results[0]??null;
     }
 }
-
 if (! function_exists('uploadImage')) {
     function uploadImage($image, $path = 'images')
     {
