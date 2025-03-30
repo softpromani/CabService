@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('bookings', function (Blueprint $table) {
             $table->unsignedBigInteger('ride_id');
+            $table->integer('seats')->default(1);
         });
     }
 
@@ -23,6 +24,7 @@ return new class extends Migration
     {
         Schema::table('bookings', function (Blueprint $table) {
             $table->dropColumn('ride_id');
+            $table->dropColumn('seats');
         });
     }
 };
