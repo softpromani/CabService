@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('user')->as('user.')->group(function () {
     Route::post('login', [AuthController::class, 'userLogin'])->name('login');
     Route::middleware(['auth:sanctum'])->group(function () {
-        Route::get('profile',ProfileController::class,'profile')->name('profile');
+        Route::get('profile', [ProfileController::class, 'profile'])->name('profile');
         Route::post('update-profile', [ProfileController::class, 'updateProfile'])->name('userProfileupdate');
 
         Route::group(['prefix' => 'support-ticket'], function () {
