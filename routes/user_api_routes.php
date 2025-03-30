@@ -21,14 +21,15 @@ Route::prefix('user')->as('user.')->group(function () {
                 Route::get('close/{id}', 'support_ticket_close');
 
             });
-            Route::group(['prefix' => 'booking', 'as' => 'booking.'], function () {
-                Route::controller(BookingController::class)->group(function () {
-                    Route::get('get-route', 'get_route');
-                    Route::post('ride-find', 'find_rides');
-                    Route::post('apply', 'apply_booking');
-                    Route::post('confirm', 'confirm_booking');
-                    Route::get('booking', 'my_booking');
-                });
+
+        });
+        Route::group(['prefix' => 'booking', 'as' => 'booking.'], function () {
+            Route::controller(BookingController::class)->group(function () {
+                Route::get('get-route', 'get_route');
+                Route::post('ride-find', 'find_rides');
+                Route::post('apply', 'apply_booking');
+                Route::post('confirm', 'confirm_booking');
+                Route::get('booking', 'my_booking');
             });
         });
 
