@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 
 class ProfileController extends Controller
 {
+    public function profile()
+    {
+        return response()->json(['user'=>auth()->user()],200);
+    }
     public function updateProfile(Request $request)
     {
         $validated = $request->validate([
