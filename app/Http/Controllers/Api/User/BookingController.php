@@ -212,6 +212,7 @@ class BookingController extends Controller
             $booking = Booking::create([
                 'user_id'            => auth()->id(),
                 'ride_id'            => $ride->id,
+                'rider_id'           => $ride->driver_id,
                 'pickup_station_id'  => $request->pickup_station_id,
                 'dropoff_station_id' => $request->dropoff_station_id,
                 'total_distance'     => $distance,
