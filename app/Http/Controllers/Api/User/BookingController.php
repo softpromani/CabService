@@ -195,16 +195,14 @@ class BookingController extends Controller
             if (! $pickupStation || ! $dropoffStation) {
                 return response()->json(['message' => 'Invalid pickup or dropoff station.'], 400);
             }
-
             // 🗺️ Calculate distance & duration using Google Maps API
             $distanceData = getDistanceByRoad($pickupStation->station->location, $dropoffStation->station->location);
 
             if (! $distanceData) {
                 return response()->json(['message' => 'Unable to calculate distance.'], 500);
             }
-
-            $distance = floatval(str_replace(' km', '', $distanceData['distance'])); // Extract numeric value
-            $time     = intval(str_replace(' mins', '', $distanceData['duration'])); // Extract numeric value
+            $distance = floatval(str_replace(' km', '', $distanceData['distance_km']));        // Extract numeric value
+            $time     = intval(str_replace(' mins', '', $distanceData['duration_in_minute'])); // Extract numeric value
 
             // 🧮 Calculate fare using `FareCalculator`
             $farePerSeat = FareCalculator::calculateFare($distance, $time, $ride->car->vehicle_type);

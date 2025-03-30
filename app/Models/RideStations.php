@@ -9,6 +9,6 @@ class RideStations extends Model
 
     public function station()
     {
-        return $this->belongsTo(RouteStation::class, 'id');
+        return $this->belongsTo(RouteStation::class, 'station_id');
     }
 }

@@ -15,4 +15,11 @@ class RouteStation extends Model
     {
         return $this->belongsTo(Route::class);
     }
+    public function getLocationAttribute()
+    {
+        return [
+            'longitude' => $this->longitute,
+            'latitude'  => $this->latitude,
+        ];
+    }
 }
