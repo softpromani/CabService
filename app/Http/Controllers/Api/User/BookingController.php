@@ -338,4 +338,11 @@ class BookingController extends Controller
             return response()->json(['message' => 'something went wrong'], 500);
         }
     }
+    public function booking_detail($id)
+    {
+        $booking = Booking::with(['rider', 'ride', 'passengers'])->find($id);
+        return response()->json(
+            ['data' => $booking]
+        );
+    }
 }

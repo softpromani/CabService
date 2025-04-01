@@ -32,6 +32,14 @@ class Booking extends Model
     {
         return $this->hasMany(Passenger::class);
     }
+    public function ride()
+    {
+        return $this->belongsTo(Ride::class, 'ride_id');
+    }
+    public function rider()
+    {
+        return $this->belongsTo(User::class, 'rider_id');
+    }
     public function book_by_user()
     {
         return $this->belongsTo(User::class);

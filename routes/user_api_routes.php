@@ -29,6 +29,7 @@ Route::prefix('user')->as('user.')->group(function () {
                 Route::post('ride-find', 'find_rides');
                 Route::post('apply', 'apply_booking');
                 Route::post('confirm', 'confirm_booking');
+                Route::get('detail/{id}', 'booking_detail');
                 Route::get('booking', 'my_booking');
             });
         });
