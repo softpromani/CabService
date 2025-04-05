@@ -340,8 +340,9 @@ class BookingController extends Controller
     }
     public function booking_detail($id)
     {
-        $booking                 = Booking::with(['rider', 'ride'=>function($q){return $q->with(['ride_stations']);}, 'passengers'])->findOrFail($id);
+        $booking                 = Booking::with(['rider', 'passengers'])->findOrFail($id);
         $booking->route_stations = $booking->ride->ride_stations;
+        $booking->car=$booking->ride->car;
         return response()->json(
             ['data' => $booking]
         );
