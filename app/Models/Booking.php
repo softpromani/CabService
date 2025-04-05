@@ -66,4 +66,15 @@ class Booking extends Model
             'station_id'          // Foreign key in RideStation
         );
     }
+    public function routeStations()
+    {
+        return $this->hasManyThrough(
+            RouteStation::class,
+            RideStations::class,
+            'ride_id',   // RideStation.ride_id
+            'id',        // RouteStation.id
+            'ride_id',   // Booking.ride_id
+            'station_id' // RideStation.station_id
+        );
+    }
 }
