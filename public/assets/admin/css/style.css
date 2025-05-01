@@ -838,6 +838,19 @@ h6 {
   background: #ffe5f6;
 }
 
+.dashboard .ride-card .card-icon {
+  background: rgba(0, 211, 199, 0.1);
+  color: #00d3c7;
+}
+.dashboard .revenuereport-card .card-icon {
+  background-color: #dff7e9 !important;
+  color: #28c76f !important;
+}
+.dashboard .cancelledbookingreport-card .card-icon {
+  background-color: rgb(255 218 218 / 49%) !important;
+  color: #ff0000 !important;
+}
+
 /* Activity */
 .dashboard .activity {
   font-size: 14px;
@@ -1284,6 +1297,62 @@ h6 {
 
   color: #ff9b01 !important;
 }
+.bg-label-secondary {
+  background-color: #f2f2f3 !important;
+  color: #a8aaae !important;
+}
+
+.bg-label-success {
+  background-color: #dff7e9 !important;
+  color: #28c76f !important;
+}
+.bg-label-primary {
+  background-color: rgba(17, 148, 247, 0.12) !important;
+  color: #2196f3 !important;
+}
+
+.bg-label-info {
+  background-color: #d9f8fc !important;
+  color: #00cfe8 !important;
+}
+
+.bg-label-warning {
+  background-color: #fff1e3 !important;
+  color: #ff9f43 !important;
+}
+
+.bg-label-danger {
+  background-color: #fce5e6 !important;
+  color: #ea5455 !important;
+}
+
+.bg-label-light {
+  background-color: #fafafb !important;
+  color: #dfdfe3 !important;
+}
+.bg-label-pink {
+  background-color: #ffe5f6  !important;
+  color: #ff01a2  !important;
+}
+.bg-label-orange {
+  background-color: #fef5e4 !important;
+  color: #ff9b01 !important;
+}
+
+.bg-label-dark {
+  background-color: #e4e4e4 !important;
+  color: #4b4b4b !important;
+}
+.bg-label-purple {
+  background-color: #f3e7fd;
+  color: #8f13fd;
+}
+
+.bg-label-gray {
+  background-color: rgba(254, 254, 254, 0.8575) !important;
+  color: rgba(75, 70, 92, 0.05) !important;
+}
+
 
 .bg-status-pink-light {
   background-color: #ffe5f6 !important;

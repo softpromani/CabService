@@ -10,7 +10,7 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-header">
-                        <p><strong>Customer</strong></p>
+                        <p><strong>Stations</strong></p>
                     </div>
                     <div class="card-body p-0">
                         <div id="example-table" class="table-bordered">
@@ -18,6 +18,8 @@
                         </div>
                     </div>
                 </div>
+               
+
             </div>
         </div>
     </section>
@@ -27,18 +29,18 @@
     <script>
         $(document).ready(function() {
             var table = new Tabulator("#example-table", {
-                ajaxURL: "{{ route('admin.customer.index') }}", // URL for the Laravel controller
-                ajaxConfig: "GET", // HTTP request type
-                pagination: "remote", // Enable remote pagination
-                paginationSize: 10, // Number of rows per page
-                paginationSizeSelector: [10, 25, 50, 100], // Page size options
+                ajaxURL: "{{ route('admin.rides.stations', $ride->id) }}",
+                ajaxConfig: "GET",
+                pagination: "remote",
+                paginationSize: 10,
+                paginationSizeSelector: [10, 25, 50, 100],
                 ajaxResponse: function(url, params, response) {
                     this.setColumns(response.columns);
-                    return response.data; // Return the response data for Tabulator to process
-                    console.log(response.data);
+                    return response.data;
                 },
-
             });
+
+            
         });
     </script>
 @endsection

@@ -21,13 +21,13 @@ class AdminController extends Controller
     }
     public function index(Request $request)
     {
-        $filter        = $request->query('filter');
-        $dashboardData = $this->dashboardService->getDashboardData($filter);
+        $dashboardData = $this->dashboardService->getDashboardData($request);
+
         if ($request->ajax()) {
-            return response()->json([
-                'total_booking' => $dashboardData['total_booking'],
-            ]);
+            return response()->json($dashboardData); // JSON yahan return karo
         }
+
+        $filter = $request->query('filter');
         return view('admin.dashboard', compact('dashboardData', 'filter'));
     }
 
@@ -51,7 +51,7 @@ class AdminController extends Controller
             $sortOrder = $request->query('sort.0.dir', 'asc');
 
             $query = User::whereDoesntHave('roles', function ($q) {
-                $q->whereIn('name', ['Driver', 'User']);
+                $q->whereIn('name', ['driver', 'user']);
             });
 
             if ($sortField && $sortOrder) {
@@ -142,8 +142,8 @@ class AdminController extends Controller
         $user = User::find($id);
 
         if (! $user) {
-            toast('User not found', 'error');
-            return redirect()->route('admin.user.index');
+            toastr()->error('User Not Found');
+            return redirect()->route('admin.userList');
         }
 
         $user->gender     = $request->input('gender');
@@ -154,10 +154,11 @@ class AdminController extends Controller
         $user->address    = $request->input('address');
 
         // Handle image upload
+
         if ($request->hasFile('user_image')) {
-            $imageName        = $request->file('user_image')->store('userImages', 'public');
-            $user->user_image = $imageName;
+            $validated['user_image'] = $request->file('user_image')->store('userImages', 'public');
         }
+
         if ($request->filled('password')) {
             $validated['password'] = Hash::make($request->input('password'));
         } else {

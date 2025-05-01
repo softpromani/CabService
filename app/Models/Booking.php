@@ -13,8 +13,8 @@ class Booking extends Model
         parent::boot();
 
         static::creating(function ($booking) {
-            $yearCode  = Carbon::now()->format('y');             // Last two digits of the year (e.g., 24 for 2024)
-            $monthCode = strtoupper(Carbon::now()->format('M')); // 3-letter month abbreviation (e.g., "MAR")
+            $yearCode  = Carbon::now()->format('y');
+            $monthCode = strtoupper(Carbon::now()->format('M'));
 
             // Generate base prefix for booking number
             $prefix = "BOOK{$yearCode}{$monthCode}";
@@ -42,7 +42,7 @@ class Booking extends Model
     }
     public function book_by_user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
     public function station_origin()
     {
@@ -76,5 +76,15 @@ class Booking extends Model
             'ride_id',   // Booking.ride_id
             'station_id' // RideStation.station_id
         );
+    }
+
+    public function pickup_station()
+    {
+        return $this->belongsTo(RouteStation::class, 'pickup_station_id');
+    }
+
+    public function dropoff_station()
+    {
+        return $this->belongsTo(RouteStation::class, 'dropoff_station_id');
     }
 }

@@ -1,23 +1,26 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\admin\CscController;
-use App\Http\Controllers\admin\UserController;
+use App\Http\Controllers\admin\BookingController;
 use App\Http\Controllers\admin\BrandController;
-use App\Http\Controllers\admin\ChartController;
-use App\Http\Controllers\admin\ModelController;
-use App\Http\Controllers\admin\RouteController;
-use App\Http\Controllers\admin\DriverController;
-use App\Http\Controllers\admin\TicketController;
-use App\Http\Controllers\admin\SettingController;
-use App\Http\Controllers\RolePermissionController;
-use App\Http\Controllers\admin\FareSetupController;
-use App\Http\Controllers\admin\SocialMediaController;
-use App\Http\Controllers\admin\UserProfileController;
 use App\Http\Controllers\admin\BusinessPageController;
 use App\Http\Controllers\admin\BusinessSettingController;
+use App\Http\Controllers\admin\ChartController;
+use App\Http\Controllers\admin\CscController;
+use App\Http\Controllers\admin\DriverController;
+use App\Http\Controllers\admin\FareSetupController;
+use App\Http\Controllers\admin\ModelController;
+use App\Http\Controllers\admin\ReportController;
+use App\Http\Controllers\admin\RideController;
+use App\Http\Controllers\admin\RouteController;
+use App\Http\Controllers\admin\SettingController;
+use App\Http\Controllers\admin\SocialMediaController;
+use App\Http\Controllers\admin\TicketController;
+use App\Http\Controllers\admin\UserController;
+use App\Http\Controllers\admin\UserProfileController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RolePermissionController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
@@ -67,7 +70,8 @@ Route::group(['name' => 'admin', 'prefix' => 'admin', 'as' => 'admin.', 'middlew
     Route::get('/permission/{id}/edit', action: [RolePermissionController::class, 'permission_create'])->name(name: 'permission-edit');
     Route::post('/role/store', action: [RolePermissionController::class, 'role_store'])->name(name: 'role-store');
     Route::put('/permission/{id}/update', action: [RolePermissionController::class, 'permission_update'])->name(name: 'permission-update');
-    Route::get('/chart-data', [ChartController::class, 'getChartData'])->name('chart.data');
+    Route::get('bookings/chart-data', [ChartController::class, 'getBookingChartData'])->name('bookings.chart.data');
+    Route::get('revenues/chart-data', [ChartController::class, 'getRevenueChartData'])->name('revenues.chart.data');
 
     Route::group(['prefix' => 'master-setup', 'as' => 'master.'], function () {
         Route::get('/countries', [CscController::class, 'country_index'])->name('country');
@@ -124,5 +128,26 @@ Route::group(['name' => 'admin', 'prefix' => 'admin', 'as' => 'admin.', 'middlew
 
         });
     });
+    Route::group(['prefix' => 'rides', 'as' => 'rides.'], function () {
+        Route::controller(RideController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{ride}/seat-segments', [RideController::class, 'seatSegments'])->name('seat-segments');
+            Route::get('/{ride}/stations', [RideController::class, 'stations'])->name('stations');
+
+        });
+    });
+    Route::group(['prefix' => 'report', 'as' => 'report.'], function () {
+        Route::controller(ReportController::class)->group(function () {
+            Route::get('/booking', 'bookingReport')->name('bookingReport');
+            Route::get('/revenue', 'revenueReport')->name('revenueReport');
+            Route::get('/customer', 'customerReport')->name('customerReport');
+            Route::get('/booking-chart-data', [ReportController::class, 'getBookingChartData'])->name('booking.chart.data');
+            Route::get('/revenue-chart-data', [ReportController::class, 'revenueChartData'])->name('revenue.chart.data');
+            Route::get('/customer-chart-data', [ReportController::class, 'customerChartData'])->name('customer.chart.data');
+
+        });
+    });
+
+    Route::resource('booking', BookingController::class);
 
 });

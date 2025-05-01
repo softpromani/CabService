@@ -37,4 +37,15 @@ class RideSeatSegment extends Model
             ->where('to_station_id', '<=', $dropoffStationId)
             ->decrement('occupied_seats', $seats);
     }
+
+    public function fromStation()
+    {
+        return $this->belongsTo(RouteStation::class, 'from_station_id');
+    }
+
+    public function toStation()
+    {
+        return $this->belongsTo(RouteStation::class, 'to_station_id');
+    }
+
 }

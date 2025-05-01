@@ -39,7 +39,7 @@
         @if(auth()->user()->hasAnyRole(['admin', 'Super Admin']))
         <li class="nav-item">
             <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
-                <i class="bi bi-shield-lock"></i><span>Role / Permision</span><i
+                <i class="bi bi-shield-lock"></i><span>Role / Permission</span><i
                     class="bi bi-chevron-down ms-auto"></i>
             </a>
             <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
@@ -144,6 +144,61 @@
                 <li class="menu-item">
                     <a href="{{ route('admin.support-ticket.view') }}" class="menu-link">
                         <div data-i18n="List">Support Ticket</div>
+                    </a>
+                </li>
+                
+
+            </ul>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link collapsed" data-bs-target="#components4-nav" data-bs-toggle="collapse" href="#">
+                <i class="bi bi-calendar-check"></i><span> Booking </span><i
+                    class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="components4-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                <li class="menu-item">
+                    <a href="{{ route('admin.booking.index') }}" class="menu-link">
+                        <div data-i18n="List">Booking History</div>
+                    </a>
+                </li>
+                
+
+            </ul>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link collapsed" data-bs-target="#components5-nav" data-bs-toggle="collapse" href="#">
+                <i class="bi bi-car-front"></i><span> Rides </span><i
+                    class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="components5-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                <li class="menu-item">
+                    <a href="{{ route('admin.rides.index') }}" class="menu-link">
+                        <div data-i18n="Rides">Rides</div>
+                    </a>
+                </li>
+                
+
+            </ul>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link collapsed" data-bs-target="#components6-nav" data-bs-toggle="collapse" href="#">
+                <i class="bi bi-graph-up"></i><span> Reports </span><i
+                    class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="components6-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                <li class="menu-item">
+                    <a href="{{ route('admin.report.bookingReport') }}" class="menu-link">
+                        <div data-i18n="Booking Reports">Booking Reports</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('admin.report.revenueReport') }}" class="menu-link">
+                        <div data-i18n="Revenue Reports">Revenue Reports</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('admin.report.customerReport') }}" class="menu-link">
+                        <div data-i18n="Revenue Reports">Customer Reports</div>
                     </a>
                 </li>
                 

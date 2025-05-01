@@ -11,6 +11,7 @@ use App\Models\State;
 use App\Models\User;
 use App\Models\UserDocument;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Role;
 
@@ -33,7 +34,7 @@ class DriverController extends Controller
             ];
 
             // Query drivers
-            $query = User::role('Driver');
+            $query = User::role('driver');
 
             // Pagination and sorting
             $page      = $request->query('page', 1);

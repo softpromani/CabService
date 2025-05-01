@@ -35,4 +35,8 @@ class Ride extends Model
         ];
         return $data;
     }
+    public function rideSeatSegments()
+    {
+        return $this->hasMany(RideSeatSegment::class);
+    }
 }
